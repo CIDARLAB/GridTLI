@@ -67,6 +67,42 @@ public class Signal {
         return min;
     }
     
+    public List<Point> getGridPoints(double xOr, double xInc){
+        List<Point> gpoints = new ArrayList<Point>();
+        
+        Point prev = new Point(this.points.get(0));
+        
+        boolean started = false;
+        boolean ended = false;
+        
+        for(Point point:this.points){
+            if(!started){
+                if(point.getX() >= xOr){
+                    if (point.getX() >= (xOr + xInc)) {
+                        started = true;
+                        if (!prev.equals(point)) {
+                            gpoints.add(prev);
+                        }
+                        gpoints.add(point);
+                    }
+                    else{
+                        break;
+                    }
+                    
+                } else {
+                    prev = point;
+                }
+                
+            } else{
+                gpoints.add(point);
+                if(point.getX() >= (xOr + xInc)){
+                    break;
+                }
+            }
+        }
+        
+        return gpoints;
+    }
     
     
     private boolean isSorted(){
@@ -116,5 +152,5 @@ public class Signal {
         p2.setYSignal(temp.getYSignal());
     
     }
-
+    
 }

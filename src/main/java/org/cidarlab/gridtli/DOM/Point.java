@@ -5,6 +5,7 @@
  */
 package org.cidarlab.gridtli.DOM;
 
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -69,5 +70,27 @@ public class Point {
         }
         
         return string;
+    }
+    
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof Point)){
+            return false;
+        }
+        Point check = (Point)o;
+        if((check.x == this.x) && (check.y == this.y) && (check.xSignal == this.xSignal) && (check.ySignal == this.ySignal)){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 41 * hash + Objects.hashCode(this.xSignal);
+        hash = 41 * hash + Objects.hashCode(this.ySignal);
+        return hash;
     }
 }
