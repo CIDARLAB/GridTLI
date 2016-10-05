@@ -66,7 +66,7 @@ public class Signal {
         return min;
     }
     
-    public List<Point> getGridPoints(double xOr, double xInc){
+    public List<Point> getGridPoints(double xOr, double xInc){ //What if two points pass through but neither are within the grid?
         List<Point> gpoints = new ArrayList<Point>();
         
         Point prev = new Point(this.points.get(0));
@@ -85,6 +85,11 @@ public class Signal {
                         gpoints.add(point);
                     }
                     else{
+                        if (!prev.equals(point)) {
+                            gpoints.add(prev);
+                            gpoints.add(point);
+                            break;
+                        }
                         break;
                     }
                     

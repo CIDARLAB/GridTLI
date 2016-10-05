@@ -17,35 +17,156 @@ import lombok.Setter;
 public class Grid {
     
     @Getter
-    @Setter
+    @Setter //Change this. This will trigger a ripple effect.
     private List<Signal> signals;
     
     @Getter
-    @Setter
+    private List<SubGrid> subGrid;
+    
+    @Getter
+    @Setter //Change this. This will trigger a ripple effect.
     private double xIncrement;
     
     @Getter
-    @Setter
+    @Setter //Change this. This will trigger a ripple effect.
     private double yIncrement;
     
     @Getter
-    @Setter
-    private double xLimit;
+    private double xUpperLimit;
     
     @Getter
-    @Setter
-    private double yLimit;
+    private double xLowerLimit;
+    
+    @Getter
+    private double yUpperLimit;
+    
+    @Getter
+    private double yLowerLimit;
+    
+    @Getter
+    private boolean centered;
     
     public Grid(List<Signal> _signals){
-        signals = _signals;
+        this.signals = _signals;
+        this.xIncrement = 1.0;
+        this.yIncrement = 1.0;
+        
+        this.xUpperLimit = this.getxMax() + this.xIncrement;  //Maybe 2*increment?    
+        this.xLowerLimit = this.getxMin() - this.xIncrement;
+        
+        this.yUpperLimit = this.getyMax() + this.yIncrement;
+        this.yLowerLimit = this.getyMin() - this.yIncrement;
+        
+        createSubGrid();
     }
     
-    public Grid(Grid copy){
+    public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement){
+        this.signals = _signals;
+        this.xIncrement = _xIncrement;
+        this.yIncrement = _yIncrement;
+        
+        this.xUpperLimit = this.getxMax() + this.xIncrement;  //Maybe 2*increment?
+        this.xLowerLimit = this.getxMin() - this.xIncrement;
+        
+        this.yUpperLimit = this.getyMax() + this.yIncrement;
+        this.yLowerLimit = this.getyMin() - this.yIncrement;
+        
+        createSubGrid();
+    }
+    
+    public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement, double _xUpperLimit, double _xLowerLimit, double _yUpperLimit, double _yLowerLimit){
+        this.signals = _signals;
+        this.xIncrement = _xIncrement;
+        this.yIncrement = _yIncrement;
+        
+        this.xUpperLimit = _xUpperLimit;
+        this.xLowerLimit = _xLowerLimit;
+        
+        this.yUpperLimit = _yUpperLimit;
+        this.yLowerLimit = _yLowerLimit;;
+        
+        createSubGrid();
+    }
+    
+    
+    /*public Grid(Grid copy){
         this.signals = new ArrayList<Signal>(copy.signals);
         this.xIncrement = copy.xIncrement;
-        this.xLimit = copy.xLimit;
+        this.xUpperLimit = copy.xUpperLimit;
+        this.xLowerLimit = copy.xLowerLimit;
         this.yIncrement = copy.yIncrement;
-        this.yLimit = copy.yLimit;
+        this.yUpperLimit = copy.yUpperLimit;
+        this.yLowerLimit = copy.yLowerLimit;
+    }*/
+    
+    public void createSubGrid(){
+        this.subGrid = new ArrayList<SubGrid>();
+        
+        if(this.centered){
+            
+        } else {
+            double xStart = 0;
+            double yStart = 0;
+            if (this.xUpperLimit < 0 || this.xLowerLimit > 0) {
+                xStart = this.xLowerLimit;
+            }
+            if (this.yUpperLimit < 0 || this.yLowerLimit > 0) {
+                yStart = this.yLowerLimit;
+            }
+
+            double xPOSstart = 0;
+            double yPOSstart = 0;
+            
+            
+            //First quadrant xPOS yPOS
+            List<SubGrid> xPOSyPOS = new ArrayList<SubGrid>();
+            if (xStart > 0) {
+                xPOSstart = xStart;
+            }
+            if (yStart > 0) {
+                yPOSstart = yStart;
+            }
+            for (double i = xPOSstart; i <= this.xUpperLimit; i += this.xIncrement) {
+                for (double j = yPOSstart; i <= this.yUpperLimit; i += this.yIncrement) {
+                    xPOSyPOS.add(new SubGrid(i, j));
+                }
+            }
+            //Second quadrant xPOS yNEG
+            List<SubGrid> xPOSyNEG = new ArrayList<SubGrid>();
+            if (xStart > 0) {
+                xPOSstart = xStart;
+            }
+            if(this.yUpperLimit <  0){
+                for(double i = xPOSstart; i <= this.xUpperLimit; i+= this.xIncrement){
+                    for(double j=this.yLowerLimit; j<= this.yUpperLimit ; j+= this.yIncrement){
+                        xPOSyNEG.add(new SubGrid(i,j));
+                    }
+                }
+            } else {
+                if (xStart > 0) {
+                    xPOSstart = xStart;
+                }
+                List<SubGrid> temp = new ArrayList<SubGrid>();
+                for(double i = xPOSstart; i <= this.xUpperLimit; i+= this.xIncrement){
+                    for(double j =0; j>= this.yLowerLimit;j -= this.yIncrement){
+                        temp.add(new SubGrid(i,j));
+                    }
+                }
+                for(int i= temp.size()-1; i>= 0 ; i--){
+                    xPOSyNEG.add(temp.get(i));
+                }
+            }
+            
+            //Third quadrant xNEG yNEG 
+            List<SubGrid> xNEGyNEG = new ArrayList<SubGrid>();
+
+            //Fourth quadrant xNEG yPOS
+            List<SubGrid> xNEGyPOS = new ArrayList<SubGrid>();
+        }
+        
+        
+        
+        
     }
     
     public double getxMax(){
@@ -111,10 +232,7 @@ public class Grid {
         //Case 0 p1 == p2
         if(p1.equals(p2)){
             if(p1.getX() >= xOr &&  p1.getX() <= (xOr + xInc)){
-                if (p1.getY() >= yOr && p1.getY() <= (yOr + yInc)) {
-                    return true;
-                }
-                return false;
+                return ( (p1.getY() >= yOr) && (p1.getY() <= (yOr + yInc)) );
             }
             return false;
         }
