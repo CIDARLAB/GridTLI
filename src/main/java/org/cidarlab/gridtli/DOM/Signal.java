@@ -77,7 +77,7 @@ public class Signal {
         for(Point point:this.points){
             if(!started){
                 if(point.getX() >= xOr){
-                    if (point.getX() <= (xOr + xInc)) {
+                    if (point.getX() < (xOr + xInc)) {
                         started = true;
                         if (!prev.equals(point)) {
                             gpoints.add(prev);

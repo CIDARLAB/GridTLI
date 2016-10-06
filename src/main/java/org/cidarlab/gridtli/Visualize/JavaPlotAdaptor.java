@@ -74,22 +74,22 @@ public class JavaPlotAdaptor {
         int count =1;
         for(SubGrid subgrid: grid.getSubGrid()){
             if(!subgrid.isCovered()){
-                System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                
+                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"black\"";
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"cyan\"";
                 
                 plot.set(obj, rect);
                 count++;
             }
         }
-        
+        plot.set("style fill", "transparent solid 0.5");
         plot.getAxis("x").setLabel("x");
         plot.getAxis("y").setLabel("y");
         plot.setTitle("Grid");
         plot.set("xzeroaxis", "");
         plot.set("yzeroaxis", "");
         plot.set("key", "off");
-        System.out.println(plot.getCommands());
         return plot;
     }
     
@@ -165,7 +165,7 @@ public class JavaPlotAdaptor {
         } catch (IOException ex) {
             System.err.print(ex);
         }
-    }
-    
+    } 
+   
     
 }

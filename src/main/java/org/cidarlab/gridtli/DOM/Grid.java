@@ -276,12 +276,10 @@ public class Grid {
         double max = this.signals.get(0).getxMax();
         for (Signal signal : this.signals) {
             double signalXmax = signal.getxMax();
-            System.out.println("Max of x signal :: " + signalXmax);
             if (signalXmax > max) {
                 max = signalXmax;
             }
         }
-        System.out.println("Max X :: " + max);
         return max;
     }
 
@@ -289,12 +287,10 @@ public class Grid {
         double min = this.signals.get(0).getxMin();
         for (Signal signal : this.signals) {
             double signalXmin = signal.getxMin();
-            System.out.println("Min of x signal :: " + signalXmin);
             if (signalXmin < min) {
                 min = signalXmin;
             }
         }
-        System.out.println("Min X :: " + min);
         return min;
     }
 
@@ -302,12 +298,10 @@ public class Grid {
         double max = this.signals.get(0).getyMax();
         for (Signal signal : this.signals) {
             double signalYmax = signal.getyMax();
-            System.out.println("Max of y signal :: " + signalYmax);
             if (signalYmax > max) {
                 max = signalYmax;
             }
         }
-        System.out.println("Max Y :: " + max);
         return max;
     }
 
@@ -315,12 +309,10 @@ public class Grid {
         double min = this.signals.get(0).getyMin();
         for (Signal signal : this.signals) {
             double signalYmin = signal.getyMin();
-            System.out.println("Min of y signal :: " + signalYmin);
             if (signalYmin < min) {
                 min = signalYmin;
             }
         }
-        System.out.println("Min Y :: " + min);
         return min;
     }
 
@@ -342,15 +334,15 @@ public class Grid {
 
         //Case 0 p1 == p2
         if (p1.equals(p2)) {
-            if (p1.getX() >= xOr && p1.getX() <= (xOr + xInc)) {
-                return ((p1.getY() >= yOr) && (p1.getY() <= (yOr + yInc)));
+            if (p1.getX() > xOr && p1.getX() < (xOr + xInc)) {
+                return ((p1.getY() > yOr) && (p1.getY() < (yOr + yInc)));
             }
             return false;
         }
 
         //Case 1 x = x1;
         if (p1.getX() == p2.getX()) {
-            if (p1.getX() >= xOr && p1.getX() <= (xOr + xInc)) {
+            if (p1.getX() > xOr && p1.getX() < (xOr + xInc)) {
                 return true;
             }
             return false;
@@ -358,7 +350,7 @@ public class Grid {
 
         //Case 2 y = y1;
         if (p1.getY() == p2.getY()) {
-            if (p1.getY() >= yOr && p1.getY() <= (yOr + yInc)) {
+            if (p1.getY() > yOr && p1.getY() < (yOr + yInc)) {
                 return true;
             }
             return false;
@@ -367,22 +359,22 @@ public class Grid {
         //Case 3 y = mx +c
         //Case 3a xOr
         double yXor = (((p2.getY() - p1.getY()) / (p2.getX() - p1.getX())) * (xOr - p1.getX())) + p1.getY();
-        if ((yXor >= yOr) && (yXor <= (yOr + yInc))) {
+        if ((yXor > yOr) && (yXor < (yOr + yInc))) {
             return true;
         }
         //Case 3b xOr+xInc
         double yXorInc = (((p2.getY() - p1.getY()) / (p2.getX() - p1.getX())) * ((xOr + xInc) - p1.getX())) + p1.getY();
-        if ((yXorInc >= yOr) && (yXorInc <= (yOr + yInc))) {
+        if ((yXorInc > yOr) && (yXorInc < (yOr + yInc))) {
             return true;
         }
         //Case 3c yOr
         double xYor = (((p2.getX() - p1.getX()) / (p2.getY() - p1.getY())) * (yOr - p1.getY())) + p1.getX();
-        if ((xYor >= xOr) && (xYor <= (xOr + xInc))) {
+        if ((xYor > xOr) && (xYor < (xOr + xInc))) {
             return true;
         }
         //Case 3d yOr+yInc
         double xYorInc = (((p2.getX() - p1.getX()) / (p2.getY() - p1.getY())) * ((yOr + yInc) - p1.getY())) + p1.getX();
-        if ((xYorInc >= xOr) && (xYorInc <= (xOr + xInc))) {
+        if ((xYorInc > xOr) && (xYorInc < (xOr + xInc))) {
             return true;
         }
         return false;
