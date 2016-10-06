@@ -71,12 +71,54 @@ public class JavaPlotAdaptor {
             dsp.setPlotStyle(sps);
             plot.addPlot(dsp);
         }
+        int count =1;
+        for(SubGrid subgrid: grid.getSubGrid()){
+            if(!subgrid.isCovered()){
+                System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                String obj = "object " + count;
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"black\"";
+                
+                plot.set(obj, rect);
+                count++;
+            }
+        }
         
         plot.getAxis("x").setLabel("x");
         plot.getAxis("y").setLabel("y");
-        plot.setTitle("SubGrid");
+        plot.setTitle("Grid");
         plot.set("xzeroaxis", "");
         plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        System.out.println(plot.getCommands());
+        return plot;
+    }
+    
+    public static JavaPlot plotGridwithoutCover(Grid grid){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        plot.addPlot(dspgrid);
+        
+        for(Signal signal:grid.getSignals()){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            sps.setLineType(NamedPlotColor.RED);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("Grid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
         return plot;
     }
     
@@ -94,8 +136,7 @@ public class JavaPlotAdaptor {
         plot.setTitle("SubGrid");
         plot.set("xzeroaxis", "");
         plot.set("yzeroaxis", "");
-        
-        System.out.println(plot.getCommands());
+        plot.set("key", "off");
         
         return plot;
     }

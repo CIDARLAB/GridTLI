@@ -74,6 +74,7 @@ public class Grid {
         this.centered = false;
 
         createSubGrid();
+        setSubGridCovers();
     }
 
     public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement) {
@@ -90,6 +91,7 @@ public class Grid {
         this.centered = false;
 
         createSubGrid();
+        setSubGridCovers();
     }
 
     public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement, double _xUpperLimit, double _xLowerLimit, double _yUpperLimit, double _yLowerLimit) {
@@ -106,6 +108,7 @@ public class Grid {
         this.centered = false;
 
         createSubGrid();
+        setSubGridCovers();
     }
 
     private void createSubGrid() {
@@ -255,7 +258,20 @@ public class Grid {
         
 
     }
-
+    
+    private void setSubGridCovers(){
+        for(SubGrid subgrid: this.subGrid){
+            for(Signal signal:this.signals){
+                List<Point> possiblePoints = signal.getGridPoints(subgrid.getXOrigin(), this.xIncrement);
+                for(int i=0;i< possiblePoints.size()-1; i++){
+                    if(this.inGrid(subgrid.getXOrigin(), this.xIncrement , subgrid.getYOrigin(), this.yIncrement, possiblePoints.get(i), possiblePoints.get(i+1))){
+                        subgrid.setCovered(true);
+                    }
+                }
+            }
+        }
+    }
+    
     public double getxMax() {
         double max = this.signals.get(0).getxMax();
         for (Signal signal : this.signals) {
