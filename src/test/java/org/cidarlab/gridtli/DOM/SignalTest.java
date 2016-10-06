@@ -40,59 +40,46 @@ public class SignalTest {
     }
 
     @Test
-    public void newSignalTest(){
-        Point p1 = new Point(1,2);
-        Point p2 = new Point(1,5);
-        Point p3 = new Point(2,6);
-        Point p4 = new Point(5,3);
-        Point p5 = new Point(3,1);
-        Point p6 = new Point(4,1);
-        List<Point> points = new ArrayList<Point>();
-        
-        
-        points.add(p1);
-        points.add(p2);
-        points.add(p3);
-        points.add(p4);
-        points.add(p5);
-        points.add(p6);
-        
-        System.out.println("Before swap");
-        System.out.println(points);
-        
-        Signal signal = new Signal(points);
-        System.out.println("After Swap");
-        System.out.println(signal.getPoints());
-        
-    }
-    
-    
-    
-    @Test
     public void getGridPointsTest(){
-        Point p1 = new Point(1,2);
-        Point p2 = new Point(1,5);
-        Point p3 = new Point(2,6);
-        Point p4 = new Point(5,3);
-        Point p5 = new Point(3,1);
-        Point p6 = new Point(4,1);
+        
+        Point p1 = new Point(1,1);
+        Point p2 = new Point(1.1,1.2);
+        Point p3 = new Point(1.2,1.3);
+        Point p4 = new Point(1.5,0.8);
+        Point p5 = new Point(2,1);
+        Point p6 = new Point(2,5);
+        Point p7 = new Point(2.5,5);
+        Point p8 = new Point(4,5);
+        Point p9 = new Point(6,8);
+        
         List<Point> points = new ArrayList<Point>();
-        
-        
         points.add(p1);
         points.add(p2);
         points.add(p3);
         points.add(p4);
         points.add(p5);
         points.add(p6);
-        
+        points.add(p7);
+        points.add(p8);
+        points.add(p9);
         
         Signal signal = new Signal(points);
-        System.out.println(signal.getPoints());
-        System.out.println("\n");
-        System.out.println(signal.getGridPoints(2, 0.5));
         
-    }
+        System.out.println("Points :: ");
+        System.out.println(points + "\n");
+        
+        System.out.println("Between x1, inc1 :: {1,2}");
+        System.out.println(signal.getGridPoints(1, 1));
+        
+        System.out.println("Between x1, inc0.1 :: {1,1.1}");
+        System.out.println(signal.getGridPoints(1, 0.1));
+        
+        System.out.println("Between x0, inc0.5 :: {0,0.5}");
+        System.out.println(signal.getGridPoints(0, 0.5));
+        
+        System.out.println("Between x4.5, inc1 :: {4.5,5.5}");
+        System.out.println(signal.getGridPoints(4.5, 1));
     
+    }
     
 }

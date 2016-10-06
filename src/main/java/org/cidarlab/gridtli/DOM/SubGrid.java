@@ -33,6 +33,14 @@ public class SubGrid {
     }
 
     @Override
+    public String toString(){
+        String str = "";
+        str += "(" + this.xOrigin + "," + this.yOrigin +  "):" + this.covered;
+        //str += this.xOrigin + "," + this.yOrigin + ":" + this.covered;
+        return str;
+    }
+    
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof SubGrid)) {
             return false;

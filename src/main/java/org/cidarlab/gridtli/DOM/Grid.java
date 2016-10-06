@@ -108,7 +108,7 @@ public class Grid {
         createSubGrid();
     }
 
-    public void createSubGrid() {
+    private void createSubGrid() {
         this.subGrid = new HashSet<SubGrid>();
 
         if (this.centered) {
@@ -148,7 +148,7 @@ public class Grid {
                 yPOSstart = yStart;
             }
             for (double i = xPOSstart; i <= this.xUpperLimit; i += this.xIncrement) {
-                for (double j = yPOSstart; i <= this.yUpperLimit; i += this.yIncrement) {
+                for (double j = yPOSstart; j <= this.yUpperLimit; j += this.yIncrement) {
                     xPOSyPOS.add(new SubGrid(i, j));
                 }
             }
@@ -257,46 +257,54 @@ public class Grid {
     }
 
     public double getxMax() {
-        double max = Double.MIN_VALUE;
+        double max = this.signals.get(0).getxMax();
         for (Signal signal : this.signals) {
             double signalXmax = signal.getxMax();
-            if (max > signalXmax) {
+            System.out.println("Max of x signal :: " + signalXmax);
+            if (signalXmax > max) {
                 max = signalXmax;
             }
         }
+        System.out.println("Max X :: " + max);
         return max;
     }
 
     public double getxMin() {
-        double min = Double.MAX_VALUE;
+        double min = this.signals.get(0).getxMin();
         for (Signal signal : this.signals) {
             double signalXmin = signal.getxMin();
-            if (min > signalXmin) {
+            System.out.println("Min of x signal :: " + signalXmin);
+            if (signalXmin < min) {
                 min = signalXmin;
             }
         }
+        System.out.println("Min X :: " + min);
         return min;
     }
 
     public double getyMax() {
-        double max = Double.MIN_VALUE;
+        double max = this.signals.get(0).getyMax();
         for (Signal signal : this.signals) {
             double signalYmax = signal.getyMax();
-            if (max > signalYmax) {
+            System.out.println("Max of y signal :: " + signalYmax);
+            if (signalYmax > max) {
                 max = signalYmax;
             }
         }
+        System.out.println("Max Y :: " + max);
         return max;
     }
 
     public double getyMin() {
-        double min = Double.MAX_VALUE;
+        double min = this.signals.get(0).getyMin();
         for (Signal signal : this.signals) {
             double signalYmin = signal.getyMin();
-            if (min > signalYmin) {
+            System.out.println("Min of y signal :: " + signalYmin);
+            if (signalYmin < min) {
                 min = signalYmin;
             }
         }
+        System.out.println("Min Y :: " + min);
         return min;
     }
 

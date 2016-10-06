@@ -32,6 +32,15 @@
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Java Plot -->
+        <dependency>
+            <groupId>org.java.plot</groupId>
+            <artifactId>JavaPlot</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/resources/lib/JavaPlot.jar</systemPath>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
