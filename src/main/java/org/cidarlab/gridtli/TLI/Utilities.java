@@ -146,10 +146,10 @@ public class Utilities {
     public static String getResourcesTempFilepath(){
         String filepath = getFilepath();
         if(Utilities.isWindows()){
-            filepath += "\\src\\main\\resources\\temp";
+            filepath += "\\src\\main\\resources\\temp\\";
         }
         else{
-            filepath += "/src/main/resources/temp";
+            filepath += "/src/main/resources/temp/";
         }
         return filepath;
     }

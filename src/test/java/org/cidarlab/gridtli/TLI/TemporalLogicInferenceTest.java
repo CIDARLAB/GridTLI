@@ -92,7 +92,8 @@ public class TemporalLogicInferenceTest {
         System.out.println("");
         System.out.println("\nSubGrid :: \n" + grid.getSubGrid());
         
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid()), Utilities.getResourcesTempFilepath() + "testgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid()), Utilities.getResourcesTempFilepath() + "subgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getResourcesTempFilepath() + "grid.png");
         
     }
     

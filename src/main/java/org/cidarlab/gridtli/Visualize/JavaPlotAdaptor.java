@@ -9,6 +9,7 @@ import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.DataSetPlot;
 import com.panayotis.gnuplot.style.NamedPlotColor;
+import com.panayotis.gnuplot.style.PlotColor;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
@@ -24,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.imageio.ImageIO;
+import org.cidarlab.gridtli.DOM.Grid;
+import org.cidarlab.gridtli.DOM.Signal;
 import org.cidarlab.gridtli.DOM.SubGrid;
 
 /**
@@ -33,6 +36,14 @@ import org.cidarlab.gridtli.DOM.SubGrid;
 public class JavaPlotAdaptor {
  
     
+    public static List<Point> getSignalJPlotPoints(Signal signal){
+        List<Point> points = new ArrayList<Point>();
+        for(org.cidarlab.gridtli.DOM.Point point:signal.getPoints()){
+            points.add(new Point(point.getX(),point.getY()));
+        }
+        return points;
+    }
+    
     public static List<Point> getSubGridJPlotPoints(Set<SubGrid> subgrids){
         List<Point> points = new ArrayList<Point>();
         for(SubGrid subgrid:subgrids){
@@ -41,12 +52,41 @@ public class JavaPlotAdaptor {
         return points;
     }
     
+    public static JavaPlot plotGrid(Grid grid){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        plot.addPlot(dspgrid);
+        
+        for(Signal signal:grid.getSignals()){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            sps.setLineType(NamedPlotColor.RED);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("SubGrid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        return plot;
+    }
+    
     public static JavaPlot visualizeSubGrid(Set<SubGrid> subgrids){
         JavaPlot plot = new JavaPlot();
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         PointDataSet pds = new PointDataSet(getSubGridJPlotPoints(subgrids));
         DataSetPlot dsp = new DataSetPlot(pds);
+        dsp.setPlotStyle(ps);
         plot.addPlot(dsp);
         
         plot.getAxis("x").setLabel("x");
