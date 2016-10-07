@@ -59,9 +59,19 @@ public class Grid {
     
     @Getter
     private double yStart;
+    
+    @Getter
+    private String xSignal;
+    
+    @Getter
+    private String ySignal;
 
     public Grid(List<Signal> _signals) {
         this.signals = _signals;
+        
+        this.xSignal = signals.get(0).getPoints().get(0).getXSignal();
+        this.ySignal = signals.get(0).getPoints().get(0).getYSignal();
+        
         this.xIncrement = 1.0;
         this.yIncrement = 1.0;
 
@@ -81,7 +91,10 @@ public class Grid {
         this.signals = _signals;
         this.xIncrement = _xIncrement;
         this.yIncrement = _yIncrement;
-
+        
+        this.xSignal = signals.get(0).getPoints().get(0).getXSignal();
+        this.ySignal = signals.get(0).getPoints().get(0).getYSignal();
+        
         this.xUpperLimit = this.getxMax() + this.xIncrement;  //Maybe 2*increment?
         this.xLowerLimit = this.getxMin() - this.xIncrement;
 
@@ -99,6 +112,9 @@ public class Grid {
         this.xIncrement = _xIncrement;
         this.yIncrement = _yIncrement;
 
+        this.xSignal = signals.get(0).getPoints().get(0).getXSignal();
+        this.ySignal = signals.get(0).getPoints().get(0).getYSignal();
+        
         this.xUpperLimit = _xUpperLimit;
         this.xLowerLimit = _xLowerLimit;
 
@@ -259,6 +275,15 @@ public class Grid {
 
     }
     
+    public SubGrid getSpecificSubGrid(SubGrid _sgrid){
+        for(SubGrid sgrid : this.subGrid){
+            if(sgrid.equals(_sgrid)){
+                return sgrid;
+            }
+        }
+        return null;
+    }
+    
     private void setSubGridCovers(){
         for(SubGrid subgrid: this.subGrid){
             for(Signal signal:this.signals){
@@ -315,7 +340,47 @@ public class Grid {
         }
         return min;
     }
-
+    
+    public double getSubGridMinX(){
+        double min = this.xUpperLimit;
+        for(SubGrid sgrid: this.subGrid){
+            if(sgrid.getXOrigin() <= min){
+                min = sgrid.getXOrigin();
+            }
+        }
+        return min;
+    }
+    
+    public double getSubGridMaxX(){
+        double max = this.xLowerLimit;
+        for(SubGrid sgrid: this.subGrid){
+            if(sgrid.getXOrigin() >= max){
+                max = sgrid.getXOrigin();
+            }
+        }
+        return max;
+    }    
+    
+    public double getSubGridMinY(){
+        double min = this.yUpperLimit;
+        for(SubGrid sgrid: this.subGrid){
+            if(sgrid.getYOrigin() <= min){
+                min = sgrid.getYOrigin();
+            }
+        }
+        return min;
+    }
+    
+    public double getSubGridMaxY(){
+        double max = this.yLowerLimit;
+        for(SubGrid sgrid: this.subGrid){
+            if(sgrid.getYOrigin() >= max){
+                max = sgrid.getYOrigin();
+            }
+        }
+        return max;
+    }
+    
     public boolean inGrid(double xOr, double xInc, double yOr, double yInc, Point p1, Point p2) {
 
         //Edge case

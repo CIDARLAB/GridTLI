@@ -43,8 +43,44 @@ public class TemporalLogicInferenceTest {
     @After
     public void tearDown() {
     }
-
+    
     @Test
+    public void testTLI(){
+        List<Point> s1points = new ArrayList<Point>();
+        s1points.add(new Point(0.0,0.7));
+        s1points.add(new Point(2.5,6.2));
+        s1points.add(new Point(6.3,6.1));
+        s1points.add(new Point(8.3,0.0));
+        
+        List<Point> s2points = new ArrayList<Point>();
+        s2points.add(new Point(0.0,0.7));
+        s2points.add(new Point(2.4,5.2));
+        s2points.add(new Point(5.6,5.0));
+        s2points.add(new Point(8.2,0.8));
+        
+        List<Point> s3points = new ArrayList<Point>();
+        s3points.add(new Point(0.0,0.4));
+        s3points.add(new Point(2.0,3.3));
+        s3points.add(new Point(5.8,3.3));
+        s3points.add(new Point(8.0,0.4));
+        
+        List<Point> s4points = new ArrayList<Point>();
+        s4points.add(new Point(0.0,0.0));
+        s4points.add(new Point(2.1,2.6));
+        s4points.add(new Point(5.2,2.7));
+        s4points.add(new Point(7.2,0.5));
+        
+        List<Signal> signals = new ArrayList<Signal>();
+        signals.add(new Signal(s1points));
+        signals.add(new Signal(s2points));
+        signals.add(new Signal(s3points));
+        signals.add(new Signal(s4points));
+        
+        Grid grid = new Grid(signals,0.5,0.5);
+        TemporalLogicInference.getSTL(grid);
+    }
+    
+    //@Test
     public void testSignals1(){
         
         List<Point> s1points = new ArrayList<Point>();
@@ -77,7 +113,7 @@ public class TemporalLogicInferenceTest {
         signals.add(new Signal(s3points));
         signals.add(new Signal(s4points));
         
-        Grid grid = new Grid(signals,0.5,0.5);
+        Grid grid = new Grid(signals,2,2);
         System.out.println("x Lower limit :" + grid.getXLowerLimit());
         System.out.println("x Upper limit :" + grid.getXUpperLimit());
         System.out.println("y Lower limit :" + grid.getYLowerLimit());
