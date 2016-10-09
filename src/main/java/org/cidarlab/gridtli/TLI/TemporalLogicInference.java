@@ -28,10 +28,13 @@ public class TemporalLogicInference {
         System.out.println(grid.getSubGrid());
 
         double xstart = grid.getSubGridMinX();
-        double xend = grid.getSubGridMaxX() + grid.getXIncrement();
+        //double xend = grid.getSubGridMaxX() + grid.getXIncrement();
+        double xend = grid.getSubGridMaxX();
+        
         double ystart = grid.getSubGridMinY();
-        double yend = grid.getSubGridMaxY() + grid.getYIncrement();
-
+        //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
+        double yend = grid.getSubGridMaxY();
+        
         boolean started = false;
         boolean ended = false;
         boolean up = false;
