@@ -22,7 +22,12 @@ import org.cidarlab.gridtli.DOM.SubGrid;
  * @author prash
  */
 public class TemporalLogicInference {
-
+    
+    public static void main(String[] args) {
+        
+    }
+    
+    
     public static STLflat getSTL(Grid grid) {
         
         System.out.println(grid.getSubGrid());

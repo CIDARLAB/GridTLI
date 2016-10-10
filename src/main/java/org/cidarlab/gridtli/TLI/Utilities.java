@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.cidarlab.gridtli.DOM.Point;
+import org.cidarlab.gridtli.DOM.Signal;
 
 /**
  *
@@ -196,6 +198,31 @@ public class Utilities {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
         return filecontent;
+    }
+    
+    public static List<String[]> getCSVFileContentAsList(String filepath){
+        List<String[]> listPieces = new ArrayList<String[]>();
+        List<String> stringList = getFileContentAsStringList(filepath);
+        for(String line:stringList){
+            listPieces.add(line.split(","));
+        }
+        return listPieces;
+    }
+    
+    public static List<Signal> getSignalsBioCPS(String filepath){
+        List<Signal> signals = new ArrayList<Signal>();
+        List<String[]> csvStrings = getCSVFileContentAsList(filepath);
+        for(String[] csvString:csvStrings){
+            int count =0;
+            List<Point> points = new ArrayList<Point>();
+            for(int i =0; i< csvString.length; i++){
+                double yVal = Double.valueOf(csvString[i]);
+                points.add(new Point(count,yVal));
+                count ++;
+            }
+            signals.add(new Signal(points));
+        }
+        return signals;
     }
     
     public static char getSeparater(){
