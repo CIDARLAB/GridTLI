@@ -321,7 +321,7 @@ public class Grid {
                 List<Point> possiblePoints = signal.getGridPoints(subgrid.getXOrigin(), this.xIncrement);
                 for(int i=0;i< possiblePoints.size()-1; i++){
                     if(this.inGrid(subgrid.getXOrigin(), this.xIncrement , subgrid.getYOrigin(), this.yIncrement, possiblePoints.get(i), possiblePoints.get(i+1))){
-                        subgrid.setCovered(true);
+                        //subgrid.setCovered(true);
                         this.subGrid.put(subgrid, true);
                     }
                 }

@@ -62,7 +62,7 @@ public class TemporalLogicInference {
                 SubGrid sgrid = new SubGrid(i, j);
                 if (grid.getSubGrid().containsKey(sgrid)) {
                     if (!started) {
-                        if (grid.getSpecificSubGrid(sgrid).isCovered()) {
+                        if (grid.isSpecificSubGridCovered(sgrid)){
                             started = true;
                             up = true;
                             predicates.add(new LinearPredicateLeaf(RelOperation.GE, grid.getYSignal(), j));
@@ -72,12 +72,12 @@ public class TemporalLogicInference {
                     if (started) {
                         if (up) {
 
-                            if (!grid.getSpecificSubGrid(sgrid).isCovered()) {
+                            if (!grid.isSpecificSubGridCovered(sgrid)) {
                                 predicates.add(new LinearPredicateLeaf(RelOperation.LE, grid.getYSignal(), j));
                                 up = false;
                             }
                         } else {
-                            if (grid.getSpecificSubGrid(sgrid).isCovered()) {
+                            if (grid.isSpecificSubGridCovered(sgrid)) {
                                 predicates.add(new LinearPredicateLeaf(RelOperation.GE, grid.getYSignal(), j));
                                 up = true;
                             }

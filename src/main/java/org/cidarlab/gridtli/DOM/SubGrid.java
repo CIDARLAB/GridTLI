@@ -22,20 +22,19 @@ public class SubGrid {
     @Setter
     private double yOrigin;
 
-    @Getter
-    @Setter
-    private boolean covered;
+    //@Getter
+    //@Setter
+    //private boolean covered;
 
     public SubGrid(double _xOrigin, double _yOrigin) {
         this.xOrigin = _xOrigin;
         this.yOrigin = _yOrigin;
-        covered = false;
     }
 
     @Override
     public String toString(){
         String str = "";
-        str += "(" + this.xOrigin + "," + this.yOrigin +  "):" + this.covered;
+        str += "(" + this.xOrigin + "," + this.yOrigin +  ")";
         //str += this.xOrigin + "," + this.yOrigin + ":" + this.covered;
         return str;
     }
