@@ -15,6 +15,7 @@ import hyness.stl.grammar.flat.STLflat;
 import java.util.ArrayList;
 import java.util.List;
 import org.cidarlab.gridtli.DOM.Grid;
+import org.cidarlab.gridtli.DOM.Signal;
 import org.cidarlab.gridtli.DOM.SubGrid;
 
 /**
@@ -25,6 +26,15 @@ public class TemporalLogicInference {
     
     public static void main(String[] args) {
         
+    }
+    
+    
+    public static List<List<Signal>> cluster(Grid grid){
+        List<List<Signal>> cluster = new ArrayList<List<Signal>>();
+        
+        
+        
+        return cluster;
     }
     
     
@@ -50,7 +60,7 @@ public class TemporalLogicInference {
             List<LinearPredicateLeaf> predicates = new ArrayList<LinearPredicateLeaf>();
             for (double j = ystart; j <= yend; j += grid.getYIncrement()) {
                 SubGrid sgrid = new SubGrid(i, j);
-                if (grid.getSubGrid().contains(sgrid)) {
+                if (grid.getSubGrid().containsKey(sgrid)) {
                     if (!started) {
                         if (grid.getSpecificSubGrid(sgrid).isCovered()) {
                             started = true;
@@ -97,7 +107,7 @@ public class TemporalLogicInference {
         }
         TreeNode entireConjunction = reduceToSingleConjunction(outerNodes);
         STLflat stl = new STLflat(entireConjunction);
-        System.out.println(stl.toString());
+        //System.out.println(stl.toString());
         return stl;
     }
     

@@ -57,7 +57,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -72,7 +72,7 @@ public class JavaPlotAdaptor {
             plot.addPlot(dsp);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid()){
+        for(SubGrid subgrid: grid.getSubGrid().keySet()){
             if(!subgrid.isCovered()){
                 
                 //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
@@ -98,7 +98,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);

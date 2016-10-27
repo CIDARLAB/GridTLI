@@ -6,8 +6,10 @@
 package org.cidarlab.gridtli.DOM;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +25,7 @@ public class Grid {
     private List<Signal> signals;
 
     @Getter
-    private Set<SubGrid> subGrid;
+    private Map<SubGrid,Boolean> subGrid;
 
     @Getter
     @Setter //Change this. This will trigger a ripple effect.
@@ -102,9 +104,14 @@ public class Grid {
         this.yLowerLimit = this.getyMin() - this.yIncrement;
 
         this.centered = false;
-
+        
+        System.out.println("Start Creating Sub Grid");
         createSubGrid();
+        
+        System.out.println("Sub Grid Creation complete. Now Setting Sub Grid Covers");
+        
         setSubGridCovers();
+        System.out.println("Sub Grid Covers set");
     }
 
     public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement, double _xUpperLimit, double _xLowerLimit, double _yUpperLimit, double _yLowerLimit) {
@@ -128,7 +135,7 @@ public class Grid {
     }
 
     private void createSubGrid() {
-        this.subGrid = new HashSet<SubGrid>();
+        this.subGrid = new HashMap<SubGrid,Boolean>();
 
         if (this.centered) {
             
@@ -169,6 +176,7 @@ public class Grid {
             for (double i = xPOSstart; i <= this.xUpperLimit; i += this.xIncrement) {
                 for (double j = yPOSstart; j <= this.yUpperLimit; j += this.yIncrement) {
                     xPOSyPOS.add(new SubGrid(i, j));
+                    this.subGrid.put(new SubGrid(i, j), false);
                 }
             }
             //Second quadrant xPOS yNEG
@@ -180,6 +188,7 @@ public class Grid {
                 for (double i = xPOSstart; i <= this.xUpperLimit; i += this.xIncrement) {
                     for (double j = this.yLowerLimit; j <= this.yUpperLimit; j += this.yIncrement) {
                         xPOSyNEG.add(new SubGrid(i, j));
+                        this.subGrid.put(new SubGrid(i, j), false);
                     }
                 }
             } else {
@@ -192,6 +201,7 @@ public class Grid {
                 for (double i = xPOSstart; i <= this.xUpperLimit; i += this.xIncrement) {
                     for (int j = temp.size() - 1; j >= 0; j--) {
                         xPOSyNEG.add(new SubGrid(i, temp.get(j)));
+                        this.subGrid.put(new SubGrid(i, temp.get(j)), false);
                     }
                 }
             }
@@ -203,6 +213,7 @@ public class Grid {
                     for (double i = this.xLowerLimit; i <= this.xUpperLimit; i += this.xIncrement) {
                         for (double j = this.yLowerLimit; j <= this.yUpperLimit; j += this.yIncrement) {
                             xNEGyNEG.add(new SubGrid(i, j));
+                            this.subGrid.put(new SubGrid(i, j), false);
                         }
                     }
                 } else {
@@ -213,6 +224,8 @@ public class Grid {
                     for (double i = this.xLowerLimit; i <= this.xUpperLimit; i += this.xIncrement) {
                         for (int j = temp.size() - 1; j >= 0; j--) {
                             xNEGyNEG.add(new SubGrid(i, temp.get(j)));
+                            this.subGrid.put(new SubGrid(i, temp.get(j)), false);
+                            
                         }
                     }
                 }
@@ -225,6 +238,8 @@ public class Grid {
                     for (int i = tempx.size() - 1; i >= 0; i--) {
                         for (double j = this.yLowerLimit; j <= this.yUpperLimit; j += this.yIncrement) {
                             xNEGyNEG.add(new SubGrid(tempx.get(i), j));
+                            this.subGrid.put(new SubGrid(tempx.get(i), j), false);
+                            
                         }
                     }
                 } else {
@@ -235,6 +250,8 @@ public class Grid {
                     for (int i = tempx.size() - 1; i >= 0; i--) {
                         for (int j = tempy.size() - 1; j >= 0; j--) {
                             xNEGyNEG.add(new SubGrid(tempx.get(i), tempy.get(j)));
+                            this.subGrid.put(new SubGrid(tempx.get(i), tempy.get(j)), false);
+                            
                         }
                     }
                 }
@@ -249,6 +266,8 @@ public class Grid {
                 for(double i=this.xLowerLimit; i <= this.xUpperLimit; i+= this.xIncrement){
                     for(double j = yPOSstart; j <= this.yUpperLimit; j += this.yIncrement){
                         xNEGyPOS.add(new SubGrid(i,j));
+                        this.subGrid.put(new SubGrid(i,j), false);
+                            
                     }
                 }
             } else {
@@ -259,14 +278,16 @@ public class Grid {
                 for(int i = tempx.size()-1; i >=0; i--){
                     for(double j = yPOSstart; j <= this.yUpperLimit; j += this.yIncrement){
                         xNEGyPOS.add(new SubGrid(tempx.get(i),j));
+                        this.subGrid.put(new SubGrid(tempx.get(i),j), false);
+                            
                     }
                 }
             }
             //This is where you add everything to the hashset. 
-            this.subGrid.addAll(xPOSyPOS);
-            this.subGrid.addAll(xPOSyNEG);
-            this.subGrid.addAll(xNEGyNEG);
-            this.subGrid.addAll(xNEGyPOS);
+            //this.subGrid.addAll(xPOSyPOS);
+            //this.subGrid.addAll(xPOSyNEG);
+            //this.subGrid.addAll(xNEGyNEG);
+            //this.subGrid.addAll(xNEGyPOS);
             
             
             
@@ -275,8 +296,15 @@ public class Grid {
 
     }
     
+    public boolean isSpecificSubGridCovered(SubGrid _sgrid){
+        if(this.subGrid.containsKey(_sgrid)){
+            return this.subGrid.get(_sgrid);
+        }
+        return false;
+    }
+    
     public SubGrid getSpecificSubGrid(SubGrid _sgrid){
-        for(SubGrid sgrid : this.subGrid){
+        for(SubGrid sgrid : this.subGrid.keySet()){
             if(sgrid.equals(_sgrid)){
                 return sgrid;
             }
@@ -285,12 +313,16 @@ public class Grid {
     }
     
     private void setSubGridCovers(){
-        for(SubGrid subgrid: this.subGrid){
+        System.out.println("In Set Sub Grid Covers");
+        System.out.println("subgrid size :: " + this.subGrid.size());
+        System.out.println("Number of Signals :: " + this.signals.size());
+        for(SubGrid subgrid: this.subGrid.keySet()){
             for(Signal signal:this.signals){
                 List<Point> possiblePoints = signal.getGridPoints(subgrid.getXOrigin(), this.xIncrement);
                 for(int i=0;i< possiblePoints.size()-1; i++){
                     if(this.inGrid(subgrid.getXOrigin(), this.xIncrement , subgrid.getYOrigin(), this.yIncrement, possiblePoints.get(i), possiblePoints.get(i+1))){
                         subgrid.setCovered(true);
+                        this.subGrid.put(subgrid, true);
                     }
                 }
             }
@@ -343,7 +375,7 @@ public class Grid {
     
     public double getSubGridMinX(){
         double min = this.xUpperLimit;
-        for(SubGrid sgrid: this.subGrid){
+        for(SubGrid sgrid: this.subGrid.keySet()){
             if(sgrid.getXOrigin() <= min){
                 min = sgrid.getXOrigin();
             }
@@ -353,7 +385,7 @@ public class Grid {
     
     public double getSubGridMaxX(){
         double max = this.xLowerLimit;
-        for(SubGrid sgrid: this.subGrid){
+        for(SubGrid sgrid: this.subGrid.keySet()){
             if(sgrid.getXOrigin() >= max){
                 max = sgrid.getXOrigin();
             }
@@ -363,7 +395,7 @@ public class Grid {
     
     public double getSubGridMinY(){
         double min = this.yUpperLimit;
-        for(SubGrid sgrid: this.subGrid){
+        for(SubGrid sgrid: this.subGrid.keySet()){
             if(sgrid.getYOrigin() <= min){
                 min = sgrid.getYOrigin();
             }
@@ -373,7 +405,7 @@ public class Grid {
     
     public double getSubGridMaxY(){
         double max = this.yLowerLimit;
-        for(SubGrid sgrid: this.subGrid){
+        for(SubGrid sgrid: this.subGrid.keySet()){
             if(sgrid.getYOrigin() >= max){
                 max = sgrid.getYOrigin();
             }

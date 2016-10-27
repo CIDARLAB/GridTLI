@@ -17,6 +17,10 @@ import lombok.Setter;
 public class Signal {
 
     @Getter
+    @Setter
+    private int index;
+    
+    @Getter
     private final List<Point> points;
 
     @Getter
