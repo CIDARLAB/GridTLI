@@ -6,7 +6,9 @@
 package org.cidarlab.gridtli.DOM;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,11 +33,34 @@ public class Signal {
     @Setter
     private double yLimit;
 
+    @Getter
+    private Set<SubGrid> subGridCovered;
+    
     public Signal(List<Point> _points) {
         points = new ArrayList<Point>(_points);
+        subGridCovered = new HashSet<SubGrid>();
         if(!isSorted()){
             sortPoints(); 
         }
+    }
+    
+    public boolean coversSubGrid(double x, double y){
+        return coversSubGrid(new SubGrid(x,y));
+    }
+    
+    public boolean coversSubGrid(SubGrid _subgrid){
+        if(this.subGridCovered.contains(_subgrid)){
+            return true;
+        }
+        return false;
+    }
+    
+    public void addSubGrid(double x, double y){
+        this.subGridCovered.add(new SubGrid(x,y));
+    }
+    
+    public void addSubGrid(SubGrid _subGrid){
+        this.subGridCovered.add(_subGrid);
     }
     
     public double getxMax(){

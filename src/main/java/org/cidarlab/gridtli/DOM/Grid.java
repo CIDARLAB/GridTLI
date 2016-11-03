@@ -105,6 +105,8 @@ public class Grid {
 
         this.centered = false;
         
+        assignSignalIndex();
+        
         System.out.println("Start Creating Sub Grid");
         createSubGrid();
         
@@ -296,11 +298,26 @@ public class Grid {
 
     }
     
+    public void assignSignalIndex(){
+        for(int i=0;i<this.signals.size();i++){
+            this.signals.get(i).setIndex(i);
+        }
+    }
+    
+    
+    public boolean isSpecificSubGridCovered(double x, double y){
+        return isSpecificSubGridCovered(new SubGrid(x,y));
+    }
+    
     public boolean isSpecificSubGridCovered(SubGrid _sgrid){
         if(this.subGrid.containsKey(_sgrid)){
             return this.subGrid.get(_sgrid);
         }
         return false;
+    }
+    
+    public SubGrid getSpecificSubGrid(double x, double y){
+        return getSpecificSubGrid(new SubGrid(x,y));
     }
     
     public SubGrid getSpecificSubGrid(SubGrid _sgrid){
@@ -322,6 +339,7 @@ public class Grid {
                 for(int i=0;i< possiblePoints.size()-1; i++){
                     if(this.inGrid(subgrid.getXOrigin(), this.xIncrement , subgrid.getYOrigin(), this.yIncrement, possiblePoints.get(i), possiblePoints.get(i+1))){
                         //subgrid.setCovered(true);
+                        signal.addSubGrid(subgrid);
                         this.subGrid.put(subgrid, true);
                     }
                 }

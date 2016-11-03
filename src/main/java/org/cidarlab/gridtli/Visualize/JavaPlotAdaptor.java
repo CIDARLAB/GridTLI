@@ -73,7 +73,7 @@ public class JavaPlotAdaptor {
         }
         int count =1;
         for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+            if(!grid.isSpecificSubGridCovered(subgrid)){
                 
                 //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
                 String obj = "object " + count;

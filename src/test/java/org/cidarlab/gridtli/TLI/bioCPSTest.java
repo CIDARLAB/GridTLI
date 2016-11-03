@@ -31,6 +31,17 @@ public class bioCPSTest {
     }
     
     @Test
+    public void testClustering(){
+        String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
+        List<Signal> signals = Utilities.getSignalsBioCPS(filepath);
+        Grid grid = new Grid(signals,1,10000);
+        //TemporalLogicInference.getSTL(grid);
+        TemporalLogicInference.cluster(grid,10000);
+        
+    }
+    
+    
+    //@Test
     public void testFadingDrop(){
         String filepathAHL = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "fadingDrop" + Utilities.getSeparater() + "AHL-data.csv";
         String filepathAHL_neighbour = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "fadingDrop" + Utilities.getSeparater() + "AHL_neighborAvg-data.csv";

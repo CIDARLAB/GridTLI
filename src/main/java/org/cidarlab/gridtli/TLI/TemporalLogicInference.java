@@ -13,7 +13,9 @@ import hyness.stl.RelOperation;
 import hyness.stl.TreeNode;
 import hyness.stl.grammar.flat.STLflat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.cidarlab.gridtli.DOM.Grid;
 import org.cidarlab.gridtli.DOM.Signal;
 import org.cidarlab.gridtli.DOM.SubGrid;
@@ -29,12 +31,99 @@ public class TemporalLogicInference {
     }
     
     
-    public static List<List<Signal>> cluster(Grid grid){
-        List<List<Signal>> cluster = new ArrayList<List<Signal>>();
+    public static List<Set<Signal>> cluster(Grid grid, double threshold){
+        List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
+        double xstart = grid.getSubGridMinX();
+        //double xend = grid.getSubGridMaxX() + grid.getXIncrement();
+        double xend = grid.getSubGridMaxX();
         
+        double ystart = grid.getSubGridMinY();
+        //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
+        double yend = grid.getSubGridMaxY();
         
+        boolean started = true;
+        boolean up = true;
+        List<Set<Integer>> clusterList = new ArrayList<Set<Integer>>();
+        List<Set<Integer>> finalClusterList = new ArrayList<Set<Integer>>();
         
-        return cluster;
+        Set<Integer> cluster = new HashSet<Integer>();
+        for(double i=xstart;i<= xend; i+= grid.getXIncrement()){
+            
+            started = false;
+            up = false;
+            clusterList = new ArrayList<Set<Integer>>();
+            cluster = new HashSet<Integer>();
+            Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
+            int differenceCount = 0;
+            for(double j=ystart; j<= yend; j+= grid.getYIncrement()){
+                System.out.println(i+ ","+j);
+                if(grid.isSpecificSubGridCovered(i, j)){
+                    if(!started){
+                        started = true;
+                    }
+                    if(!up){
+                        up = true;
+                        //System.out.println("Another cluster started.");
+                        if( (differenceCount * grid.getYIncrement()) > threshold){
+                            //System.out.println("Difference greater than threshold");
+                            if(!cluster.isEmpty()){
+                                //System.out.println("Cluster is not empty :: " + cluster);
+                                clusterList.add(cluster);
+                            }
+                            cluster = new HashSet<Integer>();
+                        }
+                    } 
+                    Set<Signal> tempSignalList = new HashSet<Signal>();
+                    for (Signal signal : signals) {
+                        if (signal.coversSubGrid(i, j)) {
+                            cluster.add(signal.getIndex());
+                            //signals.remove(signal);
+                        } else{
+                            tempSignalList.add(signal);
+                        }
+                    }
+                    signals = new HashSet<Signal>(tempSignalList);
+                } else {
+                    if(up){
+                        //System.out.println("End of cluster");
+                        differenceCount = 0;
+                        up = false;
+                    }
+                    differenceCount++;
+                }
+            }
+            if(!started){
+                System.out.println("Empty");
+            } else{
+                if (!cluster.isEmpty()) {
+                    clusterList.add(cluster);
+                }
+                System.out.println("Cluster List :: ");
+                System.out.println(clusterList);
+            }
+            System.out.println("\n\n");
+            if(clusterList.size() > finalClusterList.size()){
+                finalClusterList = new ArrayList<Set<Integer>>(clusterList);
+            }
+        }
+        
+        System.out.println("Final Cluster :: \n"+finalClusterList);
+        Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
+        for(Set<Integer> singleCluster: finalClusterList){
+            Set<Signal> signalCluster = new HashSet<Signal>();
+            Set<Signal> otherSignals = new HashSet<Signal>();
+            for(Signal signal:signals){
+                if(singleCluster.contains(signal.getIndex())){
+                    signalCluster.add(signal);
+                } else{
+                    otherSignals.add(signal);
+                }
+            }
+            clusters.add(signalCluster);
+            signals = new HashSet<Signal>(otherSignals);
+        }
+        
+        return clusters;
     }
     
     
@@ -107,7 +196,7 @@ public class TemporalLogicInference {
         }
         TreeNode entireConjunction = reduceToSingleConjunction(outerNodes);
         STLflat stl = new STLflat(entireConjunction);
-        //System.out.println(stl.toString());
+        System.out.println(stl.module.toString());
         return stl;
     }
     
