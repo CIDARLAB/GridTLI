@@ -31,6 +31,20 @@ public class SubGrid {
         this.yOrigin = _yOrigin;
     }
 
+    public boolean smallerThan(SubGrid sgrid){
+        
+        if(this.xOrigin < sgrid.xOrigin){
+            return true;
+        }
+        if(this.xOrigin == sgrid.xOrigin){
+            if(this.yOrigin < sgrid.yOrigin){
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     @Override
     public String toString(){
         String str = "";

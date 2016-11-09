@@ -6,6 +6,7 @@
 package org.cidarlab.gridtli.TLI;
 
 import java.util.List;
+import java.util.Set;
 import org.cidarlab.gridtli.DOM.Grid;
 import org.cidarlab.gridtli.DOM.Signal;
 import org.cidarlab.gridtli.Visualize.JavaPlotAdaptor;
@@ -22,7 +23,7 @@ public class bioCPSTest {
         String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
         List<Signal> signals = Utilities.getSignalsBioCPS(filepath);
         Grid grid = new Grid(signals,1,10000);
-        TemporalLogicInference.getSTL(grid);
+        TemporalLogicInference.getLongSTL(grid);
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getResourcesTempFilepath() + "subgrid.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getResourcesTempFilepath() + "gridnoCover.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getResourcesTempFilepath() + "grid.png");
@@ -34,10 +35,21 @@ public class bioCPSTest {
     public void testClustering(){
         String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
         List<Signal> signals = Utilities.getSignalsBioCPS(filepath);
-        Grid grid = new Grid(signals,1,10000);
-        //TemporalLogicInference.getSTL(grid);
-        TemporalLogicInference.cluster(grid,10000);
+        double threshold = 10000;
+        Grid grid = new Grid(signals,1,threshold);
         
+        //TemporalLogicInference.getSTL(grid);
+        List<Set<Signal>> cluster = TemporalLogicInference.cluster(grid,threshold);
+        TemporalLogicInference.getClusterSTL(grid.getXSignal(), cluster.get(0), grid.getXIncrement(), grid.getYIncrement(), grid.getXLowerLimit(), grid.getXUpperLimit(), grid.getYLowerLimit(), grid.getYUpperLimit(), threshold);
+    }
+    
+    @Test
+    public void testGetSTL(){
+        String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
+        List<Signal> signals = Utilities.getSignalsBioCPS(filepath);
+        double threshold = 10000;
+        Grid grid = new Grid(signals,1,threshold);
+        System.out.println(TemporalLogicInference.getSTL(grid, threshold).toString());
     }
     
     

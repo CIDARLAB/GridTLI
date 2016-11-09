@@ -26,11 +26,6 @@ import org.cidarlab.gridtli.DOM.SubGrid;
  */
 public class TemporalLogicInference {
     
-    public static void main(String[] args) {
-        
-    }
-    
-    
     public static List<Set<Signal>> cluster(Grid grid, double threshold){
         List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
         double xstart = grid.getSubGridMinX();
@@ -56,7 +51,7 @@ public class TemporalLogicInference {
             Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
             int differenceCount = 0;
             for(double j=ystart; j<= yend; j+= grid.getYIncrement()){
-                System.out.println(i+ ","+j);
+                //System.out.println(i+ ","+j);
                 if(grid.isSpecificSubGridCovered(i, j)){
                     if(!started){
                         started = true;
@@ -93,15 +88,15 @@ public class TemporalLogicInference {
                 }
             }
             if(!started){
-                System.out.println("Empty");
+                //System.out.println("Empty");
             } else{
                 if (!cluster.isEmpty()) {
                     clusterList.add(cluster);
                 }
-                System.out.println("Cluster List :: ");
-                System.out.println(clusterList);
+                //System.out.println("Cluster List :: ");
+                //System.out.println(clusterList);
             }
-            System.out.println("\n\n");
+            //System.out.println("\n\n");
             if(clusterList.size() > finalClusterList.size()){
                 finalClusterList = new ArrayList<Set<Integer>>(clusterList);
             }
@@ -126,8 +121,241 @@ public class TemporalLogicInference {
         return clusters;
     }
     
+    public static Set<SubGrid> getAllCoveredSubGrids(Set<Signal> signals){
+        Set<SubGrid> subgrids = new HashSet<SubGrid>();
+        
+        for(Signal signal:signals){
+            subgrids.addAll(signal.getSubGridCovered());
+        }
+        
+        return subgrids;
+    }
     
-    public static STLflat getSTL(Grid grid) {
+    public static TreeNode getClusterSTL(String xsignal, Set<Signal> signals, double xinc, double yinc, double xmin, double xmax, double ymin, double ymax, double threshold ){
+        SubGrid smallest = new SubGrid(Double.MAX_VALUE,Double.MAX_VALUE); 
+        for(Signal signal:signals){
+            if(signal.getStartingGrid().smallerThan(smallest)){
+                smallest = signal.getStartingGrid();
+            }
+        }
+        Set<SubGrid> covered = getAllCoveredSubGrids(signals);
+        boolean topend = false;
+        boolean bottomend = false;
+        
+        double x = smallest.getXOrigin();
+        double y = smallest.getYOrigin();
+        double xstart = x;
+        boolean moveright = false;
+        
+        //<editor-fold desc="bottom">
+        System.out.println("BOTTOM");
+        List<TreeNode> bottom = new ArrayList<TreeNode>();
+        while(true){
+            //System.out.println(x + "," + y);
+            if(covered.contains(new SubGrid(x, (y -yinc) )) ){
+                y = y - yinc;
+                continue;
+            } else {
+                int downcount = 0;
+                double diff =0;
+                for (int i = 1; (i * yinc) <= (y - (threshold + yinc)); i++) {
+                    if (covered.contains(new SubGrid(x, (y - (i * yinc))))) {
+                        diff = i* yinc;
+                        downcount++;
+                    }
+                }
+                if(downcount == 0){
+                    //lowest point. Move right
+                    //System.out.println("Lowest Point. Move Right.");
+                    if(moveright){
+                        if(covered.contains( new SubGrid( (x + xinc), y) )){
+                            x = x + xinc;
+                            continue;
+                        } else {
+                            moveright = false;
+                            LinearPredicateLeaf lp = new LinearPredicateLeaf(RelOperation.GE,xsignal,y);
+                            AlwaysNode always = new AlwaysNode(lp,xstart,x + xinc);
+                            bottom.add(always);
+                            System.out.println(always.toString());
+                            
+                            if(x + xinc > xmax){
+                                break;
+                            } else {
+                                int changecount = 0;
+                                diff = 0;
+                                for(int i=1; (i*yinc) <= (y-ymin); i++){
+                                    if(covered.contains(new SubGrid(x + xinc, y - (i*yinc) ) )){
+                                        changecount++;
+                                        diff = (i*yinc);
+                                    }
+                                }
+                                if(changecount ==0){
+                                    diff =0;
+                                    for(int i=1; (i*yinc) <= (ymax - y); i++ ){
+                                        if(covered.contains(new SubGrid(x + xinc, y + (i*yinc)))){
+                                            changecount++;
+                                            diff = (i*yinc);
+                                            break;
+                                        }
+                                    }
+                                    if(changecount ==0){
+                                        System.out.println("THE END!!");
+                                        break;
+                                    } else {
+                                        x = x + xinc;
+                                        y = y + diff;
+                                        continue;
+                                    }
+                                }
+                                else{
+                                    x = x + xinc;
+                                    y = y - (diff);
+                                    continue;
+                                }
+                            }
+                        }
+                        
+                        
+                    } else {
+                        moveright = true;
+                        xstart = x;
+                    }
+                } else {
+                    y = y - (diff);
+                    continue;
+                }
+            }
+        }
+        //</editor-fold>
+        
+        
+        x = smallest.getXOrigin();
+        y = smallest.getYOrigin();
+        xstart = x;
+        moveright = false;
+        
+        //<editor-fold desc="top">
+        System.out.println("TOP");
+        List<TreeNode> top = new ArrayList<TreeNode>();
+        while(true){
+            if(covered.contains(new SubGrid(x, (y + yinc) )) ){
+                y = y + yinc;
+                continue;
+            } else {
+                int upcount = 0;
+                double diff =0;
+                for (int i = 1; (i * yinc) <= (y - (threshold + yinc)); i++) {
+                    if (covered.contains(new SubGrid(x, (y + (i * yinc))))) {
+                        diff = i* yinc;
+                        upcount++;
+                    }
+                }
+                if(upcount == 0){
+                    //topmost point. Move right
+                    //System.out.println("Topmost Point. Move Right.");
+                    if(moveright){
+                        if(covered.contains( new SubGrid( (x + xinc), y) )){
+                            if(covered.contains(new SubGrid(x+xinc, y+yinc))){
+                                moveright = false;
+                                LinearPredicateLeaf lp = new LinearPredicateLeaf(RelOperation.LE, xsignal, y + yinc);
+                                AlwaysNode always = new AlwaysNode(lp, xstart, x + xinc);
+                                top.add(always);
+                                System.out.println(always.toString());
+                                x = x + xinc;
+                                y = y + yinc;
+                                continue;
+                            } else {
+                                int moverightupcount = 0;
+                                for (int i = 1; (i * yinc) <= (y - (threshold + yinc)); i++) {
+                                    if (covered.contains(new SubGrid(x + xinc, (y + (i * yinc))))) {
+                                        diff = i * yinc;
+                                        moverightupcount++;
+                                    }
+                                }
+                                
+                                
+                                if (moverightupcount == 0) {
+                                    x = x + xinc;
+                                    continue;
+                                } else {
+                                    x = x + xinc;
+                                    y = y + diff;
+                                    continue;
+                                }
+                                    
+                            }
+                            
+                        } else {
+                            moveright = false;
+                            LinearPredicateLeaf lp = new LinearPredicateLeaf(RelOperation.LE,xsignal,y + yinc);
+                            AlwaysNode always = new AlwaysNode(lp,xstart,x + xinc);
+                            top.add(always);
+                            System.out.println(always.toString());
+                            if(x + xinc > xmax){
+                                break;
+                            } else {
+                                int changecount = 0;
+                                diff = 0;
+                                for(int i=1; (i*yinc) <= (ymax - y); i++){
+                                    if(covered.contains(new SubGrid(x + xinc, y + (i*yinc) ) )){
+                                        changecount++;
+                                        diff = (i*yinc);
+                                    }
+                                }
+                                if(changecount ==0){
+                                    diff =0;
+                                    for(int i=1; (i*yinc) <= (y-ymin); i++ ){
+                                        if(covered.contains(new SubGrid(x + xinc, y - (i*yinc)))){
+                                            changecount++;
+                                            diff = (i*yinc);
+                                            break;
+                                        }
+                                    }
+                                    if(changecount ==0){
+                                        System.out.println("THE END!!");
+                                        break;
+                                    } else {
+                                        x = x + xinc;
+                                        y = y - diff;
+                                        continue;
+                                    }
+                                }
+                                else{
+                                    x = x + xinc;
+                                    y = y + (diff);
+                                    continue;
+                                }
+                            }
+                        }
+                        
+                        
+                    } else {
+                        moveright = true;
+                        xstart = x;
+                    }
+                } else {
+                    y = y + (diff);
+                    continue;
+                }
+                
+                
+                
+            }
+        }
+        //</editor-fold>
+        return new ConjunctionNode(reduceToSingleConjunction(top),reduceToSingleConjunction(bottom));
+    }
+    
+    public static TreeNode getSTL(Grid grid, double threshold){
+        List<Set<Signal>> clusters = cluster(grid,threshold);
+        List<TreeNode> disjunctionClusters = new ArrayList<TreeNode>();
+        for(Set<Signal> cluster:clusters){
+            disjunctionClusters.add(getClusterSTL(grid.getXSignal(),cluster,grid.getXIncrement(),grid.getYIncrement(),grid.getXLowerLimit(),grid.getXUpperLimit(),grid.getYLowerLimit(),grid.getYUpperLimit(),threshold));
+        }
+        return reduceToSingleDisjunction(disjunctionClusters);
+    }
+    
+    public static STLflat getLongSTL(Grid grid) {
         
         System.out.println(grid.getSubGrid());
 
@@ -200,7 +428,38 @@ public class TemporalLogicInference {
         return stl;
     }
     
-    public static TreeNode reduceToSingleDisjunction(List<TreeNode> listTreeNode) {
+    private List<Double> getMaxMin(Set<SubGrid> subgrid){
+        List<Double> maxmin = new ArrayList<Double>();
+        double xmin = Double.MAX_VALUE;
+        double xmax = (-1) * Double.MAX_VALUE;
+        double ymin = Double.MAX_VALUE;
+        double ymax = (-1) * Double.MAX_VALUE;
+        
+        for(SubGrid sgrid:subgrid){
+            if(sgrid.getXOrigin() < xmin){
+                xmin = sgrid.getXOrigin();
+            }
+            if(sgrid.getXOrigin() > xmax){
+                xmax = sgrid.getXOrigin();
+            }
+            if(sgrid.getYOrigin() < ymin){
+                ymin = sgrid.getYOrigin();
+            }
+            if(sgrid.getYOrigin() > ymax){
+                ymax = sgrid.getYOrigin();
+            }
+        }
+        
+        maxmin.add(xmin);
+        maxmin.add(xmax);
+        maxmin.add(ymin);
+        maxmin.add(ymax);
+        
+        
+        return maxmin;
+    }
+    
+    private static TreeNode reduceToSingleDisjunction(List<TreeNode> listTreeNode) {
 
         if (listTreeNode.size() == 1) {
             return listTreeNode.get(0);
@@ -224,8 +483,7 @@ public class TemporalLogicInference {
         return reducedList.get(0);
     }
     
-    
-    public static TreeNode reduceToSingleConjunction(List<TreeNode> listTreeNode) {
+    private static TreeNode reduceToSingleConjunction(List<TreeNode> listTreeNode) {
 
         if (listTreeNode.size() == 1) {
             return listTreeNode.get(0);

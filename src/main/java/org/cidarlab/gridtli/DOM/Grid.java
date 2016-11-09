@@ -341,6 +341,14 @@ public class Grid {
                         //subgrid.setCovered(true);
                         signal.addSubGrid(subgrid);
                         this.subGrid.put(subgrid, true);
+                        
+                        if(signal.getSubGridCovered().size() == 1){
+                            signal.setStartingGrid(subgrid);
+                        } else {
+                            if(subgrid.smallerThan(signal.getStartingGrid())){
+                                signal.setStartingGrid(subgrid);
+                            }
+                        }
                     }
                 }
             }

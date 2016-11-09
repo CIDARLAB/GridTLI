@@ -77,7 +77,7 @@ public class TemporalLogicInferenceTest {
         signals.add(new Signal(s4points));
         
         Grid grid = new Grid(signals,0.5,0.5);
-        TemporalLogicInference.getSTL(grid);
+        TemporalLogicInference.getLongSTL(grid);
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getResourcesTempFilepath() + "subgrid.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getResourcesTempFilepath() + "gridnoCover.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getResourcesTempFilepath() + "grid.png");

@@ -36,6 +36,10 @@ public class Signal {
     @Getter
     private Set<SubGrid> subGridCovered;
     
+    @Getter
+    @Setter
+    private SubGrid startingGrid;
+    
     public Signal(List<Point> _points) {
         points = new ArrayList<Point>(_points);
         subGridCovered = new HashSet<SubGrid>();

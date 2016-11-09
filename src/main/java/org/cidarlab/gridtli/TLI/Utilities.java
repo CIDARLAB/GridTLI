@@ -217,7 +217,7 @@ public class Utilities {
             List<Point> points = new ArrayList<Point>();
             for(int i =0; i< csvString.length; i++){
                 double yVal = Double.valueOf(csvString[i]);
-                points.add(new Point(count,yVal));
+                points.add(new Point(count,"x",yVal,"t"));
                 count ++;
             }
             signals.add(new Signal(points));
