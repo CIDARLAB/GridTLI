@@ -52,6 +52,7 @@ public class JavaPlotAdaptor {
         return points;
     }
     
+    
     public static JavaPlot plotGrid(Grid grid){
         JavaPlot plot = new JavaPlot();
         PlotStyle ps = new PlotStyle();
@@ -83,6 +84,48 @@ public class JavaPlotAdaptor {
                 count++;
             }
         }
+        plot.set("style fill", "transparent solid 0.5");
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("Grid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        return plot;
+    }
+    
+    
+    public static JavaPlot plotSignals(Grid grid){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        //plot.addPlot(dspgrid);
+        
+        for(Signal signal:grid.getSignals()){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            sps.setLineType(NamedPlotColor.RED);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        /*int count =1;
+        for(SubGrid subgrid: grid.getSubGrid().keySet()){
+            if(!grid.isSpecificSubGridCovered(subgrid)){
+                
+                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                String obj = "object " + count;
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"cyan\"";
+                
+                plot.set(obj, rect);
+                count++;
+            }
+        }*/
         plot.set("style fill", "transparent solid 0.5");
         plot.getAxis("x").setLabel("x");
         plot.getAxis("y").setLabel("y");

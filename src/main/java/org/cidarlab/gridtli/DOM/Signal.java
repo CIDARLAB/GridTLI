@@ -87,6 +87,15 @@ public class Signal {
         return max;
     }
     
+    
+    @Override
+    public String toString(){
+        String string = "";
+        string += this.index;
+        return string;
+    }
+    
+    
     public double getyMin(){
         double min = this.points.get(0).getY();
         

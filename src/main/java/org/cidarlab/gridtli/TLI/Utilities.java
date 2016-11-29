@@ -6,9 +6,11 @@
 package org.cidarlab.gridtli.TLI;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -208,6 +210,20 @@ public class Utilities {
         }
         return listPieces;
     }
+    
+    public static void writeToFile(String filepath, String content){
+        File file = new File(filepath);
+        try {
+            FileWriter fr = new FileWriter(file);
+            BufferedWriter br = new BufferedWriter(fr);
+            br.write(content);
+            br.flush();
+            br.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     
     public static List<Signal> getSignalsBioCPS(String filepath){
         List<Signal> signals = new ArrayList<Signal>();

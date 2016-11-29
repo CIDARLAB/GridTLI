@@ -131,7 +131,8 @@ public class TemporalLogicInference {
         return subgrids;
     }
     
-    public static TreeNode getClusterSTL(String xsignal, Set<Signal> signals, double xinc, double yinc, double xmin, double xmax, double ymin, double ymax, double threshold ){
+    public static List<TreeNode> getClusterSTL(String xsignal, Set<Signal> signals, double xinc, double yinc, double xmin, double xmax, double ymin, double ymax, double threshold ){
+        System.out.println("Signals :: " + signals);
         SubGrid smallest = new SubGrid(Double.MAX_VALUE,Double.MAX_VALUE); 
         for(Signal signal:signals){
             if(signal.getStartingGrid().smallerThan(smallest)){
@@ -148,7 +149,7 @@ public class TemporalLogicInference {
         boolean moveright = false;
         
         //<editor-fold desc="bottom">
-        System.out.println("BOTTOM");
+        //System.out.println("BOTTOM");
         List<TreeNode> bottom = new ArrayList<TreeNode>();
         while(true){
             //System.out.println(x + "," + y);
@@ -199,7 +200,7 @@ public class TemporalLogicInference {
                                         }
                                     }
                                     if(changecount ==0){
-                                        System.out.println("THE END!!");
+                                        //System.out.println("THE END!!");
                                         break;
                                     } else {
                                         x = x + xinc;
@@ -235,7 +236,7 @@ public class TemporalLogicInference {
         moveright = false;
         
         //<editor-fold desc="top">
-        System.out.println("TOP");
+        //System.out.println("TOP");
         List<TreeNode> top = new ArrayList<TreeNode>();
         while(true){
             if(covered.contains(new SubGrid(x, (y + yinc) )) ){
@@ -312,7 +313,7 @@ public class TemporalLogicInference {
                                         }
                                     }
                                     if(changecount ==0){
-                                        System.out.println("THE END!!");
+                                        //System.out.println("THE END!!");
                                         break;
                                     } else {
                                         x = x + xinc;
@@ -343,14 +344,30 @@ public class TemporalLogicInference {
             }
         }
         //</editor-fold>
-        return new ConjunctionNode(reduceToSingleConjunction(top),reduceToSingleConjunction(bottom));
+        List<TreeNode> allLinearPredicates = new ArrayList<TreeNode>();
+        allLinearPredicates.addAll(top);
+        allLinearPredicates.addAll(bottom);
+        return allLinearPredicates;
+    }
+    
+//    public static TreeNode getClusterSTL(List<TreeNode> topBottom){
+//        return reduceToSingleConjunction(topBottom);
+//    }
+    
+    public static List<TreeNode> getSTLClusters(Grid grid, double threshold){
+        List<Set<Signal>> clusters = cluster(grid,threshold);
+        List<TreeNode> disjunctionClusters = new ArrayList<TreeNode>();
+        for(Set<Signal> cluster:clusters){
+            disjunctionClusters.add(reduceToSingleConjunction(getClusterSTL(grid.getXSignal(),cluster,grid.getXIncrement(),grid.getYIncrement(),grid.getXLowerLimit(),grid.getXUpperLimit(),grid.getYLowerLimit(),grid.getYUpperLimit(),threshold)));
+        }
+        return disjunctionClusters;
     }
     
     public static TreeNode getSTL(Grid grid, double threshold){
         List<Set<Signal>> clusters = cluster(grid,threshold);
         List<TreeNode> disjunctionClusters = new ArrayList<TreeNode>();
         for(Set<Signal> cluster:clusters){
-            disjunctionClusters.add(getClusterSTL(grid.getXSignal(),cluster,grid.getXIncrement(),grid.getYIncrement(),grid.getXLowerLimit(),grid.getXUpperLimit(),grid.getYLowerLimit(),grid.getYUpperLimit(),threshold));
+            disjunctionClusters.add(reduceToSingleConjunction(getClusterSTL(grid.getXSignal(),cluster,grid.getXIncrement(),grid.getYIncrement(),grid.getXLowerLimit(),grid.getXUpperLimit(),grid.getYLowerLimit(),grid.getYUpperLimit(),threshold)));
         }
         return reduceToSingleDisjunction(disjunctionClusters);
     }
