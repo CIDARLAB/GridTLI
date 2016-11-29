@@ -20,7 +20,7 @@ import org.junit.Test;
  */
 public class bioCPSTest {
     
-    //@Test
+    @Test
     public void testGetSTLfromModules(){
         
         for (int i = 1; i <= 3; i++) {
@@ -41,7 +41,7 @@ public class bioCPSTest {
 
     }
     
-    //@Test
+    @Test
     public void testGetSTLfromCascades(){
         
         for (int i = 1; i <= 6; i++) {
@@ -62,7 +62,7 @@ public class bioCPSTest {
 
     }
     
-    @Test
+    //@Test
     public void testGetGurobi(){
         String module1 = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
         String module2 = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-2-data.csv";
