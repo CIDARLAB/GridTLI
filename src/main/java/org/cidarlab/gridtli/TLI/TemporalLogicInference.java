@@ -36,6 +36,17 @@ public class TemporalLogicInference {
         //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
         double yend = grid.getSubGridMaxY();
         
+//        System.out.println("xstart and ystart");
+//        System.out.println(xstart);
+//        System.out.println(ystart);
+//        
+//        System.out.println("xend and yend");
+//        System.out.println(xend);
+//        System.out.println(yend);
+//        System.out.println("Grid X Increment :: " + grid.getXIncrement());
+//        System.out.println("Grid Y Increment :: " + grid.getYIncrement());
+        
+        
         boolean started = true;
         boolean up = true;
         List<Set<Integer>> clusterList = new ArrayList<Set<Integer>>();

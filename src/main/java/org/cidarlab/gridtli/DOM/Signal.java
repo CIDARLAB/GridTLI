@@ -46,6 +46,7 @@ public class Signal {
         if(!isSorted()){
             sortPoints(); 
         }
+        checkPoints();
     }
     
     public boolean coversSubGrid(double x, double y){
@@ -158,6 +159,19 @@ public class Signal {
             }
         }
         return true;
+    }
+    
+    private void checkPoints(){
+        for(int i=0;i<this.points.size()-1; i++){
+            try{
+                if(points.get(i).getX() == points.get(i+1).getX()){
+                    throw new TLIException("Two Points in the same signal cannot have the same time (x) value. This would imply that time was stopped.");
+                }
+            } catch(TLIException ex){
+                System.out.println(ex.getMessage());
+                System.exit(1);
+            }
+        }
     }
     
     private void sortPoints() {

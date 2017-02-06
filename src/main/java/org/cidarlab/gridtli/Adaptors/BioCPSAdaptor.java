@@ -28,8 +28,7 @@ import org.cidarlab.gridtli.TLI.Utilities;
 public class BioCPSAdaptor {
     
     private static String generateGurobiHeader() {
-        String header = "# Constraints from TLI job 7711075\n"
-                + "from gurobipy import GRB, LinExpr\n"
+        String header = "from gurobipy import GRB, LinExpr\n"
                 + "## HELPER FUNCTION\n"
                 + "def check_timepoints(timepoints, T_whole, constrSet):\n"
                 + "    check_T = True\n"
@@ -55,12 +54,12 @@ public class BioCPSAdaptor {
         
         AlwaysNode lastNode = (AlwaysNode) alwaysNodes.get(alwaysNodes.size()-1);
         timeIntervals += lastNode.low + ",";
-        timeIntervals += lastNode.high;
+        timeIntervals += lastNode.high; //make timeIntervals 
         gurobi += "# " + lastNode.toString() + "\n";
         
         
         gurobi += ("def " + module + "(m,r," + signals + ",i,j,T_whole):\n");
-        gurobi += tab + "# check that T_whole contains the required interval";
+        gurobi += tab + "# check that T_whole contains the required interval\n";
         gurobi += (tab + "check_T([" + timeIntervals  + "], T_whole, \"" + module + "\")\n");
         gurobi += tab + "if not check_T:\n";
         gurobi += tab + tab + "return check_T\n";

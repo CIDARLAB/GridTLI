@@ -12,7 +12,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -47,7 +46,7 @@ public class SignalTest {
         Point p3 = new Point(1.2,1.3);
         Point p4 = new Point(1.5,0.8);
         Point p5 = new Point(2,1);
-        Point p6 = new Point(2,5);
+        Point p6 = new Point(2.3,5);
         Point p7 = new Point(2.5,5);
         Point p8 = new Point(4,5);
         Point p9 = new Point(6,8);

@@ -225,6 +225,27 @@ public class Utilities {
     }
     
     
+    public static List<Signal> getSignalsIBioSim(String filepath){
+        List<Signal> signals = new ArrayList<Signal>();
+        List<String[]> csvsignals = getCSVFileContentAsList(filepath);
+        List<List<Point>> pointlist = new ArrayList<List<Point>>();
+        for(int i=0;i<=csvsignals.get(1).length-2;i++){
+            pointlist.add(new ArrayList<Point>());
+        }
+        for(int i=1;i<csvsignals.size();i++){
+            double x = Double.valueOf(csvsignals.get(i)[0]);
+            for(int j=1;j<csvsignals.get(i).length;j++){
+                double y = Double.valueOf(csvsignals.get(i)[j]);
+                pointlist.get(j-1).add(new Point(x,"x",y,"t"));
+            }
+        }
+        for(int i=0;i<pointlist.size();i++){
+            signals.add(new Signal(pointlist.get(i)));
+        }
+        
+        return signals;
+    }
+    
     public static List<Signal> getSignalsBioCPS(String filepath){
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvStrings = getCSVFileContentAsList(filepath);

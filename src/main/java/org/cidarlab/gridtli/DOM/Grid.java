@@ -84,7 +84,9 @@ public class Grid {
         this.yLowerLimit = this.getyMin() - this.yIncrement;
 
         this.centered = false;
-
+        
+        assignSignalIndex();
+        
         createSubGrid();
         setSubGridCovers();
     }
@@ -132,6 +134,8 @@ public class Grid {
 
         this.centered = false;
 
+        assignSignalIndex();
+        
         createSubGrid();
         setSubGridCovers();
     }
@@ -465,7 +469,7 @@ public class Grid {
 
         //Case 1 x = x1;
         if (p1.getX() == p2.getX()) {
-            if (p1.getX() > xOr && p1.getX() < (xOr + xInc)) {
+            if (p1.getX() >= xOr && p1.getX() < (xOr + xInc)) {
                 return true;
             }
             return false;
@@ -473,7 +477,7 @@ public class Grid {
 
         //Case 2 y = y1;
         if (p1.getY() == p2.getY()) {
-            if (p1.getY() > yOr && p1.getY() < (yOr + yInc)) {
+            if (p1.getY() >= yOr && p1.getY() < (yOr + yInc)) {
                 return true;
             }
             return false;
