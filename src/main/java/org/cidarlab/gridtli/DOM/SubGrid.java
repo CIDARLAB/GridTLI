@@ -22,6 +22,15 @@ public class SubGrid {
     @Setter
     private double yOrigin;
 
+    
+    @Getter
+    @Setter
+    private double xInc;
+    
+    @Getter
+    @Setter
+    private double yInc;
+    
     //@Getter
     //@Setter
     //private boolean covered;
@@ -29,6 +38,13 @@ public class SubGrid {
     public SubGrid(double _xOrigin, double _yOrigin) {
         this.xOrigin = _xOrigin;
         this.yOrigin = _yOrigin;
+    }
+    
+    public SubGrid(double _xOrigin, double _yOrigin, double _xInc, double _yInc){
+        this.xOrigin = _xOrigin;
+        this.yOrigin = _yOrigin;
+        this.xInc = _xInc;
+        this.yInc = _yInc;
     }
 
     public boolean smallerThan(SubGrid sgrid){

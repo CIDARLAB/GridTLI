@@ -131,7 +131,7 @@ public class BioCPSAdaptor {
         String signalString = "";
         int count =1;
         for(String file:files){
-            List<Signal> signals = Utilities.getSignalsBioCPS(file);
+            List<Signal> signals = Utilities.getSignalsBioCPS(file,false);
             Grid grid = new Grid(signals, xThreshold, yThreshold);
             clusters = TemporalLogicInference.cluster(grid, clusterThreshold);
             String module = "module_" + count;

@@ -1,1 +1,6 @@
 /target/
+/src/main/resources/fuelcontrol/
+/src/main/resources/biosignals/
+/src/main/resources/temp/
+/src/main/resources/ibiosim/
+/src/main/resources/bioCPS/

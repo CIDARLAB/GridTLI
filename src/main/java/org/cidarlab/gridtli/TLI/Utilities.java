@@ -33,7 +33,6 @@ public class Utilities {
         System.out.println("#########################################");
     }
     
-    
     //<editor-fold desc="OS Check">
     public static boolean isSolaris() {
         String os = System.getProperty("os.name");
@@ -160,7 +159,6 @@ public class Utilities {
     
     //</editor-fold>
     
-    
     //<editor-fold desc="File content">
     
     public static String getFileContentAsString(String filepath){
@@ -211,6 +209,14 @@ public class Utilities {
         return listPieces;
     }
     
+    public static void writeToFile(String filepath, List<String> content){
+        String allcontent = "";
+        for(String line:content){
+            allcontent += line + "\n";
+        }
+        writeToFile(filepath,allcontent);
+    }
+    
     public static void writeToFile(String filepath, String content){
         File file = new File(filepath);
         try {
@@ -246,19 +252,40 @@ public class Utilities {
         return signals;
     }
     
-    public static List<Signal> getSignalsBioCPS(String filepath){
+    public static List<Signal> getSignalsBioCPS(String filepath, boolean header){
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvStrings = getCSVFileContentAsList(filepath);
-        for(String[] csvString:csvStrings){
-            int count =0;
-            List<Point> points = new ArrayList<Point>();
-            for(int i =0; i< csvString.length; i++){
-                double yVal = Double.valueOf(csvString[i]);
-                points.add(new Point(count,"x",yVal,"t"));
-                count ++;
+        if (!header) {
+            for (String[] csvString : csvStrings) {
+                int count = 0;
+                List<Point> points = new ArrayList<Point>();
+                for (int i = 0; i < csvString.length; i++) {
+                    if(csvString[i].trim().isEmpty()){
+                        continue;
+                    }
+                    double yVal = Double.valueOf(csvString[i]);
+                    points.add(new Point(count, "x", yVal, "t"));
+                    count++;
+                }
+                signals.add(new Signal(points));
             }
-            signals.add(new Signal(points));
+        } else {
+            String[] headerLine = csvStrings.get(0);
+            for(int i=1;i<csvStrings.size();i++){
+                String csvString[] = csvStrings.get(i);
+                List<Point> points = new ArrayList<Point>();
+                for (int j = 0; j < csvString.length; j++) {
+                    if(csvString[j].trim().isEmpty()){
+                        continue;
+                    }
+                    double xVal = Double.valueOf(headerLine[i]);
+                    double yVal = Double.valueOf(csvString[j]);
+                    points.add(new Point(xVal, "x", yVal, "t"));
+                }
+                signals.add(new Signal(points));
+            }
         }
+        
         return signals;
     }
     

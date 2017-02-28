@@ -5,14 +5,12 @@
  */
 package org.cidarlab.gridtli.DOM;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -116,6 +114,23 @@ public class GridTest {
 //        assertFalse(g1.isSpecificSubGridCovered(new SubGrid(0,2)));
 //        assertTrue(g1.isSpecificSubGridCovered(new SubGrid(0,0)));
         
+    }
+    
+    @Test
+    public void testQuadTreeSubGrid(){
+        double xmin = 0;
+        double xmax = 10;
+        double ymin = -2;
+        double ymax = 8;
+        
+        double yinc = ymax - ymin;
+        double xinc = xmax - xmin;
+        
+        double xthreshold = 1;
+        double ythreshold = 0.5;
+        
+        Set<SubGrid> quadTree = Grid.createQuadTreeSubGrid(xmin, ymin, xinc, yinc, xthreshold, ythreshold);
+        System.out.println(quadTree);
     }
     
 }

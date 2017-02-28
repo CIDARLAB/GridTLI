@@ -45,6 +45,45 @@ public class TemporalLogicInferenceTest {
     }
     
     @Test
+    public void testColumnDemo(){
+        System.out.println("COLUMN TYPE DATA");
+        String columnData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
+        List<Signal> signals = Utilities.getSignalsIBioSim(columnData);
+        double xthreshold = 10;
+        double ythreshold = 10;
+        double clusterThreshold = 10;
+        
+        Grid grid = new Grid(signals, xthreshold, ythreshold);
+        System.out.println("STL ::\n" + TemporalLogicInference.getSTL(grid, clusterThreshold).toString());
+               
+        String demoFilepath = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater();
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Column.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Column.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Column.png");
+        
+    }
+    
+    @Test
+    public void testRowDemo(){
+        System.out.println("ROW TYPE DATA");
+        String rowData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "row_data.csv";
+        List<Signal> signals = Utilities.getSignalsBioCPS(rowData,false);
+        double xthreshold = 1;
+        double ythreshold = 1;
+        double clusterThreshold = 1;
+        
+        Grid grid = new Grid(signals, xthreshold, ythreshold);
+        System.out.println("STL ::\n" + TemporalLogicInference.getSTL(grid, clusterThreshold).toString());
+        
+        String demoFilepath = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater();
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Row.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Row.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Row.png");
+        
+    }
+    
+    
+    //@Test
     public void testTLI(){
         List<Point> s1points = new ArrayList<Point>();
         s1points.add(new Point(0.0,0.7));

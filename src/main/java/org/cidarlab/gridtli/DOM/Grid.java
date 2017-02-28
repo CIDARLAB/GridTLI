@@ -140,6 +140,41 @@ public class Grid {
         setSubGridCovers();
     }
 
+    public static Set<SubGrid> createQuadTreeSubGrid(double xmin, double ymin, double xInc, double yInc, double xthreshold, double ythreshold){
+        Set<SubGrid> set = new HashSet<SubGrid>();
+        set.add(new SubGrid(xmin,ymin,xInc,yInc));
+        double yhalf = yInc/2;
+        if( yhalf >= ythreshold){
+            set.add(new SubGrid(xmin,ymin,xInc,yhalf));
+            set.add(new SubGrid(xmin,ymin + yhalf,xInc,yhalf));
+        } 
+        Set<SubGrid> xdiv = new HashSet<SubGrid>();
+        
+        for(SubGrid sgrid:set){
+            xdiv.addAll(divideX(sgrid.getXOrigin(),sgrid.getYOrigin(),sgrid.getXInc(),sgrid.getYInc(),xthreshold,ythreshold));
+        }
+        set.addAll(xdiv);
+        return set;
+    }
+    
+    private static Set<SubGrid> divideX(double xmin, double ymin, double xInc, double yInc, double xthreshold, double ythreshold){
+        Set<SubGrid> set = new HashSet<SubGrid>();
+        double xhalf = xInc/2;
+        double yhalf = yInc/2;
+        if(xhalf >= xthreshold){
+            set.add(new SubGrid(xmin,ymin,xhalf,yInc));
+            set.add(new SubGrid(xmin+xhalf,ymin,xhalf,yInc));
+        }
+        Set<SubGrid> ydiv = new HashSet<SubGrid>();
+        if(yhalf >= ythreshold){
+            for(SubGrid sgrid:set){
+                ydiv.addAll(createQuadTreeSubGrid(sgrid.getXOrigin(),sgrid.getYOrigin(),sgrid.getXInc(),sgrid.getYInc(),xthreshold,ythreshold));
+            }
+            set.addAll(ydiv);
+        }
+        return set;
+    }
+    
     private void createSubGrid() {
         this.subGrid = new HashMap<SubGrid,Boolean>();
 
