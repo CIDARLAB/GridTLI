@@ -26,7 +26,7 @@ public class bioCPSTest {
     private double _xthreshold = 10;
     private double _ythreshold = 5;
 
-    //@Test
+    @Test
     public void testiBioSimGetSTLfromModules() {
 
         double threshold = 5;
@@ -76,14 +76,14 @@ public class bioCPSTest {
                 for (int j = 1; j <= 2; j++) {
 
                     String filename = i + "-" + j + "-data";
-                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + filename + ".csv";
-                    List<Signal> signals = Utilities.getSignalsIBioSim(filepath);
+                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "modules_high_input" + Utilities.getSeparater() + filename + ".csv";
+                    List<Signal> signals = Utilities.getColumnSignals(filepath,false);
                     //double threshold = 10000;
 
                     Grid grid = new Grid(signals, xthreshold, ythreshold);
                     //TemporalLogicInference.getSTL(grid);
 
-                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater() + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
+                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "modules_high_input" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater() + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
                     Utilities.writeToFile(resultFilepath, TemporalLogicInference.getSTL(grid, threshold).toString());
 
                 }
@@ -142,7 +142,7 @@ public class bioCPSTest {
                 for (int j = 1; j <= 3; j++) {
                     String filename = i + "-" + j + "-data";
                     String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + filename + ".csv";
-                    List<Signal> signals = Utilities.getSignalsIBioSim(filepath);
+                    List<Signal> signals = Utilities.getColumnSignals(filepath,false);
                     //double threshold = 10000;
                     Grid grid = new Grid(signals, xthreshold, ythreshold);
 
@@ -162,7 +162,7 @@ public class bioCPSTest {
             for (int j = 1; j <= 2; j++) {
                 String filename = i + "-" + j + "-data";
                 String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + filename + ".csv";
-                List<Signal> signals = Utilities.getSignalsBioCPS(filepath,false);
+                List<Signal> signals = Utilities.getRowSignals(filepath,false);
                 //double threshold = 10000;
                 Grid grid = new Grid(signals, _xthreshold, _ythreshold);
 
@@ -180,7 +180,7 @@ public class bioCPSTest {
             for (int j = 1; j <= 3; j++) {
                 String filename = i + "-" + j + "-data";
                 String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + filename + ".csv";
-                List<Signal> signals = Utilities.getSignalsBioCPS(filepath,false);
+                List<Signal> signals = Utilities.getRowSignals(filepath,false);
                 //double threshold = 10000;
                 Grid grid = new Grid(signals, _xthreshold, _ythreshold);
 
@@ -211,7 +211,7 @@ public class bioCPSTest {
     //@Test
     public void testModule11Data() {
         String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
-        List<Signal> signals = Utilities.getSignalsBioCPS(filepath,false);
+        List<Signal> signals = Utilities.getRowSignals(filepath,false);
         Grid grid = new Grid(signals, 1, 10000);
         //TemporalLogicInference.getLongSTL(grid);
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getResourcesTempFilepath() + "subgrid.png");
@@ -241,19 +241,19 @@ public class bioCPSTest {
     //@Test
     public void testClustering() {
         String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
-        List<Signal> signals = Utilities.getSignalsBioCPS(filepath,false);
+        List<Signal> signals = Utilities.getRowSignals(filepath,false);
         double threshold = 10000;
         Grid grid = new Grid(signals, 1, threshold);
 
         //TemporalLogicInference.getSTL(grid);
         List<Set<Signal>> cluster = TemporalLogicInference.cluster(grid, threshold);
-        TemporalLogicInference.getClusterSTL(grid.getXSignal(), cluster.get(0), grid.getXIncrement(), grid.getYIncrement(), grid.getXLowerLimit(), grid.getXUpperLimit(), grid.getYLowerLimit(), grid.getYUpperLimit(), threshold);
+        TemporalLogicInference.getClusterSTLFast(grid.getXSignal(), cluster.get(0), grid.getXIncrement(), grid.getYIncrement(), grid.getXLowerLimit(), grid.getXUpperLimit(), grid.getYLowerLimit(), grid.getYUpperLimit(), threshold);
     }
 
     //@Test
     public void testGetSTL() {
         String filepath = Utilities.getResourcesFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
-        List<Signal> signals = Utilities.getSignalsBioCPS(filepath,false);
+        List<Signal> signals = Utilities.getRowSignals(filepath,false);
         double threshold = 10000;
         Grid grid = new Grid(signals, 1, threshold);
         System.out.println(TemporalLogicInference.getSTL(grid, threshold).toString());
@@ -272,7 +272,7 @@ public class bioCPSTest {
 
     public static void getFormulaAndPlots(String filename, String filepath, double xThreshHold, double yThreshHold) {
 
-        List<Signal> signals = Utilities.getSignalsBioCPS(filepath,false);
+        List<Signal> signals = Utilities.getRowSignals(filepath,false);
         Grid grid = new Grid(signals, xThreshHold, yThreshHold);
         //TemporalLogicInference.getSTL(grid);
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid()), Utilities.getResourcesTempFilepath() + "subgrid" + filename +  ".png");

@@ -6,7 +6,6 @@
 package org.cidarlab.gridtli.Adaptors;
 
 import hyness.stl.AlwaysNode;
-import hyness.stl.ConjunctionNode;
 import hyness.stl.LinearPredicateLeaf;
 import hyness.stl.RelOperation;
 import hyness.stl.TreeNode;
@@ -18,7 +17,6 @@ import java.util.Set;
 import org.cidarlab.gridtli.DOM.Grid;
 import org.cidarlab.gridtli.DOM.Signal;
 import org.cidarlab.gridtli.TLI.TemporalLogicInference;
-import static org.cidarlab.gridtli.TLI.TemporalLogicInference.cluster;
 import org.cidarlab.gridtli.TLI.Utilities;
 
 /**
@@ -131,7 +129,7 @@ public class BioCPSAdaptor {
         String signalString = "";
         int count =1;
         for(String file:files){
-            List<Signal> signals = Utilities.getSignalsBioCPS(file,false);
+            List<Signal> signals = Utilities.getRowSignals(file,false);
             Grid grid = new Grid(signals, xThreshold, yThreshold);
             clusters = TemporalLogicInference.cluster(grid, clusterThreshold);
             String module = "module_" + count;
@@ -142,7 +140,7 @@ public class BioCPSAdaptor {
             clusterSTL_List = new ArrayList<>();
             for(Set<Signal> cluster:clusters){
                 moduleStrings.add(module + "_" + mCount);
-                clusterSTL_List.add(TemporalLogicInference.getClusterSTL(grid.getXSignal(), cluster, grid.getXIncrement(), grid.getYIncrement(), grid.getXLowerLimit(), grid.getXUpperLimit(), grid.getYLowerLimit(), grid.getYUpperLimit(), clusterThreshold));
+                clusterSTL_List.add(TemporalLogicInference.getClusterSTLFast(grid.getXSignal(), cluster, grid.getXIncrement(), grid.getYIncrement(), grid.getXLowerLimit(), grid.getXUpperLimit(), grid.getYLowerLimit(), grid.getYUpperLimit(), clusterThreshold));
                 mCount++;
             }
             allModuleStrings.addAll(moduleStrings);

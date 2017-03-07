@@ -9,7 +9,6 @@ import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.DataSetPlot;
 import com.panayotis.gnuplot.style.NamedPlotColor;
-import com.panayotis.gnuplot.style.PlotColor;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
@@ -18,16 +17,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.imageio.ImageIO;
 import org.cidarlab.gridtli.DOM.Grid;
 import org.cidarlab.gridtli.DOM.Signal;
 import org.cidarlab.gridtli.DOM.SubGrid;
+import org.cidarlab.gridtli.TLI.TemporalLogicInference;
 
 /**
  *
@@ -52,6 +49,125 @@ public class JavaPlotAdaptor {
         return points;
     }
     
+    public static NamedPlotColor getRandomColor(){
+        Random rand = new Random();
+        int i= rand.nextInt(NamedPlotColor.values().length);
+        return NamedPlotColor.values()[i];
+    }
+    
+    public static int getClusterIndex(List<Set<Signal>> clusters, Signal s){
+        for(int i=0;i<clusters.size();i++){
+            if(clusters.get(i).contains(s)){
+                return i;
+            }
+        }
+        return 0;
+    }
+    
+    public static JavaPlot plotGrid(Grid grid, List<Set<Signal>> clusters){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        plot.addPlot(dspgrid);
+        
+        List<NamedPlotColor> clusterColors = new ArrayList<NamedPlotColor>();
+        for (Set<Signal> cluster : clusters) {
+            NamedPlotColor randColor = getRandomColor();
+            while(clusterColors.contains(randColor)){
+                randColor = randColor = getRandomColor();
+            }
+            clusterColors.add(randColor);
+        }
+        //clusterColors.add(NamedPlotColor.RED);
+        //clusterColors.add(NamedPlotColor.BLUE);
+        //clusterColors.add(NamedPlotColor.BLACK);
+        
+        for(Signal signal:grid.getSignals()){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            //System.out.println("Signal Index :: " + signal.getIndex() + ", Color :: " + clusterColors.get(getClusterIndex(clusters,signal)).name());
+            //sps.setLineType(clusterColors.get(getClusterIndex(clusters,signal)));
+            sps.setLineType(NamedPlotColor.BLACK);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        int count =1;
+        for(SubGrid subgrid: grid.getSubGrid().keySet()){
+            if(grid.isSpecificSubGridCovered(subgrid)){
+                
+                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                String obj = "object " + count;
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"yellow\"";
+                
+                plot.set(obj, rect);
+                count++;
+            }
+        }
+        plot.set("style fill", "transparent solid 0.5");
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("Grid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        return plot;
+    }
+    
+    
+    public static JavaPlot plotSpecificCluster(Grid grid, Set<Signal> cluster){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        plot.addPlot(dspgrid);
+        
+        Set<SubGrid> coveredCluster = TemporalLogicInference.getAllCoveredSubGrids(cluster);
+        
+        for(Signal signal:cluster){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            //System.out.println("Signal Index :: " + signal.getIndex() + ", Color :: " + clusterColors.get(getClusterIndex(clusters,signal)).name());
+            sps.setLineType(NamedPlotColor.RED);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        int count =1;
+        for(SubGrid subgrid: grid.getSubGrid().keySet()){
+            if(grid.isSpecificSubGridCovered(subgrid)){
+                
+                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                String obj = "object " + count;
+                if (coveredCluster.contains(subgrid)) {
+                    String rect = "rect from " + subgrid.getXOrigin() + "," + subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin() + grid.getYIncrement()) + " fc rgb \"yellow\"";
+                    plot.set(obj, rect);
+                    count++;
+
+                }
+    
+            }
+        }
+        plot.set("style fill", "transparent solid 0.5");
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("Grid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        return plot;
+    }
+    
+    
     
     public static JavaPlot plotGrid(Grid grid){
         JavaPlot plot = new JavaPlot();
@@ -74,7 +190,7 @@ public class JavaPlotAdaptor {
         }
         int count =1;
         for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(!grid.isSpecificSubGridCovered(subgrid)){
+            if(grid.isSpecificSubGridCovered(subgrid)){
                 
                 //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
                 String obj = "object " + count;
@@ -381,6 +497,7 @@ public class JavaPlotAdaptor {
         plot.set("yzeroaxis", "");
         plot.set("key", "off");
         return plot;
+        
     }
     
     public static JavaPlot plotGridwithoutCover(Grid grid){

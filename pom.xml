@@ -45,7 +45,7 @@
         <!--STL-flat-->
         <dependency>
             <groupId>org.cidarlab.bioCPS</groupId>
-            <artifactId>STLb</artifactId>
+            <artifactId>STLSharp</artifactId>
             <version>1.0</version>
         </dependency>        
         

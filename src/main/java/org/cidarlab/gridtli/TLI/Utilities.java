@@ -230,21 +230,22 @@ public class Utilities {
         }
     }
     
-    
-    public static List<Signal> getSignalsIBioSim(String filepath){
+    public static List<Signal> getiBioSimSignals(String filepath){ //
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvsignals = getCSVFileContentAsList(filepath);
         List<List<Point>> pointlist = new ArrayList<List<Point>>();
-        for(int i=0;i<=csvsignals.get(1).length-2;i++){
+        for(int i=0;i<csvsignals.get(1).length-1;i++){
             pointlist.add(new ArrayList<Point>());
         }
-        for(int i=1;i<csvsignals.size();i++){
-            double x = Double.valueOf(csvsignals.get(i)[0]);
-            for(int j=1;j<csvsignals.get(i).length;j++){
+        
+        for (int i = 1; i < csvsignals.size(); i++) {
+            for (int j = 1; j < csvsignals.get(i).length; j++) {
+                double x = Double.valueOf(csvsignals.get(i)[0]);
                 double y = Double.valueOf(csvsignals.get(i)[j]);
-                pointlist.get(j-1).add(new Point(x,"x",y,"t"));
+                pointlist.get(j-1).add(new Point(x, "t", y, "x"));
             }
         }
+
         for(int i=0;i<pointlist.size();i++){
             signals.add(new Signal(pointlist.get(i)));
         }
@@ -252,7 +253,43 @@ public class Utilities {
         return signals;
     }
     
-    public static List<Signal> getSignalsBioCPS(String filepath, boolean header){
+    public static List<Signal> getColumnSignals(String filepath, boolean columnHeader){ //
+        List<Signal> signals = new ArrayList<Signal>();
+        List<String[]> csvsignals = getCSVFileContentAsList(filepath);
+        List<List<Point>> pointlist = new ArrayList<List<Point>>();
+        
+        if (!columnHeader) {
+            for (int i = 0; i < csvsignals.get(1).length; i++) {
+                pointlist.add(new ArrayList<Point>());
+            }
+            for (int i = 0; i < csvsignals.size(); i++) {
+                //double x = Double.valueOf(csvsignals.get(i)[0]);
+                for (int j = 0; j < csvsignals.get(i).length; j++) {
+                    double y = Double.valueOf(csvsignals.get(i)[j]);
+                    pointlist.get(j).add(new Point(i, "t", y, "x"));
+                }
+            }
+        } else {
+            for (int i = 0; i < csvsignals.get(1).length-1; i++) {
+                pointlist.add(new ArrayList<Point>());
+            }
+            for (int i = 0; i < csvsignals.size(); i++) {
+                for (int j = 1; j < csvsignals.get(i).length; j++) {
+                    double x = Double.valueOf(csvsignals.get(0)[j]);
+                    double y = Double.valueOf(csvsignals.get(i)[j]);
+                    pointlist.get(j-1).add(new Point(x, "t", y, "x"));
+                }
+            }
+        }
+        
+        for(int i=0;i<pointlist.size();i++){
+            signals.add(new Signal(pointlist.get(i)));
+        }
+        
+        return signals;
+    }
+    
+    public static List<Signal> getRowSignals(String filepath, boolean header){
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvStrings = getCSVFileContentAsList(filepath);
         if (!header) {
@@ -264,7 +301,7 @@ public class Utilities {
                         continue;
                     }
                     double yVal = Double.valueOf(csvString[i]);
-                    points.add(new Point(count, "x", yVal, "t"));
+                    points.add(new Point(count, "t", yVal, "x"));
                     count++;
                 }
                 signals.add(new Signal(points));
@@ -278,9 +315,9 @@ public class Utilities {
                     if(csvString[j].trim().isEmpty()){
                         continue;
                     }
-                    double xVal = Double.valueOf(headerLine[i]);
+                    double xVal = Double.valueOf(headerLine[j]);
                     double yVal = Double.valueOf(csvString[j]);
-                    points.add(new Point(xVal, "x", yVal, "t"));
+                    points.add(new Point(xVal, "t", yVal, "x"));
                 }
                 signals.add(new Signal(points));
             }

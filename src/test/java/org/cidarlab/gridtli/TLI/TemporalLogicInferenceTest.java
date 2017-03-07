@@ -48,7 +48,7 @@ public class TemporalLogicInferenceTest {
     public void testColumnDemo(){
         System.out.println("COLUMN TYPE DATA");
         String columnData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
-        List<Signal> signals = Utilities.getSignalsIBioSim(columnData);
+        List<Signal> signals = Utilities.getColumnSignals(columnData,false);
         double xthreshold = 10;
         double ythreshold = 10;
         double clusterThreshold = 10;
@@ -67,7 +67,7 @@ public class TemporalLogicInferenceTest {
     public void testRowDemo(){
         System.out.println("ROW TYPE DATA");
         String rowData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "row_data.csv";
-        List<Signal> signals = Utilities.getSignalsBioCPS(rowData,false);
+        List<Signal> signals = Utilities.getRowSignals(rowData,false);
         double xthreshold = 1;
         double ythreshold = 1;
         double clusterThreshold = 1;
