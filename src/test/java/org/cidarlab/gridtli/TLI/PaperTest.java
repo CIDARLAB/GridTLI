@@ -35,12 +35,128 @@ public class PaperTest {
     String posmapfile = fuelControlDatafilepath + "MAP-pos-data.csv";
     String negmapfile = fuelControlDatafilepath + "MAP-neg-data.csv";
     int samplesize = 3;
+    int kSize = 10;
     int iterations = 20;
     String delimiter = ",";
 
+    String biofilesuffix = "GeoMeanMEPTR";
+    String biosignalsfilepath = Utilities.getResourcesFilepath() + "biosignals" + Utilities.getSeparater();
+    int biosamples = 20;
+    List<Double> time = new ArrayList<Double>();
+    List<Double> lasAHLconc = new ArrayList<Double>();
+
+    
+    
     //@Test
-    public void generateFuelControlTest() {
-        String testdatafilepath = fuelControlDatafilepath + "testData";
+    public void generateFuelControlTest_KFold() {
+        String testdatafilepath = fuelControlDatafilepath + Mode.KFold.toString();
+        if (!Utilities.validFilepath(testdatafilepath)) {
+            Utilities.makeDirectory(testdatafilepath);
+        }
+        List<Signal> posego = Utilities.getRowSignals(posegofile,false);
+        List<Signal> negego = Utilities.getRowSignals(negegofile,false);
+        List<Signal> posmap = Utilities.getRowSignals(posmapfile,false);
+        List<Signal> negmap = Utilities.getRowSignals(negmapfile,false);
+
+        //System.out.println(posego.size());
+        //System.out.println(negego.size());
+        //System.out.println(posmap.size());
+        //System.out.println(negmap.size());
+        List<Set<Integer>> kfoldpos = generateKSets(posego.size()); 
+        List<Set<Integer>> kfoldneg = generateKSets(posego.size()); 
+        for (int i = 0; i < kSize; i++) {
+            int trainSize = posego.size() - kfoldpos.get(i).size();
+            String trainSizeFilepath = testdatafilepath + Utilities.getSeparater() + trainSize;
+            if (!Utilities.validFilepath(trainSizeFilepath)) {
+                Utilities.makeDirectory(trainSizeFilepath);
+            }
+            String subsetfilepath = trainSizeFilepath + Utilities.getSeparater() + i;
+            if (!Utilities.validFilepath(subsetfilepath)) {
+                Utilities.makeDirectory(subsetfilepath);
+            }
+            
+            Set<Integer> unusedpos = new HashSet<Integer>();
+            unusedpos.addAll(kfoldpos.get(i));
+            Set<Integer> unusedneg = new HashSet<Integer>();
+            unusedneg.addAll(kfoldneg.get(i));
+            
+            List<Signal> usedposego = new ArrayList<Signal>();
+            List<Signal> unusedposego = new ArrayList<Signal>();
+            List<Signal> usedposmap = new ArrayList<Signal>();
+            List<Signal> unusedposmap = new ArrayList<Signal>();
+
+            List<Signal> usednegego = new ArrayList<Signal>();
+            List<Signal> unusednegego = new ArrayList<Signal>();
+            List<Signal> usednegmap = new ArrayList<Signal>();
+            List<Signal> unusednegmap = new ArrayList<Signal>();
+
+            List<Integer> usedposlist = new ArrayList<Integer>();
+            List<Integer> usedneglist = new ArrayList<Integer>();
+            List<Integer> unusedposlist = new ArrayList<Integer>();
+            List<Integer> unusedneglist = new ArrayList<Integer>();
+
+            for (int k = 0; k < posego.size(); k++) {
+                if (unusedpos.contains(k)) {
+                    unusedposego.add(posego.get(k));
+                    unusedposmap.add(posmap.get(k));
+                    unusedposlist.add(k);
+                } 
+                else {
+                    usedposego.add(posego.get(k));
+                    usedposmap.add(posmap.get(k));
+                    usedposlist.add(k);
+                }
+                if (unusedneg.contains(k)) {
+                    unusednegego.add(negego.get(k));
+                    unusednegmap.add(negmap.get(k));
+                    unusedneglist.add(k);
+                } 
+                else {
+                    usednegego.add(negego.get(k));
+                    usednegmap.add(negmap.get(k));
+                    usedneglist.add(k);
+                }
+            }
+            String usedposegoFilepath = subsetfilepath + Utilities.getSeparater() + "used-pos-EGO.csv";
+            String unusedposegoFilepath = subsetfilepath + Utilities.getSeparater() + "unused-pos-EGO.csv";
+
+            String usednegegoFilepath = subsetfilepath + Utilities.getSeparater() + "used-neg-EGO.csv";
+            String unusednegegoFilepath = subsetfilepath + Utilities.getSeparater() + "unused-neg-EGO.csv";
+
+            String usedposmapFilepath = subsetfilepath + Utilities.getSeparater() + "used-pos-MAP.csv";
+            String unusedposmapFilepath = subsetfilepath + Utilities.getSeparater() + "unused-pos-MAP.csv";
+
+            String usednegmapFilepath = subsetfilepath + Utilities.getSeparater() + "used-neg-MAP.csv";
+            String unusednegmapFilepath = subsetfilepath + Utilities.getSeparater() + "unused-neg-MAP.csv";
+
+            writeSignalsToFile(usedposegoFilepath, usedposego);
+            writeSignalsToFile(unusedposegoFilepath, unusedposego);
+            writeSignalsToFile(usedposmapFilepath, usedposmap);
+            writeSignalsToFile(unusedposmapFilepath, unusedposmap);
+            writeSignalsToFile(usednegegoFilepath, usednegego);
+            writeSignalsToFile(unusednegegoFilepath, unusednegego);
+            writeSignalsToFile(usednegmapFilepath, usednegmap);
+            writeSignalsToFile(unusednegmapFilepath, unusednegmap);
+
+            String posusedfilepath = subsetfilepath + Utilities.getSeparater() + "pos-used.txt";
+            String negusedfilepath = subsetfilepath + Utilities.getSeparater() + "neg-used.txt";
+
+            String posunusedfilepath = subsetfilepath + Utilities.getSeparater() + "pos-unused.txt";
+            String negunusedfilepath = subsetfilepath + Utilities.getSeparater() + "neg-unused.txt";
+
+            Utilities.writeToFile(posusedfilepath, usedposlist.toString());
+            Utilities.writeToFile(negusedfilepath, usedneglist.toString());
+            Utilities.writeToFile(posunusedfilepath, unusedposlist.toString());
+            Utilities.writeToFile(negunusedfilepath, unusedneglist.toString());
+
+           
+        }
+
+    }
+
+    //@Test
+    public void generateFuelControlTest_RRS() {
+        String testdatafilepath = fuelControlDatafilepath + Mode.RRS.toString();
         if (!Utilities.validFilepath(testdatafilepath)) {
             Utilities.makeDirectory(testdatafilepath);
         }
@@ -148,78 +264,6 @@ public class PaperTest {
         }
 
     }
-
-    private void writeSignalsToFile(String filepath, List<Signal> signals) {
-        List<String> lines = new ArrayList<String>();
-        for (Signal signal : signals) {
-            String line = "";
-            for (int i = 0; i < signal.getPoints().size() - 1; i++) {
-                line += signal.getPoints().get(i).getY() + ",";
-            }
-            line += signal.getPoints().get(signal.getPoints().size() - 1).getY();
-            lines.add(line);
-        }
-        Utilities.writeToFile(filepath, lines);
-    }
-
-    private void writeSignalsToFileWithHeader(String filepath, List<Signal> signals, List<Double> header) {
-        List<String> lines = new ArrayList<String>();
-        String head = "";
-        for (int i = 0; i < header.size() - 1; i++) {
-            head += header.get(i) + ",";
-        }
-        head += header.get(header.size() - 1);
-        lines.add(head);
-        for (Signal signal : signals) {
-            String line = "";
-            if (signal.getPoints().size() == header.size()) {
-                for (int i = 0; i < signal.getPoints().size() - 1; i++) {
-                    line += signal.getPoints().get(i).getY() + ",";
-                }
-                line += signal.getPoints().get(signal.getPoints().size() - 1).getY();
-            } else {
-                int signalCounter = 0;
-                for (int i = 0; i < header.size(); i++) {
-                    double x = signal.getPoints().get(signalCounter).getX();
-                    double y = signal.getPoints().get(signalCounter).getY();
-                    if (header.get(i).equals(x)) {
-                        line += y + ",";
-                        signalCounter++;
-                    } else {
-                        line += ",";
-                    }
-                }
-                line = line.substring(0, line.length() - 1);
-            }
-            lines.add(line);
-        }
-        Utilities.writeToFile(filepath, lines);
-
-    }
-
-    private int getRandom(int min, int max) {
-        Random random = new Random();
-        return (random.nextInt(max - min + 1) + min);
-    }
-
-    private int getSubsetNumber(int i, int max) {
-        switch (i) {
-            case 0:
-                return ((max / 100) * 10);
-            case 1:
-                return ((max / 100) * 25);
-            case 2:
-                return ((max / 100) * 50);
-            //case 3: return 300;
-        }
-        return 0;
-    }
-
-    String biofilesuffix = "GeoMeanMEPTR";
-    String biosignalsfilepath = Utilities.getResourcesFilepath() + "biosignals" + Utilities.getSeparater();
-    int biosamples = 20;
-    List<Double> time = new ArrayList<Double>();
-    List<Double> lasAHLconc = new ArrayList<Double>();
 
     //@Test
     public void generateBioSignalsTest() {
@@ -356,11 +400,17 @@ public class PaperTest {
         }
         return signals;
     }
-
-    //@Test
-    public void testFuelControl() {
+    
+    @Test
+    public void testFuelControl(){
+        testFuelControl(Mode.KFold,1);
+    }
+    
+    
+    public void testFuelControl(Mode mode, int run) {
         System.out.println("Fuel Control Data Set!");
-        String root = fuelControlDatafilepath + "testData" + Utilities.getSeparater();
+        String root = fuelControlDatafilepath + mode.toString() + Utilities.getSeparater();
+        //String root = fuelControlDatafilepath + "KFold" + Utilities.getSeparater();
         String headerLine = 
                     "sizeFolder" +delimiter + //sizeFolder
                     "iterFolder" +delimiter+ //iterFolder
@@ -393,7 +443,11 @@ public class PaperTest {
                     String cplot = cplotdot.replaceAll("\\.", "_");
 
                     String plotsuffix = xplot + "-" + yplot + "-" + cplot;
-                    String resultRoot = fuelControlDatafilepath + plotsuffix;
+                    String resultRun = fuelControlDatafilepath + (mode.toString() + "_Run" + run) + Utilities.getSeparater();
+                    if (!Utilities.isDirectory(resultRun)) {
+                        Utilities.makeDirectory(resultRun);
+                    }
+                    String resultRoot = resultRun + plotsuffix;
                     if (!Utilities.isDirectory(resultRoot)) {
                         Utilities.makeDirectory(resultRoot);
                     }
@@ -413,7 +467,7 @@ public class PaperTest {
 
     //@Test
     public void testTransformFuel(){
-        String path = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater() + "testData" + Utilities.getSeparater();
+        String path = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater() + Mode.KFold.toString() + Utilities.getSeparater();
         String header = "";
         BigDecimal b = new BigDecimal(0.3);
         b = b.setScale(1, RoundingMode.UP);
@@ -429,27 +483,90 @@ public class PaperTest {
         walkTransformFuel(path,header);
     }
     
-    public void walkTransformFuel(String path, String header){
-        File root = new File(path);
-        File[] list = root.listFiles();
-
-        if (list == null) {
-            return;
-        }
+    //@Test
+    public void testBioSignals() {
+        String root = biosignalsfilepath + "separatedSignals" + Utilities.getSeparater();
+        System.out.println("Biosignals test");
+        String headerLine = "plasmid" +delimiter+ 
+                "iterFolder" +delimiter+ 
+                "trainSize" +delimiter+ 
+                "mcrTrain" +delimiter+ 
+                "fnrTrain" +delimiter+ 
+                "testSize" +delimiter+ 
+                "mcrTest" +delimiter+ 
+                "fnrTest" +delimiter+ 
+                "runtime" +delimiter+ 
+                "t_t" +delimiter+ 
+                "x_t" +delimiter+ 
+                "c_t";
         
-        for (File f : list) {
-            if (f.isDirectory()) {
-                walkTransformFuel(f.getAbsolutePath(), header);
-            } // Reached all Files
-            else {
-                if (f.getName().endsWith(".csv")) {
+        
+        for(int i=0;i<6;i++){
+            for(int j=0;j<3;j++){
+                for (int k = 0; k < 4; k++) {
+                    double xthreshold = getBiot(i);
+                    double ythreshold = getBiox(j);
+                    double cthreshold = getBioc(k);
                     List<String> filelines = new ArrayList<String>();
-                    filelines.add(header);
-                    filelines.addAll(Utilities.getFileContentAsStringList(f.getAbsolutePath()));
-                    Utilities.writeToFile(f.getAbsolutePath(), filelines);
-                    
+                    filelines.add(headerLine);
+                    walkBioSignals(root, root, xthreshold, ythreshold, cthreshold, filelines);
+
+                    String xplotdot = "x" + xthreshold;
+                    String xplot = xplotdot.replaceAll("\\.", "_");
+                    String yplotdot = "y" + ythreshold;
+                    String yplot = yplotdot.replaceAll("\\.", "_");
+                    String cplotdot = "c" + cthreshold;
+                    String cplot = cplotdot.replaceAll("\\.", "_");
+
+                    String plotsuffix = xplot + "-" + yplot + "-" + cplot;
+                    String resultRoot = biosignalsfilepath + plotsuffix;
+                    if (!Utilities.isDirectory(resultRoot)) {
+                        Utilities.makeDirectory(resultRoot);
+                    }
+                    String resultFilepath = resultRoot + Utilities.getSeparater() + "result.csv";
+                    Utilities.writeToFile(resultFilepath, filelines);
                 }
             }
+        }
+    }
+    
+    //@Test
+    public void testSpecificBiosignal(){
+        System.out.println("Specific Test");
+        String filepath = Utilities.getResourcesFilepath() + "biosignals/separatedSignals/pL2f1439/1/testData/10/11/";
+        String usedSignalsFilepath = filepath + "used-plasmid.csv";
+        String unusedSignalsFilepath = filepath + "unused-plasmid.csv";
+        String plot = filepath + "grid.png";
+        String cluster1 = filepath + "cluster1.png";
+        String cluster2 = filepath + "cluster2.png";
+        String cluster3 = filepath + "cluster3.png";
+        List<Signal> used = Utilities.getRowSignals(usedSignalsFilepath, true);
+        List<Signal> unused = Utilities.getRowSignals(unusedSignalsFilepath, true);
+        
+        double xthreshold = 0.5;
+        double ythreshold = 10;
+        double cthreshold = 0.5;
+        
+        Grid grid = new Grid(used,xthreshold,ythreshold);
+        TreeNode stl = TemporalLogicInference.getSTL(grid, cthreshold);
+        List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
+        clusters = TemporalLogicInference.cluster(grid, cthreshold);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid,clusters), plot);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(0)), cluster1);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(1)), cluster2);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(2)), cluster3);
+        
+        System.out.println("STL Formula");
+        System.out.println(stl);
+        
+        for (Signal s : used) {
+            double r = Validation.getRobustness(stl, s);
+            if (r < 0) {
+                System.out.println("SIGNAL INDEX :: " + s.getIndex());
+                System.out.println(s.getPoints());
+                System.out.println(r);
+            }
+
         }
     }
     
@@ -507,6 +624,7 @@ public class PaperTest {
         Utilities.writeToFile(filepath, finalLines);
     }
     
+    //<editor-fold desc="Folder walk functions" defaultstate="collapsed">
     private void walkResults(String path, List<String> allLines){
         
         File root = new File(path);
@@ -529,124 +647,6 @@ public class PaperTest {
                 }
             }
         }
-    }
-    
-    
-    private double getFuelt(int t){
-        switch(t){
-            case 0: return 0.01;
-            case 1: return 0.1;
-            case 2: return 0.3;
-            case 3: return 1.0;
-            case 4: return 5.0;
-            case 5: return 10.0;
-        }
-        return 0;
-    }
-    
-    private double getFuelx(int x){
-        switch(x){
-            case 0: return 0.5;
-            case 1: return 1.0;
-            case 2: return 10.0;
-        }
-        return 0;
-    }
-    
-    private double getFuelc(int c){
-        switch(c){
-            case 0: return 0.1;
-            case 1: return 0.5;
-            case 2: return 1.0;
-            case 3: return 10.0;
-        }
-        return 0;
-    }
-    
-    
-    //@Test
-    public void testBioSignals() {
-        String root = biosignalsfilepath + "separatedSignals" + Utilities.getSeparater();
-        System.out.println("Biosignals test");
-        String headerLine = "plasmid" +delimiter+ 
-                "iterFolder" +delimiter+ 
-                "trainSize" +delimiter+ 
-                "mcrTrain" +delimiter+ 
-                "fnrTrain" +delimiter+ 
-                "testSize" +delimiter+ 
-                "mcrTest" +delimiter+ 
-                "fnrTest" +delimiter+ 
-                "runtime" +delimiter+ 
-                "t_t" +delimiter+ 
-                "x_t" +delimiter+ 
-                "c_t";
-        
-        
-        for(int i=0;i<6;i++){
-            for(int j=0;j<3;j++){
-                for (int k = 0; k < 4; k++) {
-                    double xthreshold = getBiot(i);
-                    double ythreshold = getBiox(j);
-                    double cthreshold = getBioc(k);
-                    List<String> filelines = new ArrayList<String>();
-                    filelines.add(headerLine);
-                    walkBioSignals(root, root, xthreshold, ythreshold, cthreshold, filelines);
-
-                    String xplotdot = "x" + xthreshold;
-                    String xplot = xplotdot.replaceAll("\\.", "_");
-                    String yplotdot = "y" + ythreshold;
-                    String yplot = yplotdot.replaceAll("\\.", "_");
-                    String cplotdot = "c" + cthreshold;
-                    String cplot = cplotdot.replaceAll("\\.", "_");
-
-                    String plotsuffix = xplot + "-" + yplot + "-" + cplot;
-                    String resultRoot = biosignalsfilepath + plotsuffix;
-                    if (!Utilities.isDirectory(resultRoot)) {
-                        Utilities.makeDirectory(resultRoot);
-                    }
-                    String resultFilepath = resultRoot + Utilities.getSeparater() + "result.csv";
-                    Utilities.writeToFile(resultFilepath, filelines);
-                }
-            }
-        }
-        
-        
-    
-    }
-    
-    //t_t  = {0.01, 0.1, 0.5, 1.0, 5.0, 10.0}
-    //x_t = {10.0, 50.0, 100.0}
-    //c_t = {5.0, 10.0, 50.0, 100.0}
-    
-    private double getBiot(int t){
-        switch(t){
-            case 0: return 0.01;
-            case 1: return 0.1;
-            case 2: return 0.5;
-            case 3: return 1.0;
-            case 4: return 5.0;
-            case 5: return 10.0;
-        }
-        return 0;
-    }
-    
-    private double getBiox(int x){
-        switch(x){
-            case 0: return 10.0;
-            case 1: return 50.0;
-            case 2: return 100.0;
-        }
-        return 0;
-    }
-    
-    private double getBioc(int c){
-        switch(c){
-            case 0: return 5.0;
-            case 1: return 10.0;
-            case 2: return 50.0;
-            case 3: return 100.0;
-        }
-        return 0;
     }
     
     private void walkFuelControl(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> fileLines) {
@@ -705,21 +705,12 @@ public class PaperTest {
         if (analysis) {
             //System.out.println("path : " + path);
             
-            
-            
             String xplotdot = "x" + xthreshold;
             String xplot = xplotdot.replaceAll("\\.", "_");
             String yplotdot = "y" + ythreshold;
             String yplot = yplotdot.replaceAll("\\.", "_");
             String cplotdot = "c" + cthreshold;
             String cplot = cplotdot.replaceAll("\\.", "_");
-           
-//            String plotsuffix = xplot + "-" + yplot + "-" + cplot;
-//            String plotMapfilepath = path + Utilities.getSeparater() + "plotMap" + plotsuffix  +".png";
-//            String plotEgofilepath = path + Utilities.getSeparater() + "plotEgo" + plotsuffix  +".png";
-//            
-//            String clusterplotMapPrefix = path + Utilities.getSeparater() + "clusterPlotMap";
-//            String clusterplotEgoPrefix = path + Utilities.getSeparater() + "clusterPlotEgo";
             
             long tstart = System.nanoTime();
             Grid gridEgo = new Grid(training_PosEGO, xthreshold, ythreshold);
@@ -728,33 +719,9 @@ public class PaperTest {
             TreeNode stlMap = TemporalLogicInference.getSTL(gridMap, cthreshold);
             long tend = System.nanoTime();
             double runtime = getTimeElapsed(tstart,tend);
-            
-//            List<Set<Signal>> clustersMap = TemporalLogicInference.cluster(gridMap, cthreshold);
-//            List<Set<Signal>> clustersEgo = TemporalLogicInference.cluster(gridEgo, cthreshold);
-            
-//            JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(gridEgo,clustersEgo), plotEgofilepath);
-//            JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(gridMap,clustersMap), plotMapfilepath);
-//            JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(gridEgo), plotEgofilepath);
-//            JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(gridMap), plotMapfilepath);
-            
+                        
             int count=0;
-//            for(Set<Signal> cluster:clustersMap){
-//                String clusterplotfilepath = clusterplotMapPrefix + count++ + plotsuffix + ".png";
-//                JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(gridMap,cluster), clusterplotfilepath);
-//            }
-//            count=0;
-//            for(Set<Signal> cluster:clustersEgo){
-//                String clusterplotfilepath = clusterplotEgoPrefix + count++ + plotsuffix + ".png";
-//                JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(gridEgo,cluster), clusterplotfilepath);
-//            }
-            
-            
-            //System.out.println("EGO STL");
-            //System.out.println(stlEgo);
-            //System.out.println("MAP STL");
-            //System.out.println(stlMap);
-            
-            
+
             List<Integer> pos_training_Ego_robust = new ArrayList<Integer>();
             List<Integer> pos_training_Map_robust = new ArrayList<Integer>();
             
@@ -962,11 +929,6 @@ public class PaperTest {
 
     }
     
-    private double getTimeElapsed(long start, long end){
-        long elapsed = end - start;
-        return (elapsed/1000000000.0);
-    }
-    
     private void walkBioSignals(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> filelines) {
         File root = new File(path);
         File[] list = root.listFiles();
@@ -1075,50 +1037,218 @@ public class PaperTest {
             filelines.add(line);
         }
     }
+    
+    public void walkTransformFuel(String path, String header){
+        File root = new File(path);
+        File[] list = root.listFiles();
 
-    //@Test
-    public void testSpecificBiosignal(){
-        System.out.println("Specific Test");
-        String filepath = Utilities.getResourcesFilepath() + "biosignals/separatedSignals/pL2f1439/1/testData/10/11/";
-        String usedSignalsFilepath = filepath + "used-plasmid.csv";
-        String unusedSignalsFilepath = filepath + "unused-plasmid.csv";
-        String plot = filepath + "grid.png";
-        String cluster1 = filepath + "cluster1.png";
-        String cluster2 = filepath + "cluster2.png";
-        String cluster3 = filepath + "cluster3.png";
-        List<Signal> used = Utilities.getRowSignals(usedSignalsFilepath, true);
-        List<Signal> unused = Utilities.getRowSignals(unusedSignalsFilepath, true);
+        if (list == null) {
+            return;
+        }
         
-        double xthreshold = 0.5;
-        double ythreshold = 10;
-        double cthreshold = 0.5;
-        
-        Grid grid = new Grid(used,xthreshold,ythreshold);
-        TreeNode stl = TemporalLogicInference.getSTL(grid, cthreshold);
-        List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
-        clusters = TemporalLogicInference.cluster(grid, cthreshold);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid,clusters), plot);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(0)), cluster1);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(1)), cluster2);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(2)), cluster3);
-        
-        System.out.println("STL Formula");
-        System.out.println(stl);
-        
-        for (Signal s : used) {
-            double r = Validation.getRobustness(stl, s);
-            if (r < 0) {
-                System.out.println("SIGNAL INDEX :: " + s.getIndex());
-                System.out.println(s.getPoints());
-                System.out.println(r);
+        for (File f : list) {
+            if (f.isDirectory()) {
+                walkTransformFuel(f.getAbsolutePath(), header);
+            } // Reached all Files
+            else {
+                if (f.getName().endsWith(".csv")) {
+                    List<String> filelines = new ArrayList<String>();
+                    filelines.add(header);
+                    filelines.addAll(Utilities.getFileContentAsStringList(f.getAbsolutePath()));
+                    Utilities.writeToFile(f.getAbsolutePath(), filelines);
+                    
+                }
             }
-
         }
     }
     
+    //</editor-fold>
+    
+    //<editor-fold desc="Helper Functions" defaultstate="collapsed">
+    private double getTimeElapsed(long start, long end){
+        long elapsed = end - start;
+        return (elapsed/1000000000.0);
+    }
+    
+    private List<Set<Integer>> generateKSets(int size){
+        List<Set<Integer>> kfold = new ArrayList<Set<Integer>>();
+        for(int i=0;i<kSize;i++){
+            kfold.add(new HashSet<Integer>());
+        }
+        Set<Integer> assigned = new HashSet<Integer>();
+        while(assigned.size() < size){
+            for (int i = 0; i < kSize; i++) {
+                if(assigned.size() >= size){
+                    break;
+                }
+                int indx = getRandom(0,size-1);
+                while(assigned.contains(indx)){
+                    indx = getRandom(0,size-1);
+                }
+                assigned.add(indx);
+                kfold.get(i).add(indx);
+            }
+        }
+        return kfold;
+    }
+    
+    private int getRandom(int min, int max) {
+        Random random = new Random();
+        return (random.nextInt(max - min + 1) + min);
+    }
+
+    private int getSubsetNumber(int i, int max) {
+        switch (i) {
+            case 0:
+                return ((max / 100) * 10);
+            case 1:
+                return ((max / 100) * 25);
+            case 2:
+                return ((max / 100) * 50);
+            //case 3: return 300;
+        }
+        return 0;
+    }
+
     private static String[] filepathPieces(String filepath, String rootFilepath) {
         String relativeFilepath = filepath.substring(filepath.lastIndexOf(rootFilepath) + rootFilepath.length());
         return relativeFilepath.split("/");
     }
+    
+    
+    private void writeSignalsToFile(String filepath, List<Signal> signals) {
+        List<String> lines = new ArrayList<String>();
+        for (Signal signal : signals) {
+            String line = "";
+            for (int i = 0; i < signal.getPoints().size() - 1; i++) {
+                line += signal.getPoints().get(i).getY() + ",";
+            }
+            line += signal.getPoints().get(signal.getPoints().size() - 1).getY();
+            lines.add(line);
+        }
+        Utilities.writeToFile(filepath, lines);
+    }
 
+    private void writeSignalsToFileWithHeader(String filepath, List<Signal> signals, List<Double> header) {
+        List<String> lines = new ArrayList<String>();
+        String head = "";
+        for (int i = 0; i < header.size() - 1; i++) {
+            head += header.get(i) + ",";
+        }
+        head += header.get(header.size() - 1);
+        lines.add(head);
+        for (Signal signal : signals) {
+            String line = "";
+            if (signal.getPoints().size() == header.size()) {
+                for (int i = 0; i < signal.getPoints().size() - 1; i++) {
+                    line += signal.getPoints().get(i).getY() + ",";
+                }
+                line += signal.getPoints().get(signal.getPoints().size() - 1).getY();
+            } else {
+                int signalCounter = 0;
+                for (int i = 0; i < header.size(); i++) {
+                    double x = signal.getPoints().get(signalCounter).getX();
+                    double y = signal.getPoints().get(signalCounter).getY();
+                    if (header.get(i).equals(x)) {
+                        line += y + ",";
+                        signalCounter++;
+                    } else {
+                        line += ",";
+                    }
+                }
+                line = line.substring(0, line.length() - 1);
+            }
+            lines.add(line);
+        }
+        Utilities.writeToFile(filepath, lines);
+
+    }
+
+    public enum Mode{
+        RRS,
+        KFold
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold desc="Threshold Values" defaultstate="collapsed">
+    
+    //Fuel Control Thresholds
+    private double getFuelt(int t){
+        switch(t){
+            case 0: return 0.01;
+            case 1: return 0.1;
+            case 2: return 0.3;
+            case 3: return 1.0;
+            case 4: return 5.0;
+            case 5: return 10.0;
+        }
+        return 0;
+    }
+    
+    private double getFuelx(int x){
+        switch(x){
+            case 0: return 0.5;
+            case 1: return 1.0;
+            case 2: return 10.0;
+        }
+        return 0;
+    }
+    
+    private double getFuelc(int c){
+        switch(c){
+            case 0: return 0.1;
+            case 1: return 0.5;
+            case 2: return 1.0;
+            case 3: return 10.0;
+        }
+        return 0;
+    }
+    
+    //Bio Signal Thresholds
+    private double getBiot(int t) {
+        switch (t) {
+            case 0:
+                return 0.01;
+            case 1:
+                return 0.1;
+            case 2:
+                return 0.5;
+            case 3:
+                return 1.0;
+            case 4:
+                return 5.0;
+            case 5:
+                return 10.0;
+        }
+        return 0;
+    }
+
+    private double getBiox(int x) {
+        switch (x) {
+            case 0:
+                return 10.0;
+            case 1:
+                return 50.0;
+            case 2:
+                return 100.0;
+        }
+        return 0;
+    }
+
+    private double getBioc(int c) {
+        switch (c) {
+            case 0:
+                return 5.0;
+            case 1:
+                return 10.0;
+            case 2:
+                return 50.0;
+            case 3:
+                return 100.0;
+        }
+        return 0;
+    }
+    //</editor-fold>
+    
 }
