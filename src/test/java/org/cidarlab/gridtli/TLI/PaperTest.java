@@ -5,6 +5,8 @@
  */
 package org.cidarlab.gridtli.TLI;
 
+import hyness.stl.ConjunctionNode;
+import hyness.stl.DisjunctionNode;
 import hyness.stl.TreeNode;
 import java.io.File;
 import java.math.BigDecimal;
@@ -739,7 +741,8 @@ public class PaperTest {
                     "runtime" +delimiter+ //Runtime
                     "t_t" +delimiter+ //xthreshold
                     "x_t" +delimiter+ //ythreshold
-                    "c_t"  //cthreshold
+                    "c_t" +delimiter+ //cthreshold
+                    "primitiveCount" //Number of primitives
                     ;
         
         for(int t=0;t<6;t++){
@@ -918,7 +921,8 @@ public class PaperTest {
                     "runtime" +delimiter+ //Runtime
                     "t_t" +delimiter+ //xthreshold
                     "x_t" +delimiter+ //ythreshold
-                    "c_t"  //cthreshold
+                    "c_t" +delimiter+ //cthreshold
+                    "primitiveCount" //Number of primitives
                     ;
         finalLines.add(headerLine);
         walkResults(path,lines);
@@ -1499,6 +1503,42 @@ public class PaperTest {
     //</editor-fold>
     
     //<editor-fold desc="Helper Functions" defaultstate="collapsed">
+    
+    private int getPrimitiveCount(TreeNode node){
+        int count = 0;
+        for(TreeNode dChild : getAllDisjunctionChildren(node)){
+            count += getAllConjunctionChildren(dChild).size();
+        }
+        return count;
+    }
+    
+    private List<TreeNode> getAllDisjunctionChildren(TreeNode node){
+        List<TreeNode> children = new ArrayList<TreeNode>();
+        
+        if(node instanceof DisjunctionNode){
+            DisjunctionNode dnode = (DisjunctionNode)node;
+            children.addAll(getAllDisjunctionChildren(dnode.left));
+            children.addAll(getAllDisjunctionChildren(dnode.right));
+        } else {
+            children.add(node);
+        }
+        return children;
+    }
+    
+    private List<TreeNode> getAllConjunctionChildren(TreeNode node){
+        List<TreeNode> children = new ArrayList<TreeNode>();
+        
+        if(node instanceof ConjunctionNode){
+            ConjunctionNode cnode = (ConjunctionNode)node;
+            children.addAll(getAllConjunctionChildren(cnode.left));
+            children.addAll(getAllConjunctionChildren(cnode.right));
+        } else {
+            children.add(node);
+        }
+        return children;
+    }
+    
+    
     private double getTimeElapsed(long start, long end){
         long elapsed = end - start;
         return (elapsed/1000000000.0);
