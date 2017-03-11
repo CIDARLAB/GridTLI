@@ -265,6 +265,315 @@ public class PaperTest {
 
     }
 
+    private void createFolder(String filepath){
+        if(!Utilities.validFilepath(filepath)){
+            Utilities.makeDirectory(filepath);
+        }
+    }
+    
+    //@Test
+    public void generateBioSignalsTest_KFold(){
+        
+        String allSignalsFilepath = biosignalsfilepath + "allSignals" + Utilities.getSeparater();
+        createFolder(allSignalsFilepath);
+        String twoRBSFilepath = biosignalsfilepath + "twoRBS" + Utilities.getSeparater();
+        createFolder(twoRBSFilepath);
+        String randomAllSignalsFilepath = allSignalsFilepath + "random" + Utilities.getSeparater();
+        createFolder(randomAllSignalsFilepath);
+        String balancedAllSignalsFilepath = allSignalsFilepath + "balanced" + Utilities.getSeparater();
+        createFolder(balancedAllSignalsFilepath);
+        String strongFilepath = twoRBSFilepath + "strong" + Utilities.getSeparater();
+        createFolder(strongFilepath);
+        String weakFilepath = twoRBSFilepath + "weak" + Utilities.getSeparater();
+        createFolder(weakFilepath);
+        String randomStrongFilepath = strongFilepath + "random" + Utilities.getSeparater();
+        createFolder(randomStrongFilepath);
+        String balancedStrongFilepath = strongFilepath + "balanced" + Utilities.getSeparater();
+        createFolder(balancedStrongFilepath);
+        String randomWeakFilepath = weakFilepath + "random" + Utilities.getSeparater();
+        createFolder(randomWeakFilepath);
+        String balancedWeakFilepath = weakFilepath + "balanced" + Utilities.getSeparater();
+        createFolder(balancedWeakFilepath);
+        
+        Map<String, Map<Double, List<Signal>>> signals = readBioSignals(biosignalsfilepath);
+        Map<String, Map<Double, List<Set<Signal>>>> kFolds = new HashMap<String, Map<Double, List<Set<Signal>>>>(); 
+        Map<String, Map<Double, List<Set<Integer>>>> kFoldsIndx = new HashMap<String, Map<Double, List<Set<Integer>>>>(); 
+        List<Signal> allSignals = new ArrayList<Signal>();
+        List<Signal> weakRBS = new ArrayList<Signal>();
+        List<Signal> strongRBS = new ArrayList<Signal>();
+        
+        List<String> allSignalsInfo = new ArrayList<String>();
+        List<String> weakRBSInfo = new ArrayList<String>();
+        List<String> strongRBSInfo = new ArrayList<String>();
+        
+        //Get All data
+        for(String plasmid:signals.keySet()){
+            kFolds.put(plasmid, new HashMap<Double, List<Set<Signal>>>());
+            kFoldsIndx.put(plasmid, new HashMap());
+            List<Set<Signal>> signalKFold = new ArrayList<Set<Signal>>();
+            for(Double ahl:signals.get(plasmid).keySet()){
+                signalKFold = new ArrayList<Set<Signal>>();
+                kFolds.get(plasmid).put(ahl, new ArrayList<Set<Signal>>());
+                List<Set<Integer>> kfold = generateKSets(signals.get(plasmid).get(ahl).size());
+                kFoldsIndx.get(plasmid).put(ahl, kfold);
+                for(int i=0;i<kSize;i++){
+                    signalKFold.add(new HashSet<Signal>());
+                }
+                int count =0;
+                for(Signal s: signals.get(plasmid).get(ahl)){
+                    for(int i=0;i<kSize;i++){
+                        Set<Integer> k = kfold.get(i);
+                        if(k.contains(count)){
+                            signalKFold.get(i).add(s);
+                            break;
+                        }
+                    }
+                    allSignals.add(s);
+                    String infoLineAll = count +delimiter+ plasmid +delimiter+ ahl;
+                    allSignalsInfo.add(infoLineAll);
+                    
+                    //Strong RBS
+                    if(plasmid.equals("pL2f1433") || plasmid.equals("pL2f1434") || plasmid.equals("pL2f1435") || plasmid.equals("pL2f1436")){
+                        strongRBS.add(s);
+                        int index = strongRBS.size()-1;
+                        String infoLine = index +delimiter+ plasmid +delimiter+ ahl;
+                        strongRBSInfo.add(infoLine);
+                    } else {
+                    //Weak RBS
+                        weakRBS.add(s);
+                        int index = weakRBS.size()-1;
+                        String infoLine = index +delimiter+ plasmid +delimiter+ ahl;
+                        weakRBSInfo.add(infoLine);
+                    }
+                    count++;
+                }
+                kFolds.get(plasmid).get(ahl).addAll(signalKFold);
+            }
+        }
+        
+        List<List<Signal>> balancedSignals = new ArrayList<List<Signal>>();
+        List<List<Signal>> balancedWeak = new ArrayList<List<Signal>>();
+        List<List<Signal>> balancedStrong = new ArrayList<List<Signal>>();
+        List<List<String>> balancedInfo = new ArrayList();
+        List<List<String>> balancedWeakInfo = new ArrayList();
+        List<List<String>> balancedStrongInfo = new ArrayList();
+        
+        for(int i=0;i<kSize;i++){
+            balancedSignals.add(new ArrayList());
+            balancedWeak.add(new ArrayList());
+            balancedStrong.add(new ArrayList());
+            balancedInfo.add(new ArrayList());
+            balancedWeakInfo.add(new ArrayList());
+            balancedStrongInfo.add(new ArrayList());
+        }
+        
+        //Balanced K-fold sampling
+        for(String plasmid:signals.keySet()){
+            for(Double ahl:signals.get(plasmid).keySet()){
+                for(int i=0;i<kSize;i++){
+                    balancedSignals.get(i).addAll(kFolds.get(plasmid).get(ahl).get(i));
+                    for(Integer indx:kFoldsIndx.get(plasmid).get(ahl).get(i)){
+                        balancedInfo.get(i).add(indx+delimiter+plasmid+delimiter+ahl);
+                    }
+                    if(plasmid.equals("pL2f1433") || plasmid.equals("pL2f1434") || plasmid.equals("pL2f1435") || plasmid.equals("pL2f1436")){
+                        balancedStrong.get(i).addAll(kFolds.get(plasmid).get(ahl).get(i));
+                        for (Integer indx : kFoldsIndx.get(plasmid).get(ahl).get(i)) {
+                            balancedStrongInfo.get(i).add(indx+delimiter+plasmid+delimiter+ahl);
+                        }
+                    } else {
+                        balancedWeak.get(i).addAll(kFolds.get(plasmid).get(ahl).get(i));
+                        for (Integer indx : kFoldsIndx.get(plasmid).get(ahl).get(i)) {
+                            balancedWeakInfo.get(i).add(indx+delimiter+plasmid+delimiter+ahl);
+                        }
+                    }
+                }
+            }
+        }
+        
+        for(int i=0;i<kSize;i++){
+            
+            //balancedAllSignalsFilepath
+            String allIterationFilepath = balancedAllSignalsFilepath + i + Utilities.getSeparater();
+            createFolder(allIterationFilepath);
+            List<Signal> training = new ArrayList<Signal>();
+            List<Signal> testing = new ArrayList<Signal>();
+            List<String> trainingInfo = new ArrayList<String>();
+            List<String> testingInfo = new ArrayList<String>();
+            
+            for(int j=0;j<balancedSignals.size();j++){
+                if(i==j){
+                    testing.addAll(balancedSignals.get(j));
+                    testingInfo.addAll(balancedInfo.get(j));
+                } else {
+                    training.addAll(balancedSignals.get(j));
+                    trainingInfo.addAll(balancedInfo.get(j));
+                }
+            }
+            String allUsedPlasmidFilepath = allIterationFilepath + "training.csv";
+            String allUnusedPlasmidFilepath = allIterationFilepath + "testing.csv";
+            String allUsedInfoFilepath = allIterationFilepath + "training-info.csv";
+            String allUnusedInfoFilepath = allIterationFilepath + "testing-info.csv";
+            
+            writeSignalsToFileWithHeader(allUsedPlasmidFilepath,training,time);
+            writeSignalsToFileWithHeader(allUnusedPlasmidFilepath,testing,time);
+            Utilities.writeToFile(allUsedInfoFilepath, trainingInfo);
+            Utilities.writeToFile(allUnusedInfoFilepath, testingInfo);
+            
+            //balancedStrongFilepath
+            String strongIterationFilepath = balancedStrongFilepath + i + Utilities.getSeparater();
+            createFolder(strongIterationFilepath);
+            
+            training = new ArrayList<Signal>();
+            testing = new ArrayList<Signal>();
+            trainingInfo = new ArrayList<String>();
+            testingInfo = new ArrayList<String>();
+            
+            for(int j=0;j<balancedStrong.size();j++){
+                if(i==j){
+                    testing.addAll(balancedStrong.get(j));
+                    testingInfo.addAll(balancedStrongInfo.get(j));
+                } else {
+                    training.addAll(balancedStrong.get(j));
+                    trainingInfo.addAll(balancedStrongInfo.get(j));
+                }
+            }
+            
+            allUsedPlasmidFilepath = strongIterationFilepath + "training.csv";
+            allUnusedPlasmidFilepath = strongIterationFilepath + "testing.csv";
+            allUsedInfoFilepath = strongIterationFilepath + "training-info.csv";
+            allUnusedInfoFilepath = strongIterationFilepath + "testing-info.csv";
+            
+            writeSignalsToFileWithHeader(allUsedPlasmidFilepath,training,time);
+            writeSignalsToFileWithHeader(allUnusedPlasmidFilepath,testing,time);
+            Utilities.writeToFile(allUsedInfoFilepath, trainingInfo);
+            Utilities.writeToFile(allUnusedInfoFilepath, testingInfo);
+            
+            //balancedWeakFilepath
+            String weakIterationFilepath = balancedWeakFilepath + i + Utilities.getSeparater();
+            createFolder(weakIterationFilepath);
+            
+            training = new ArrayList<Signal>();
+            testing = new ArrayList<Signal>();
+            trainingInfo = new ArrayList<String>();
+            testingInfo = new ArrayList<String>();
+            
+            for(int j=0;j<balancedWeak.size();j++){
+                if(i==j){
+                    testing.addAll(balancedWeak.get(j));
+                    testingInfo.addAll(balancedWeakInfo.get(j));
+                } else {
+                    training.addAll(balancedWeak.get(j));
+                    trainingInfo.addAll(balancedWeakInfo.get(j));
+                }
+            }
+            
+            allUsedPlasmidFilepath = weakIterationFilepath + "training.csv";
+            allUnusedPlasmidFilepath = weakIterationFilepath + "testing.csv";
+            allUsedInfoFilepath = weakIterationFilepath + "training-info.csv";
+            allUnusedInfoFilepath = weakIterationFilepath + "testing-info.csv";
+            
+            writeSignalsToFileWithHeader(allUsedPlasmidFilepath,training,time);
+            writeSignalsToFileWithHeader(allUnusedPlasmidFilepath,testing,time);
+            Utilities.writeToFile(allUsedInfoFilepath, trainingInfo);
+            Utilities.writeToFile(allUnusedInfoFilepath, testingInfo);
+            
+        }
+        
+        //Random k-fold sampling
+        List<Set<Integer>> allK = generateKSets(allSignals.size());
+        List<Set<Integer>> strongK = generateKSets(strongRBS.size());
+        List<Set<Integer>> weakK = generateKSets(weakRBS.size());
+        
+        for(int i=0;i<kSize;i++){
+            String allIterationFilepath = randomAllSignalsFilepath + i + Utilities.getSeparater();
+            createFolder(allIterationFilepath);
+            String strongIterationFilepath = randomStrongFilepath + i + Utilities.getSeparater();
+            createFolder(strongIterationFilepath);
+            String weakIterationFilepath = randomWeakFilepath + i + Utilities.getSeparater();
+            createFolder(weakIterationFilepath);
+            
+            
+            List<Signal> allUsed = new ArrayList<Signal>();
+            List<Signal> allUnused = new ArrayList<Signal>();
+            List<String> allUsedInfo = new ArrayList<String>();
+            List<String> allUnusedInfo = new ArrayList<String>();
+            
+            String allUsedPlasmidFilepath = allIterationFilepath + "training.csv";
+            String allUnusedPlasmidFilepath = allIterationFilepath + "testing.csv";
+            String allUsedInfoFilepath = allIterationFilepath + "training-info.csv";
+            String allUnusedInfoFilepath = allIterationFilepath + "testing-info.csv";
+            
+            for(int j=0;j<allSignals.size();j++){
+                if(allK.get(i).contains(j)){
+                    allUnused.add(allSignals.get(j));
+                    allUnusedInfo.add(allSignalsInfo.get(j));
+                } else {
+                    allUsed.add(allSignals.get(j));
+                    allUsedInfo.add(allSignalsInfo.get(j));
+                }
+            }
+            
+            writeSignalsToFileWithHeader(allUsedPlasmidFilepath,allUsed,time);
+            writeSignalsToFileWithHeader(allUnusedPlasmidFilepath,allUnused,time);
+            Utilities.writeToFile(allUsedInfoFilepath, allUsedInfo);
+            Utilities.writeToFile(allUnusedInfoFilepath, allUnusedInfo);
+            
+            
+            //Strong
+            allUsed = new ArrayList<Signal>();
+            allUnused = new ArrayList<Signal>();
+            allUsedInfo = new ArrayList<String>();
+            allUnusedInfo = new ArrayList<String>();
+            for(int j=0;j<strongRBS.size();j++){
+                if(strongK.get(i).contains(j)){
+                    allUnused.add(strongRBS.get(j));
+                    allUnusedInfo.add(strongRBSInfo.get(j));
+                } else {
+                    allUsed.add(strongRBS.get(j));
+                    allUsedInfo.add(strongRBSInfo.get(j));
+                }
+            }
+            
+            allUsedPlasmidFilepath = strongIterationFilepath + "training.csv";
+            allUnusedPlasmidFilepath = strongIterationFilepath + "testing.csv";
+            allUsedInfoFilepath = strongIterationFilepath + "training-info.csv";
+            allUnusedInfoFilepath = strongIterationFilepath + "testing-info.csv";
+            
+            writeSignalsToFileWithHeader(allUsedPlasmidFilepath,allUsed,time);
+            writeSignalsToFileWithHeader(allUnusedPlasmidFilepath,allUnused,time);
+            Utilities.writeToFile(allUsedInfoFilepath, allUsedInfo);
+            Utilities.writeToFile(allUnusedInfoFilepath, allUnusedInfo);
+            
+            
+            //Weak
+            allUsed = new ArrayList<Signal>();
+            allUnused = new ArrayList<Signal>();
+            allUsedInfo = new ArrayList<String>();
+            allUnusedInfo = new ArrayList<String>();
+            for(int j=0;j<weakRBS.size();j++){
+                if(weakK.get(i).contains(j)){
+                    allUnused.add(weakRBS.get(j));
+                    allUnusedInfo.add(weakRBSInfo.get(j));
+                } else {
+                    allUsed.add(weakRBS.get(j));
+                    allUsedInfo.add(weakRBSInfo.get(j));
+                }
+            }
+            
+            allUsedPlasmidFilepath = weakIterationFilepath + "training.csv";
+            allUnusedPlasmidFilepath = weakIterationFilepath + "testing.csv";
+            allUsedInfoFilepath = weakIterationFilepath + "training-info.csv";
+            allUnusedInfoFilepath = weakIterationFilepath + "testing-info.csv";
+            
+            writeSignalsToFileWithHeader(allUsedPlasmidFilepath,allUsed,time);
+            writeSignalsToFileWithHeader(allUnusedPlasmidFilepath,allUnused,time);
+            Utilities.writeToFile(allUsedInfoFilepath, allUsedInfo);
+            Utilities.writeToFile(allUnusedInfoFilepath, allUnusedInfo);
+        }
+        
+        
+    }
+    
     //@Test
     public void generateBioSignalsTest() {
         Map<String, Map<Double, List<Signal>>> signals = readBioSignals(biosignalsfilepath);
@@ -392,7 +701,12 @@ public class PaperTest {
                             //System.out.println(k + "," + l);
                             continue;
                         }
-                        points.add(new Point(time.get(l), "t", Double.valueOf(pieces[l + (k * time.size()) + 1]), "x"));
+                        if(Double.valueOf(pieces[l + (k * time.size()) + 1]) < 0){
+                            points.add(new Point(time.get(l), "t", 0, "x"));
+                        } else {
+                            points.add(new Point(time.get(l), "t", Double.valueOf(pieces[l + (k * time.size()) + 1]), "x"));
+                        }
+                        
                     }
                     signals.get(plasmidName).get(lasAHLconc.get(k)).add(new Signal(points));
                 }
@@ -401,7 +715,7 @@ public class PaperTest {
         return signals;
     }
     
-    @Test
+    //@Test
     public void testFuelControl(){
         testFuelControl(Mode.KFold,1);
     }
@@ -483,11 +797,25 @@ public class PaperTest {
         walkTransformFuel(path,header);
     }
     
-    //@Test
-    public void testBioSignals() {
-        String root = biosignalsfilepath + "separatedSignals" + Utilities.getSeparater();
+    @Test
+    public void testBioSignals(){
+        String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() ;
+        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
+        String balancedWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater();
+        String randomWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
+        String balancedStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater();
+        String randomStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
+        testBioSignals(balancedAll,1,"all_balanced");
+        testBioSignals(randomAll,1,"all_random");
+        testBioSignals(balancedWeak,1,"weak_balanced");
+        testBioSignals(randomWeak,1,"weak_random");
+        testBioSignals(balancedStrong,1,"strong_balanced");
+        testBioSignals(randomStrong,1,"strong_random");
+    }
+    
+    public void testBioSignals(String root, int run, String jobName) {
         System.out.println("Biosignals test");
-        String headerLine = "plasmid" +delimiter+ 
+        String headerLine = 
                 "iterFolder" +delimiter+ 
                 "trainSize" +delimiter+ 
                 "mcrTrain" +delimiter+ 
@@ -519,11 +847,12 @@ public class PaperTest {
                     String cplot = cplotdot.replaceAll("\\.", "_");
 
                     String plotsuffix = xplot + "-" + yplot + "-" + cplot;
-                    String resultRoot = biosignalsfilepath + plotsuffix;
-                    if (!Utilities.isDirectory(resultRoot)) {
-                        Utilities.makeDirectory(resultRoot);
-                    }
-                    String resultFilepath = resultRoot + Utilities.getSeparater() + "result.csv";
+                    String runRoot = root + "run"+run + Utilities.getSeparater();
+                    createFolder(runRoot);
+                    String resultRoot = runRoot + plotsuffix;
+                    createFolder(resultRoot);
+                    
+                    String resultFilepath = resultRoot + Utilities.getSeparater() + jobName+"_result.csv";
                     Utilities.writeToFile(resultFilepath, filelines);
                 }
             }
@@ -940,6 +1269,110 @@ public class PaperTest {
         boolean analysis = false;
         List<Signal> training = new ArrayList<Signal>();
         List<Signal> testing = new ArrayList<Signal>();
+        int sampleSize = 0;
+        int iteration = 0;
+        for (File f : list) {
+            if (f.isDirectory()) {
+                walkBioSignals(f.getAbsolutePath(), resultsRoot, xthreshold, ythreshold, cthreshold, filelines);
+            } // Reached all Files
+            else {
+                String pathPieces[] = filepathPieces(f.getAbsolutePath(),resultsRoot);
+                if (f.getName().equals("training.csv")) {
+                    
+                    //sampleSize = Integer.valueOf(pathPieces[pathPieces.length - 3].trim());
+                    for(String p:pathPieces){
+                        System.out.println(p);
+                    }
+                    iteration = Integer.valueOf(pathPieces[pathPieces.length - 2].trim());
+                    
+                    training = Utilities.getRowSignals(f.getAbsolutePath(), true);
+                    analysis = true;
+                } else if(f.getName().equals("testing.csv")){
+                    testing = Utilities.getRowSignals(f.getAbsolutePath(), true);
+                }
+            }
+        }
+        if(analysis){
+            
+            String xplotdot = "x" + xthreshold;
+            String xplot = xplotdot.replaceAll("\\.", "_");
+            String yplotdot = "y" + ythreshold;
+            String yplot = yplotdot.replaceAll("\\.", "_");
+            String cplotdot = "c" + cthreshold;
+            String cplot = cplotdot.replaceAll("\\.", "_");
+           
+            long tstart = System.nanoTime();
+            Grid g = new Grid(training,xthreshold,ythreshold);
+            TreeNode stl = TemporalLogicInference.getSTL(g, cthreshold);
+            long tend = System.nanoTime();
+            double timeElapsed = getTimeElapsed(tstart,tend);
+            
+
+            int count=0;
+            
+            List<Integer> training_robust = new ArrayList<Integer>();
+            List<Integer> training_fail = new ArrayList<Integer>();
+            List<Integer> testing_robust = new ArrayList<Integer>();
+            List<Integer> testing_fail = new ArrayList<Integer>();
+            
+            count =0;
+            for(Signal s:training){
+                double r = Validation.getRobustness(stl, s);
+                if(r < 0){
+                    training_fail.add(count);
+                } else {
+                    training_robust.add(count);
+                }
+                count++;
+            }
+            count =0;
+            for(Signal s:testing){
+                double r = Validation.getRobustness(stl, s);
+                if(r < 0){
+                    testing_fail.add(count);
+                } else {
+                    testing_robust.add(count);
+                }
+                count++;
+            }
+
+            double fnrTrain = ((double)training_fail.size()) / ((double) training.size());
+            double mcrTrain = fnrTrain;
+            
+            double fnrTest = ((double)testing_fail.size()) / ((double) testing.size());
+            double mcrTest = fnrTest;
+            
+            
+
+            String line = 
+                    iteration +delimiter+ 
+                    training.size() +delimiter+ 
+                    mcrTrain +delimiter+
+                    fnrTrain +delimiter+
+                    testing.size() +delimiter+ 
+                    mcrTest +delimiter+
+                    fnrTest +delimiter+
+                    timeElapsed +delimiter+ 
+                    xthreshold +delimiter+ 
+                    ythreshold +delimiter+ 
+                    cthreshold;
+            
+            filelines.add(line);
+        }
+    }
+    
+    
+    private void walkBioSignals_old(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> filelines) {
+        File root = new File(path);
+        File[] list = root.listFiles();
+
+        if (list == null) {
+            return;
+        }
+        
+        boolean analysis = false;
+        List<Signal> training = new ArrayList<Signal>();
+        List<Signal> testing = new ArrayList<Signal>();
         String plasmidName = "";
         int sampleSize = 0;
         int iteration = 0;
@@ -1037,6 +1470,7 @@ public class PaperTest {
             filelines.add(line);
         }
     }
+    
     
     public void walkTransformFuel(String path, String header){
         File root = new File(path);
