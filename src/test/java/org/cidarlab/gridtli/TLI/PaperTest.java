@@ -800,7 +800,7 @@ public class PaperTest {
         walkTransformFuel(path,header);
     }
     
-    @Test
+    //@Test
     public void testBioSignals(){
         String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() ;
         String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
@@ -932,12 +932,27 @@ public class PaperTest {
         Utilities.writeToFile(filepath, finalLines);
     }
     
-    //@Test
+    @Test
     public void testConsolidateBioResults(){
-        String path = Utilities.getResourcesFilepath() + "bioSignals" + Utilities.getSeparater()+ "separatedSignals" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String balancedWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String randomWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String balancedStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String randomStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        testConsolidateBioResults(balancedAll);
+        testConsolidateBioResults(randomAll);
+        testConsolidateBioResults(balancedWeak);
+        testConsolidateBioResults(randomWeak);
+        testConsolidateBioResults(balancedStrong);
+        testConsolidateBioResults(randomStrong);
+        
+    }
+    
+    public void testConsolidateBioResults(String path){
         List<String> finalLines = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
-        String headerLine = "plasmid" +delimiter+ 
+        String headerLine =  
                 "iterFolder" +delimiter+ 
                 "trainSize" +delimiter+ 
                 "mcrTrain" +delimiter+ 
@@ -1284,9 +1299,6 @@ public class PaperTest {
                 if (f.getName().equals("training.csv")) {
                     
                     //sampleSize = Integer.valueOf(pathPieces[pathPieces.length - 3].trim());
-                    for(String p:pathPieces){
-                        System.out.println(p);
-                    }
                     iteration = Integer.valueOf(pathPieces[pathPieces.length - 2].trim());
                     
                     training = Utilities.getRowSignals(f.getAbsolutePath(), true);
