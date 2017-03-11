@@ -829,7 +829,9 @@ public class PaperTest {
                 "runtime" +delimiter+ 
                 "t_t" +delimiter+ 
                 "x_t" +delimiter+ 
-                "c_t";
+                "c_t" + delimiter + //cthreshold
+                "primitiveCount" //Number of primitives
+                ;
         
         
         for(int i=0;i<6;i++){
@@ -963,7 +965,9 @@ public class PaperTest {
                 "runtime" +delimiter+ 
                 "t_t" +delimiter+ 
                 "x_t" +delimiter+ 
-                "c_t";
+                "c_t" + delimiter + //cthreshold
+                "primitiveCount" //Number of primitives
+                ;
         finalLines.add(headerLine);
         walkResults(path,lines);
         finalLines.addAll(lines);
@@ -1256,6 +1260,7 @@ public class PaperTest {
             
             int trainingSize = (neg_training_robust.size() + pos_training_robust.size() + neg_training_fail.size() + pos_training_fail.size());
             int testingSize = (neg_testing_robust.size() + pos_testing_robust.size() + neg_testing_fail.size() + pos_testing_fail.size());
+            int primitiveCount = (getPrimitiveCount(stlEgo) + getPrimitiveCount(stlMap));
             String line = 
                     sampleSize +delimiter + //sizeFolder
                     iteration +delimiter+ //iterFolder
@@ -1270,7 +1275,8 @@ public class PaperTest {
                     runtime +delimiter+ //Runtime
                     xthreshold +delimiter+ //xthreshold
                     ythreshold +delimiter+ //ythreshold
-                    cthreshold  //cthreshold
+                    cthreshold +delimiter+ //cthreshold
+                    primitiveCount //Primitive Count
                     ;
             fileLines.add(line);
         }
@@ -1358,7 +1364,7 @@ public class PaperTest {
             double fnrTest = ((double)testing_fail.size()) / ((double) testing.size());
             double mcrTest = fnrTest;
             
-            
+            int primitiveCount = getPrimitiveCount(stl);
 
             String line = 
                     iteration +delimiter+ 
@@ -1371,7 +1377,9 @@ public class PaperTest {
                     timeElapsed +delimiter+ 
                     xthreshold +delimiter+ 
                     ythreshold +delimiter+ 
-                    cthreshold;
+                    cthreshold +delimiter+
+                    primitiveCount
+                    ;
             
             filelines.add(line);
         }
