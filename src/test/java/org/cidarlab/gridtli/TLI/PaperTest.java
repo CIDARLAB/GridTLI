@@ -717,9 +717,11 @@ public class PaperTest {
         return signals;
     }
     
-    //@Test
+    @Test
     public void testFuelControl(){
         testFuelControl(Mode.KFold,1);
+        testConsolidateFuelResults();
+        System.out.println("FC done");
     }
     
     
@@ -814,6 +816,9 @@ public class PaperTest {
         testBioSignals(randomWeak,1,"weak_random");
         testBioSignals(balancedStrong,1,"strong_balanced");
         testBioSignals(randomStrong,1,"strong_random");
+    
+        testConsolidateBioResults();
+        System.out.println("Biosignals done");
     }
     
     public void testBioSignals(String root, int run, String jobName) {
@@ -906,7 +911,7 @@ public class PaperTest {
     
     //@Test
     public void testConsolidateFuelResults(){
-        String path = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+        String path = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater() + "KFold_Run1" + Utilities.getSeparater();
         List<String> finalLines = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
         String headerLine = 
@@ -934,7 +939,7 @@ public class PaperTest {
         Utilities.writeToFile(filepath, finalLines);
     }
     
-    @Test
+    //@Test
     public void testConsolidateBioResults(){
         String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
         String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
@@ -1026,9 +1031,13 @@ public class PaperTest {
                 walkFuelControl(f.getAbsolutePath(), resultsRoot, xthreshold, ythreshold, cthreshold, fileLines);
             } // Reached all Files
             else {
+                if(f.getName().contains("DS_Store")){
+                    continue; //Fuck you mac.... 
+                }
                 analysis = true;
+                
                 String pieces[] = filepathPieces(f.getAbsolutePath(), resultsRoot);
-
+                
                 sampleSize = Integer.valueOf(pieces[pieces.length - 3].trim());
                 
 
