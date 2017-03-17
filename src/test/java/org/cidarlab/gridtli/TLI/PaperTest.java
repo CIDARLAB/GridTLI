@@ -829,11 +829,12 @@ public class PaperTest {
                 "trainSize" +delimiter+ 
                 "mcrTrain" +delimiter+ 
                 "fnrTrain" +delimiter+ 
-                "avgRTrain" +delimiter+ 
+                "avgRTPtrain" +delimiter+ 
                 "testSize" +delimiter+ 
                 "mcrTest" +delimiter+ 
                 "fnrTest" +delimiter+ 
-                "avgRTest" +delimiter+
+                "avgRTPtest" +delimiter+
+                "avgRFNtest" +delimiter+
                 "runtime" +delimiter+ 
                 "t_t" +delimiter+ 
                 "x_t" +delimiter+ 
@@ -968,11 +969,12 @@ public class PaperTest {
                 "trainSize" +delimiter+ 
                 "mcrTrain" +delimiter+ 
                 "fnrTrain" +delimiter+ 
-                "avgRTrain" +delimiter+ 
+                "avgRTPtrain" +delimiter+ 
                 "testSize" +delimiter+ 
                 "mcrTest" +delimiter+ 
                 "fnrTest" +delimiter+ 
-                "avgRTest" +delimiter+
+                "avgRTPtest" +delimiter+
+                "avgRFNtest" +delimiter+
                 "runtime" +delimiter+ 
                 "t_t" +delimiter+ 
                 "x_t" +delimiter+ 
@@ -1354,8 +1356,9 @@ public class PaperTest {
             List<Integer> testing_fail = new ArrayList<Integer>();
             
             count =0;
-            double trainingRobustnessTot = 0.0;
-            double testingRobustnessTot = 0.0;
+            double trainingTruePosRobustnessTot = 0.0;
+            double testingFalseNegRobustnessTot = 0.0;
+            double testingTruePosRobustnessTot = 0.0;
             
             for(Signal s:training){
                 double r = Validation.getRobustness(stl, s);
@@ -1363,8 +1366,8 @@ public class PaperTest {
                     training_fail.add(count);
                 } else {
                     training_robust.add(count);
+                    trainingTruePosRobustnessTot+= r;
                 }
-                trainingRobustnessTot+= r;
                 count++;
             }
             count =0;
@@ -1372,10 +1375,11 @@ public class PaperTest {
                 double r = Validation.getRobustness(stl, s);
                 if(r < 0){
                     testing_fail.add(count);
+                    testingFalseNegRobustnessTot+= r;
                 } else {
                     testing_robust.add(count);
+                    testingTruePosRobustnessTot+= r;
                 }
-                testingRobustnessTot+=r;
                 count++;
             }
 
@@ -1385,8 +1389,12 @@ public class PaperTest {
             double fnrTest = ((double)testing_fail.size()) / ((double) testing.size());
             double mcrTest = fnrTest;
             
-            double avgRTrain = trainingRobustnessTot/ ((double) training.size());
-            double avgRTest = testingRobustnessTot/ ((double) testing.size());
+            double avgRTPtrain = training_robust.size() <= 0 ? 0 :
+                    trainingTruePosRobustnessTot / ((double)training_robust.size());
+            double avgRFNtest = testing_fail.size() <= 0 ? 0 :
+                    testingFalseNegRobustnessTot / ((double)testing_fail.size());
+            double avgRTPtest = testing_robust.size() <= 0 ? 0 :
+                    testingTruePosRobustnessTot / ((double)testing_robust.size());
             
             int primitiveCount = getPrimitiveCount(stl);
             int clusterCount = getClusterCount(stl);
@@ -1414,11 +1422,12 @@ public class PaperTest {
                     training.size() +delimiter+ 
                     mcrTrain +delimiter+
                     fnrTrain +delimiter+
-                    avgRTrain +delimiter+
+                    avgRTPtrain +delimiter+
                     testing.size() +delimiter+ 
                     mcrTest +delimiter+
                     fnrTest +delimiter+
-                    avgRTest +delimiter+
+                    avgRTPtest +delimiter+
+                    avgRFNtest +delimiter+
                     timeElapsed +delimiter+ 
                     xthreshold +delimiter+ 
                     ythreshold +delimiter+ 
