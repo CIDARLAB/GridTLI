@@ -717,7 +717,7 @@ public class PaperTest {
         return signals;
     }
     
-    @Test
+    //@Test
     public void testFuelControl(){
         testFuelControl(Mode.KFold,1);
         testConsolidateFuelResults();
@@ -802,7 +802,7 @@ public class PaperTest {
         walkTransformFuel(path,header);
     }
     
-    //@Test
+    @Test
     public void testBioSignals(){
         String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() ;
         String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
@@ -810,14 +810,15 @@ public class PaperTest {
         String randomWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
         String balancedStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater();
         String randomStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
-        testBioSignals(balancedAll,1,"all_balanced");
-        testBioSignals(randomAll,1,"all_random");
-        testBioSignals(balancedWeak,1,"weak_balanced");
-        testBioSignals(randomWeak,1,"weak_random");
-        testBioSignals(balancedStrong,1,"strong_balanced");
-        testBioSignals(randomStrong,1,"strong_random");
+        int run = 2;
+        testBioSignals(balancedAll,run,"all_balanced");
+        testBioSignals(randomAll,run,"all_random");
+        testBioSignals(balancedWeak,run,"weak_balanced");
+        testBioSignals(randomWeak,run,"weak_random");
+        testBioSignals(balancedStrong,run,"strong_balanced");
+        testBioSignals(randomStrong,run,"strong_random");
     
-        testConsolidateBioResults();
+        testConsolidateBioResults(run);
         System.out.println("Biosignals done");
     }
     
@@ -943,13 +944,13 @@ public class PaperTest {
     }
     
     //@Test
-    public void testConsolidateBioResults(){
-        String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
-        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
-        String balancedWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
-        String randomWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
-        String balancedStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
-        String randomStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run1" + Utilities.getSeparater();
+    public void testConsolidateBioResults(int run){
+        String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() + "run" + run + Utilities.getSeparater();
+        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run" + run + Utilities.getSeparater();
+        String balancedWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater() + "run" + run + Utilities.getSeparater();
+        String randomWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run" + run + Utilities.getSeparater();
+        String balancedStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater() + "run" + run + Utilities.getSeparater();
+        String randomStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "random" + Utilities.getSeparater() + "run" + run + Utilities.getSeparater();
         testConsolidateBioResults(balancedAll);
         testConsolidateBioResults(randomAll);
         testConsolidateBioResults(balancedWeak);
