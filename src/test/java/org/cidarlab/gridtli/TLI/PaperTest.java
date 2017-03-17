@@ -828,14 +828,17 @@ public class PaperTest {
                 "trainSize" +delimiter+ 
                 "mcrTrain" +delimiter+ 
                 "fnrTrain" +delimiter+ 
+                "avgRTrain" +delimiter+ 
                 "testSize" +delimiter+ 
                 "mcrTest" +delimiter+ 
                 "fnrTest" +delimiter+ 
+                "avgRTest" +delimiter+
                 "runtime" +delimiter+ 
                 "t_t" +delimiter+ 
                 "x_t" +delimiter+ 
-                "c_t" + delimiter + //cthreshold
-                "primitiveCount" //Number of primitives
+                "c_t" +delimiter+ //cthreshold
+                "primitiveCount" +delimiter+ //Number of primitives
+                "clusterCount"
                 ;
         
         
@@ -959,19 +962,22 @@ public class PaperTest {
     public void testConsolidateBioResults(String path){
         List<String> finalLines = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
-        String headerLine =  
+        String headerLine = 
                 "iterFolder" +delimiter+ 
                 "trainSize" +delimiter+ 
                 "mcrTrain" +delimiter+ 
                 "fnrTrain" +delimiter+ 
+                "avgRTrain" +delimiter+ 
                 "testSize" +delimiter+ 
                 "mcrTest" +delimiter+ 
                 "fnrTest" +delimiter+ 
+                "avgRTest" +delimiter+
                 "runtime" +delimiter+ 
                 "t_t" +delimiter+ 
                 "x_t" +delimiter+ 
-                "c_t" + delimiter + //cthreshold
-                "primitiveCount" //Number of primitives
+                "c_t" +delimiter+ //cthreshold
+                "primitiveCount" +delimiter+ //Number of primitives
+                "clusterCount"
                 ;
         finalLines.add(headerLine);
         walkResults(path,lines);
@@ -1347,6 +1353,9 @@ public class PaperTest {
             List<Integer> testing_fail = new ArrayList<Integer>();
             
             count =0;
+            double trainingRobustnessTot = 0.0;
+            double testingRobustnessTot = 0.0;
+            
             for(Signal s:training){
                 double r = Validation.getRobustness(stl, s);
                 if(r < 0){
@@ -1354,6 +1363,7 @@ public class PaperTest {
                 } else {
                     training_robust.add(count);
                 }
+                trainingRobustnessTot+= r;
                 count++;
             }
             count =0;
@@ -1364,6 +1374,7 @@ public class PaperTest {
                 } else {
                     testing_robust.add(count);
                 }
+                testingRobustnessTot+=r;
                 count++;
             }
 
@@ -1373,21 +1384,46 @@ public class PaperTest {
             double fnrTest = ((double)testing_fail.size()) / ((double) testing.size());
             double mcrTest = fnrTest;
             
+            double avgRTrain = trainingRobustnessTot/ ((double) training.size());
+            double avgRTest = testingRobustnessTot/ ((double) testing.size());
+            
             int primitiveCount = getPrimitiveCount(stl);
-
+            int clusterCount = getClusterCount(stl);
+            
+//            String headerLine = 
+//                "iterFolder" +delimiter+ 
+//                "trainSize" +delimiter+ 
+//                "mcrTrain" +delimiter+ 
+//                "fnrTrain" +delimiter+ 
+//                "avgRTrain" +delimiter+ 
+//                "testSize" +delimiter+ 
+//                "mcrTest" +delimiter+ 
+//                "fnrTest" +delimiter+ 
+//                "avgRTest" +delimiter+
+//                "runtime" +delimiter+ 
+//                "t_t" +delimiter+ 
+//                "x_t" +delimiter+ 
+//                "c_t" +delimiter+ //cthreshold
+//                "primitiveCount" +delimiter+ //Number of primitives
+//                "clusterCount"
+//                ;
+            
             String line = 
                     iteration +delimiter+ 
                     training.size() +delimiter+ 
                     mcrTrain +delimiter+
                     fnrTrain +delimiter+
+                    avgRTrain +delimiter+
                     testing.size() +delimiter+ 
                     mcrTest +delimiter+
                     fnrTest +delimiter+
+                    avgRTest +delimiter+
                     timeElapsed +delimiter+ 
                     xthreshold +delimiter+ 
                     ythreshold +delimiter+ 
                     cthreshold +delimiter+
-                    primitiveCount
+                    primitiveCount +delimiter+
+                    clusterCount
                     ;
             
             filelines.add(line);
@@ -1532,6 +1568,11 @@ public class PaperTest {
     //</editor-fold>
     
     //<editor-fold desc="Helper Functions" defaultstate="collapsed">
+    
+    
+    private int getClusterCount(TreeNode node){
+        return getAllDisjunctionChildren(node).size();
+    }
     
     private int getPrimitiveCount(TreeNode node){
         int count = 0;
