@@ -843,13 +843,31 @@ public class PaperTest {
                 "clusterCount"
                 ;
         
+        double xmax = 0;
+        double tmax = 0;
         
-        for(int i=0;i<6;i++){
-            for(int j=0;j<3;j++){
-                for (int k = 0; k < 4; k++) {
-                    double xthreshold = getBiot(i);
-                    double ythreshold = getBiox(j);
-                    double cthreshold = getBioc(k);
+        double x_inc = 0.05 * xmax;
+        double t_inc = 0.05 * tmax;
+        
+        double x_lim = xmax/2;
+        double t_lim = tmax/2;
+        
+        
+        for(double i=0;i<x_lim;i+=x_inc){
+            for(double j=0;j<t_lim;j+=t_inc){
+                for (double k = 0; k < x_lim; k+=x_inc) {
+                    double xthreshold = i;
+                    if(i==0){
+                        xthreshold = 0.01 * xmax; 
+                    }
+                    double ythreshold = j;
+                    if(j==0){
+                        ythreshold = 0.01 * tmax;
+                    }
+                    double cthreshold = k;
+                    if(k==0){
+                        cthreshold = 0.01 * xmax;
+                    }
                     List<String> filelines = new ArrayList<String>();
                     filelines.add(headerLine);
                     walkBioSignals(root, root, xthreshold, ythreshold, cthreshold, filelines);
