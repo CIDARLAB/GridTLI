@@ -719,11 +719,15 @@ public class PaperTest {
     
     //@Test
     public void testFuelControl(){
-        testFuelControl(Mode.KFold,1);
-        testConsolidateFuelResults();
+        int run = 3;
+        testFuelControl(Mode.KFold,run);
+        testConsolidateFuelResults(Mode.KFold, run);
         System.out.println("FC done");
     }
     
+    private double getThresholdValue(double range, double perc, int it){
+        return (it * (perc*(range)));
+    }
     
     public void testFuelControl(Mode mode, int run) {
         System.out.println("Fuel Control Data Set!");
@@ -736,32 +740,58 @@ public class PaperTest {
                     "mcrTrain" +delimiter+ //training MCR
                     "fprTrain" +delimiter+ //training FPR
                     "fnrTrain" +delimiter+ //training FNR
+                    "tpTrain" +delimiter+ // True Positive Training
+                    "fnTrain" +delimiter+ // False Negative Training
+                    "fpTrain" +delimiter+ // False Positive Training 
+                    "tnTrain" +delimiter+ // True Negative Training
                     "testSize" +delimiter+ //testSize (used in PosNeg TLI)
                     "mcrTest" +delimiter+ //testing MCR
                     "fprTest" +delimiter+ //testing FPR
                     "fnrTest" +delimiter+ //testing FNR
+                    "tpTest" +delimiter+ // True Positive Testing
+                    "fnTest" +delimiter+ // False Negative Testing
+                    "fpTest" +delimiter+ // False Positive Testing 
+                    "tnTest" +delimiter+ // True Negative Testing
                     "runtime" +delimiter+ //Runtime
                     "t_t" +delimiter+ //xthreshold
-                    "x_t" +delimiter+ //ythreshold
-                    "c_t" +delimiter+ //cthreshold
+                    "x_t_EGO" +delimiter+ //ythreshold
+                    "c_t_EGO" +delimiter+ //cthreshold
+                    "x_t_MAP" +delimiter+ //ythreshold
+                    "c_t_MAP" +delimiter+ //cthreshold
                     "primitiveCount" //Number of primitives
                     ;
         
-        for(int t=0;t<6;t++){
-            for(int x=0;x<3;x++){
-                for(int c=0;c<4;c++){
-                    double xthreshold = getFuelt(t); //t
-                    double ythreshold = getFuelx(x); //x
-                    double cthreshold = getFuelc(c); //c
-
-                    String xplotdot = "x" + xthreshold;
+        double tmax = 59.7;
+        
+        double xmax_MAP = 1.0058;
+        double xmin_MAP = 0.2985;
+        
+        double xmax_EGO = 1.1095;
+        double xmin_EGO = 0.0071;
+        
+        double x_range_EGO = xmax_EGO - xmin_EGO;
+        double x_range_MAP = xmax_MAP - xmin_MAP;
+        
+        double inc = 0.05;
+        int steps = 10;
+        
+        for(int i = 1; i <= steps; i ++){
+            for(int j = 1; j <= steps; j ++){
+                System.out.format("i = %d, j = %d%n", i, j);
+                for (int k = 0; k <= steps; k++) {
+                    double x_t_MAP = getThresholdValue(x_range_MAP,inc,i);
+                    double x_t_EGO = getThresholdValue(x_range_EGO,inc,i);
+                    double t_t = getThresholdValue(tmax,inc,j);
+                    double c_t_MAP = getThresholdValue(x_range_MAP,inc,k);
+                    double c_t_EGO = getThresholdValue(x_range_EGO,inc,k);
+                    String xplotdot = "x" + x_t_EGO;
                     String xplot = xplotdot.replaceAll("\\.", "_");
-                    String yplotdot = "y" + ythreshold;
+                    String yplotdot = "t" + t_t;
                     String yplot = yplotdot.replaceAll("\\.", "_");
-                    String cplotdot = "c" + cthreshold;
+                    String cplotdot = "c" + c_t_EGO;
                     String cplot = cplotdot.replaceAll("\\.", "_");
 
-                    String plotsuffix = xplot + "-" + yplot + "-" + cplot;
+                    String plotsuffix = yplot + "-" + xplot + "-" + cplot;
                     String resultRun = fuelControlDatafilepath + (mode.toString() + "_Run" + run) + Utilities.getSeparater();
                     if (!Utilities.isDirectory(resultRun)) {
                         Utilities.makeDirectory(resultRun);
@@ -772,7 +802,7 @@ public class PaperTest {
                     }
                     List<String> fileLines = new ArrayList<String>();
                     fileLines.add(headerLine);
-                    walkFuelControl(root, root, xthreshold, ythreshold, cthreshold, fileLines);
+                    walkFuelControl(root, root, t_t, x_t_EGO, x_t_MAP, c_t_EGO, c_t_MAP, fileLines);
 
                     String resultsFilepath = resultRoot + Utilities.getSeparater() + "result.csv";
                     Utilities.writeToFile(resultsFilepath, fileLines);
@@ -846,48 +876,36 @@ public class PaperTest {
         double xmax = 3687;
         double tmax = 6.9;
         
-        double x_inc = 0.05 * xmax;
-        double t_inc = 0.05 * tmax;
+        double inc = 0.05;
+        int steps = 10;
         
-        double x_lim = xmax/2;
-        double t_lim = tmax/2;
+        //double x_lim = xmax/2;
+        //double t_lim = tmax/2;
         
-        
-        for(double i = 0; i <= x_lim; i += x_inc){
-            for(double j = 0; j <= t_lim; j += t_inc){
-                for (double k = -x_inc; k <= x_lim; k += x_inc) {
-                    double xthreshold = i;
-                    if(i==0){
-                        xthreshold = 0.01 * xmax; 
-                    }
-                    double ythreshold = j;
-                    if(j==0){
-                        ythreshold = 0.01 * tmax;
-                    }
-                    double cthreshold = k;
-                    if(k < 0){
-                        cthreshold = 0.005 * xmax;
-                    }
-                    else if(k==0){
-                        cthreshold = 0.01 * xmax;
-                    }
-                    System.out.format("(%10.4f,%10.4f,%10.4f)%n", xthreshold, ythreshold, cthreshold);
+        for(int i = 1; i <= steps; i ++){
+            for(int j = 1; j <= steps; j ++){
+                System.out.format("i = %d, j = %d%n", i, j);
+                for (int k = 0; k <= steps; k++) {
+                    double x_t = getThresholdValue(xmax,inc,i);
+                    double t_t = getThresholdValue(tmax,inc,j);
+                    double c_t = getThresholdValue(xmax,inc,k);
                     List<String> filelines = new ArrayList<String>();
                     filelines.add(headerLine);
-                    walkBioSignals(root, root, xthreshold, ythreshold, cthreshold, filelines);
 
-                    String xplotdot = "x" + xthreshold;
+                    String xplotdot = "x" + x_t;
                     String xplot = xplotdot.replaceAll("\\.", "_");
-                    String yplotdot = "y" + ythreshold;
+                    String yplotdot = "t" + t_t;
                     String yplot = yplotdot.replaceAll("\\.", "_");
-                    String cplotdot = "c" + cthreshold;
+                    String cplotdot = "c" + c_t;
                     String cplot = cplotdot.replaceAll("\\.", "_");
 
-                    String plotsuffix = xplot + "-" + yplot + "-" + cplot;
+                    String plotsuffix = yplot + "-" + xplot + "-" + cplot;
                     String runRoot = root + "run"+run + Utilities.getSeparater();
                     createFolder(runRoot);
                     String resultRoot = runRoot + plotsuffix;
                     createFolder(resultRoot);
+                    
+                    walkBioSignals(root, root, t_t, x_t, c_t, filelines);
                     
                     String resultFilepath = resultRoot + Utilities.getSeparater() + jobName+"_result.csv";
                     Utilities.writeToFile(resultFilepath, filelines);
@@ -937,8 +955,9 @@ public class PaperTest {
     }
     
     //@Test
-    public void testConsolidateFuelResults(){
-        String path = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater() + "KFold_Run1" + Utilities.getSeparater();
+    public void testConsolidateFuelResults(Mode mode, int run){
+        
+        String path = fuelControlDatafilepath + (mode.toString() + "_Run" + run) + Utilities.getSeparater();
         List<String> finalLines = new ArrayList<String>();
         List<String> lines = new ArrayList<String>();
         String headerLine = 
@@ -948,14 +967,24 @@ public class PaperTest {
                     "mcrTrain" +delimiter+ //training MCR
                     "fprTrain" +delimiter+ //training FPR
                     "fnrTrain" +delimiter+ //training FNR
+                    "tpTrain" +delimiter+ // True Positive Training
+                    "fnTrain" +delimiter+ // False Negative Training
+                    "fpTrain" +delimiter+ // False Positive Training 
+                    "tnTrain" +delimiter+ // True Negative Training
                     "testSize" +delimiter+ //testSize (used in PosNeg TLI)
                     "mcrTest" +delimiter+ //testing MCR
                     "fprTest" +delimiter+ //testing FPR
                     "fnrTest" +delimiter+ //testing FNR
+                    "tpTest" +delimiter+ // True Positive Testing
+                    "fnTest" +delimiter+ // False Negative Testing
+                    "fpTest" +delimiter+ // False Positive Testing 
+                    "tnTest" +delimiter+ // True Negative Testing
                     "runtime" +delimiter+ //Runtime
                     "t_t" +delimiter+ //xthreshold
-                    "x_t" +delimiter+ //ythreshold
-                    "c_t" +delimiter+ //cthreshold
+                    "x_t_EGO" +delimiter+ //ythreshold
+                    "c_t_EGO" +delimiter+ //cthreshold
+                    "x_t_MAP" +delimiter+ //ythreshold
+                    "c_t_MAP" +delimiter+ //cthreshold
                     "primitiveCount" //Number of primitives
                     ;
         finalLines.add(headerLine);
@@ -1037,7 +1066,7 @@ public class PaperTest {
         }
     }
     
-    private void walkFuelControl(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> fileLines) {
+    private void walkFuelControl(String path, String resultsRoot, double t_t, double x_t_EGO, double x_t_MAP, double c_t_EGO, double c_t_MAP, List<String> fileLines) {
         File root = new File(path);
         File[] list = root.listFiles();
 
@@ -1059,11 +1088,11 @@ public class PaperTest {
         for (File f : list) {
 
             if (f.isDirectory()) {
-                walkFuelControl(f.getAbsolutePath(), resultsRoot, xthreshold, ythreshold, cthreshold, fileLines);
+                walkFuelControl(f.getAbsolutePath(), resultsRoot, t_t, x_t_EGO, x_t_MAP, c_t_EGO, c_t_MAP, fileLines);
             } // Reached all Files
             else {
                 if(f.getName().contains("DS_Store")){
-                    continue; //Fuck you mac.... 
+                    continue; //Fuck you mac.... FAACCKKKK YOU, says Rachael to the Mac.. :( 
                 }
                 analysis = true;
                 
@@ -1097,18 +1126,18 @@ public class PaperTest {
         if (analysis) {
             //System.out.println("path : " + path);
             
-            String xplotdot = "x" + xthreshold;
+            String xplotdot = "t" + t_t;
             String xplot = xplotdot.replaceAll("\\.", "_");
-            String yplotdot = "y" + ythreshold;
+            String yplotdot = "x" + x_t_EGO;
             String yplot = yplotdot.replaceAll("\\.", "_");
-            String cplotdot = "c" + cthreshold;
+            String cplotdot = "c" + c_t_EGO;
             String cplot = cplotdot.replaceAll("\\.", "_");
             
             long tstart = System.nanoTime();
-            Grid gridEgo = new Grid(training_PosEGO, xthreshold, ythreshold);
-            Grid gridMap = new Grid(training_PosMAP, xthreshold, ythreshold);
-            TreeNode stlEgo = TemporalLogicInference.getSTL(gridEgo, cthreshold);
-            TreeNode stlMap = TemporalLogicInference.getSTL(gridMap, cthreshold);
+            Grid gridEgo = new Grid(training_PosEGO, t_t, x_t_EGO);
+            Grid gridMap = new Grid(training_PosMAP, t_t, x_t_MAP);
+            TreeNode stlEgo = TemporalLogicInference.getSTL(gridEgo, c_t_EGO);
+            TreeNode stlMap = TemporalLogicInference.getSTL(gridMap, c_t_MAP); //Rachael really doesn't trust her mac.. or maybe she does.. she gave me the dagger eyes.. 
             long tend = System.nanoTime();
             double runtime = getTimeElapsed(tstart,tend);
                         
@@ -1138,6 +1167,16 @@ public class PaperTest {
             List<Integer> neg_testing_Ego_fail = new ArrayList<Integer>();
             List<Integer> neg_testing_Map_fail = new ArrayList<Integer>();
             
+            Map<Integer,Double> train_Pos_EGO_r = new HashMap<Integer,Double>();
+            Map<Integer,Double> train_Neg_EGO_r = new HashMap<Integer,Double>();
+            Map<Integer,Double> train_Pos_MAP_r = new HashMap<Integer,Double>();
+            Map<Integer,Double> train_Neg_MAP_r = new HashMap<Integer,Double>();
+            
+            Map<Integer,Double> test_Pos_EGO_r = new HashMap<Integer,Double>();
+            Map<Integer,Double> test_Neg_EGO_r = new HashMap<Integer,Double>();
+            Map<Integer,Double> test_Pos_MAP_r = new HashMap<Integer,Double>();
+            Map<Integer,Double> test_Neg_MAP_r = new HashMap<Integer,Double>();
+            
             double training_Pos_EGO_total = 0;
             double testing_Pos_EGO_total = 0;
             double training_Pos_MAP_total = 0;
@@ -1161,6 +1200,7 @@ public class PaperTest {
                     pos_training_Ego_robust.add(count);
                 }
                 training_Pos_EGO_total += r;
+                train_Pos_EGO_r.put(count, r);
                 count++;
             }
             
@@ -1172,6 +1212,7 @@ public class PaperTest {
                 } else {
                     pos_training_Map_robust.add(count);
                 }
+                train_Pos_MAP_r.put(count, r);
                 training_Pos_MAP_total += r;
                 count++;
             }
@@ -1185,6 +1226,7 @@ public class PaperTest {
                 } else {
                     pos_testing_Ego_robust.add(count);
                 }
+                test_Pos_EGO_r.put(count, r);
                 testing_Pos_EGO_total += r;
                 count++;
             }
@@ -1197,6 +1239,7 @@ public class PaperTest {
                 } else {
                     pos_testing_Map_robust.add(count);
                 }
+                test_Pos_MAP_r.put(count, r);
                 testing_Pos_MAP_total += r;
                 count++;
             }
@@ -1210,6 +1253,7 @@ public class PaperTest {
                 } else {
                     neg_training_Ego_fail.add(count);
                 }
+                train_Neg_EGO_r.put(count, r);
                 training_Neg_EGO_total += r;
                 count++;
             }
@@ -1222,6 +1266,7 @@ public class PaperTest {
                 } else {
                     neg_training_Map_fail.add(count);
                 }
+                train_Neg_MAP_r.put(count, r);
                 training_Neg_MAP_total += r;
                 count++;
             }
@@ -1236,6 +1281,7 @@ public class PaperTest {
                     neg_testing_Ego_fail.add(count);
                 }
                 testing_Neg_EGO_total += r;
+                test_Neg_EGO_r.put(count, r);
                 count++;
             }
             
@@ -1247,6 +1293,7 @@ public class PaperTest {
                 } else {
                     neg_testing_Map_fail.add(count);
                 }
+                test_Neg_MAP_r.put(count, r);
                 testing_Neg_MAP_total += r;
                 count++;
             }
@@ -1270,6 +1317,40 @@ public class PaperTest {
             neg_training_fail.addAll(neg_training_Map_robust);
             neg_training_fail.removeAll(neg_training_robust);
             
+            //Calculate Total Positive Training Robustnes = min(EGO,MAP)
+            double pos_training_r = 0.0;
+            double pos_training_f = 0.0;
+            
+            double neg_training_r = 0.0;
+            double neg_training_f = 0.0;
+            
+            double pos_testing_r = 0.0;
+            double pos_testing_f = 0.0;
+            
+            double neg_testing_r = 0.0;
+            double neg_testing_f = 0.0;
+            
+            for(Integer i:pos_training_robust){
+                double val = (train_Pos_EGO_r.get(i) < train_Pos_MAP_r.get(i)) ? train_Pos_EGO_r.get(i) :train_Pos_MAP_r.get(i);
+                pos_training_r += val;
+            }
+            
+            for(Integer i: pos_training_fail){
+                double val = (train_Pos_EGO_r.get(i) < train_Pos_MAP_r.get(i)) ? train_Pos_EGO_r.get(i) :train_Pos_MAP_r.get(i);
+                pos_training_f += val;
+            }
+            
+            
+            for(Integer i:neg_training_robust){
+                double val = (train_Neg_EGO_r.get(i) < train_Neg_MAP_r.get(i)) ? train_Neg_EGO_r.get(i) :train_Neg_MAP_r.get(i);
+                neg_training_r += val;
+            }
+            
+            for(Integer i:neg_training_fail){
+                double val = (train_Neg_EGO_r.get(i) < train_Neg_MAP_r.get(i)) ? train_Neg_EGO_r.get(i) :train_Neg_MAP_r.get(i);
+                neg_training_f += val;
+            }
+            
             // testing data
             List<Integer> pos_testing_robust = new ArrayList<Integer>();
             pos_testing_robust.addAll(pos_testing_Map_robust);
@@ -1288,6 +1369,38 @@ public class PaperTest {
             neg_testing_fail.addAll(neg_testing_Map_fail);
             neg_testing_fail.addAll(neg_testing_Map_robust);
             neg_testing_fail.removeAll(neg_testing_robust);
+            
+            
+            for(Integer i:pos_testing_robust){
+                double val = (test_Pos_EGO_r.get(i) < test_Pos_MAP_r.get(i)) ? test_Pos_EGO_r.get(i) :test_Pos_MAP_r.get(i);
+                pos_testing_r += val;
+            }
+            
+            for(Integer i:pos_testing_fail){
+                double val = (test_Pos_EGO_r.get(i) < test_Pos_MAP_r.get(i)) ? test_Pos_EGO_r.get(i) :test_Pos_MAP_r.get(i);
+                pos_testing_f += val;
+            }
+            
+            for(Integer i:neg_testing_robust){
+                double val = (test_Neg_EGO_r.get(i) < test_Neg_MAP_r.get(i)) ? test_Neg_EGO_r.get(i) :test_Neg_MAP_r.get(i);
+                neg_testing_r += val;
+            }
+            
+            for(Integer i:neg_testing_fail){
+                double val = (test_Neg_EGO_r.get(i) < test_Neg_MAP_r.get(i)) ? test_Neg_EGO_r.get(i) :test_Neg_MAP_r.get(i);
+                neg_testing_f += val;
+            }
+            
+            double tp_pos_training = (pos_training_robust.size() <= 0) ? 0.0 : (pos_training_r/((double)pos_training_robust.size()));
+            double fn_pos_training = (pos_training_fail.size() <= 0) ? 0.0 : (pos_training_f/((double)pos_training_fail.size()));
+            double fp_neg_training = (neg_training_robust.size() <= 0) ? 0.0 : (neg_training_r/((double)neg_training_robust.size()));
+            double tn_neg_training = (neg_training_fail.size() <= 0) ? 0.0 : (neg_training_f/((double)neg_training_fail.size()));
+            
+            double tp_pos_testing = (pos_testing_robust.size() <= 0) ? 0.0 : (pos_testing_r/((double)pos_testing_robust.size()));
+            double fn_pos_testing = (pos_testing_fail.size() <= 0) ? 0.0 : (pos_testing_f/((double)pos_testing_fail.size()));
+            double fp_neg_testing = (neg_testing_robust.size() <= 0) ? 0.0 : (neg_testing_r/((double)neg_testing_robust.size()));
+            double tn_neg_testing = (neg_testing_fail.size() <= 0) ? 0.0 : (neg_testing_f/((double)neg_testing_fail.size()));
+            
             
             double fpr_training = ((double)neg_training_robust.size()) / ((double)(neg_training_robust.size() + pos_training_robust.size()));
             double fpr_testing = ((double)neg_testing_robust.size()) / ((double)(neg_testing_robust.size() + pos_testing_robust.size()));
@@ -1308,14 +1421,24 @@ public class PaperTest {
                     mcr_training +delimiter+ //training MCR
                     fpr_training +delimiter+ //training FPR
                     fnr_training +delimiter+ //training FNR
+                    tp_pos_training +delimiter+ // True Positive Training
+                    fn_pos_training +delimiter+ // False Negative Training
+                    fp_neg_training +delimiter+ // False Positive training 
+                    tn_neg_training +delimiter+ // True Negative training
                     testingSize +delimiter+ //testSize (used in PosNeg TLI)
                     mcr_testing +delimiter+ //testing MCR
                     fpr_testing +delimiter+ //testing FPR
                     fnr_testing +delimiter+ //testing FNR
+                    tp_pos_testing +delimiter+ // True Positive Testing
+                    fn_pos_testing +delimiter+ // False Negative Testing
+                    fp_neg_testing +delimiter+ // False Positive Testing 
+                    tn_neg_testing +delimiter+ // True Negative Testing
                     runtime +delimiter+ //Runtime
-                    xthreshold +delimiter+ //xthreshold
-                    ythreshold +delimiter+ //ythreshold
-                    cthreshold +delimiter+ //cthreshold
+                    t_t +delimiter+ //xthreshold
+                    x_t_EGO +delimiter+ //ythreshold
+                    c_t_EGO +delimiter+ //cthreshold
+                    x_t_MAP +delimiter+ //ythreshold
+                    c_t_MAP +delimiter+ //cthreshold
                     primitiveCount //Primitive Count
                     ;
             fileLines.add(line);
