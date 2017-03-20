@@ -717,9 +717,9 @@ public class PaperTest {
         return signals;
     }
     
-    //@Test
+    @Test
     public void testFuelControl(){
-        int run = 3;
+        int run = 666;
         testFuelControl(Mode.KFold,run);
         testConsolidateFuelResults(Mode.KFold, run);
         System.out.println("FC done");
@@ -769,11 +769,11 @@ public class PaperTest {
         double xmax_EGO = 1.1095;
         double xmin_EGO = 0.0071;
         
-        double x_range_EGO = xmax_EGO - xmin_EGO;
         double x_range_MAP = xmax_MAP - xmin_MAP;
+        double x_range_EGO = xmax_EGO - xmin_EGO;
         
-        double inc = 0.05;
-        int steps = 10;
+        double inc = 0.025;
+        int steps = 20;
         
         for(int i = 1; i <= steps; i ++){
             for(int j = 1; j <= steps; j ++){
@@ -782,8 +782,11 @@ public class PaperTest {
                     double x_t_MAP = getThresholdValue(x_range_MAP,inc,i);
                     double x_t_EGO = getThresholdValue(x_range_EGO,inc,i);
                     double t_t = getThresholdValue(tmax,inc,j);
-                    double c_t_MAP = getThresholdValue(x_range_MAP,inc,k);
-                    double c_t_EGO = getThresholdValue(x_range_EGO,inc,k);
+                    double c_t_MAP = k*x_t_MAP;//getThresholdValue(x_range_MAP,inc,k);
+                    double c_t_EGO = k*x_t_EGO;//getThresholdValue(x_range_EGO,inc,k);
+                    if(c_t_MAP > x_range_MAP*3/4 || c_t_EGO > x_range_EGO*3/4){
+                        continue;
+                    }
                     String xplotdot = "x" + x_t_EGO;
                     String xplot = xplotdot.replaceAll("\\.", "_");
                     String yplotdot = "t" + t_t;
@@ -835,14 +838,14 @@ public class PaperTest {
     @Test
     public void testBioSignals(){
         String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() ;
-        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
+//        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
 //        String balancedWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater();
 //        String randomWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
 //        String balancedStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater();
 //        String randomStrong = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "strong" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
-        int run = 3;
+        int run = 666;
         testBioSignals(balancedAll,run,"all_balanced");
-        testBioSignals(randomAll,run,"all_random");
+//        testBioSignals(randomAll,run,"all_random");
 //        testBioSignals(balancedWeak,run,"weak_balanced");
 //        testBioSignals(randomWeak,run,"weak_random");
 //        testBioSignals(balancedStrong,run,"strong_balanced");
@@ -876,8 +879,8 @@ public class PaperTest {
         double xmax = 3687;
         double tmax = 6.9;
         
-        double inc = 0.05;
-        int steps = 10;
+        double inc = 0.025;
+        int steps = 20;
         
         //double x_lim = xmax/2;
         //double t_lim = tmax/2;
@@ -888,7 +891,10 @@ public class PaperTest {
                 for (int k = 0; k <= steps; k++) {
                     double x_t = getThresholdValue(xmax,inc,i);
                     double t_t = getThresholdValue(tmax,inc,j);
-                    double c_t = getThresholdValue(xmax,inc,k);
+                    double c_t = k*x_t;//getThresholdValue(xmax,inc,k);
+                    if(c_t > xmax*3/4){
+                        continue;
+                    }
                     List<String> filelines = new ArrayList<String>();
                     filelines.add(headerLine);
 
