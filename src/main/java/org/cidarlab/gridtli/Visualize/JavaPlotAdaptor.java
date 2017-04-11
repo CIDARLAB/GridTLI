@@ -182,7 +182,7 @@ public class JavaPlotAdaptor {
         for(Signal signal:grid.getSignals()){
             PlotStyle sps = new PlotStyle();
             sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
+            sps.setLineType(NamedPlotColor.BLACK);
             PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
             DataSetPlot dsp = new DataSetPlot(psd);
             dsp.setPlotStyle(sps);
@@ -194,7 +194,7 @@ public class JavaPlotAdaptor {
                 
                 //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"cyan\"";
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -209,6 +209,109 @@ public class JavaPlotAdaptor {
         plot.set("key", "off");
         return plot;
     }
+    
+    
+    public static JavaPlot plotGrid_withTestingData(Grid grid, List<Signal> test){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        plot.addPlot(dspgrid);
+        
+        for(Signal signal:grid.getSignals()){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            sps.setLineType(NamedPlotColor.BLACK);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        for(Signal signal:test){
+            PlotStyle sps_test = new PlotStyle();
+            sps_test.setStyle(Style.LINES);
+            sps_test.setLineType(NamedPlotColor.RED);
+            PointDataSet psd_test = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp_test = new DataSetPlot(psd_test);
+            dsp_test.setPlotStyle(sps_test);
+            plot.addPlot(dsp_test);
+        }
+        int count =1;
+        for(SubGrid subgrid: grid.getSubGrid().keySet()){
+            if(grid.isSpecificSubGridCovered(subgrid)){
+                
+                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                String obj = "object " + count;
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
+                
+                plot.set(obj, rect);
+                count++;
+            }
+        }
+        plot.set("style fill", "transparent solid 0.5");
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("Grid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        return plot;
+    }
+    
+    public static JavaPlot plotGrid_withTestingData(Grid grid, List<Signal> satisfy, List<Signal> notSatisfy){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.DOTS);
+        ps.setLineType(NamedPlotColor.BLACK);
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
+        dspgrid.setPlotStyle(ps);
+        plot.addPlot(dspgrid);
+        
+        for(Signal signal:satisfy){
+            PlotStyle sps = new PlotStyle();
+            sps.setStyle(Style.LINES);
+            sps.setLineType(NamedPlotColor.BLACK);
+            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp = new DataSetPlot(psd);
+            dsp.setPlotStyle(sps);
+            plot.addPlot(dsp);
+        }
+        for(Signal signal:notSatisfy){
+            PlotStyle sps_test = new PlotStyle();
+            sps_test.setStyle(Style.LINES);
+            sps_test.setLineType(NamedPlotColor.RED);
+            sps_test.setLineWidth(3);
+            PointDataSet psd_test = new PointDataSet(getSignalJPlotPoints(signal));
+            DataSetPlot dsp_test = new DataSetPlot(psd_test);
+            dsp_test.setPlotStyle(sps_test);
+            plot.addPlot(dsp_test);
+        }
+        int count =1;
+        for(SubGrid subgrid: grid.getSubGrid().keySet()){
+            if(grid.isSpecificSubGridCovered(subgrid)){
+                
+                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                String obj = "object " + count;
+                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
+                
+                plot.set(obj, rect);
+                count++;
+            }
+        }
+        plot.set("style fill", "transparent solid 0.5");
+        plot.getAxis("x").setLabel("x");
+        plot.getAxis("y").setLabel("y");
+        plot.setTitle("Grid");
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        return plot;
+    }
+    
     
     public static JavaPlot plotGridData1_1(Grid grid){
         JavaPlot plot = new JavaPlot();

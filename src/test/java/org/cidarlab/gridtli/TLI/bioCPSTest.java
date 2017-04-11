@@ -25,9 +25,9 @@ public class bioCPSTest {
     private double _threshold = 5;
     private double _xthreshold = 10;
     private double _ythreshold = 5;
-
-    @Test
-    public void testiBioSimGetSTLfromModules() {
+    
+    //@Test
+    public void testiBioSimGetSTLfromModulesHigh() {
 
         double threshold = 5;
         double xthreshold = 10;
@@ -76,15 +76,17 @@ public class bioCPSTest {
                 for (int j = 1; j <= 2; j++) {
 
                     String filename = i + "-" + j + "-data";
-                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "modules_high_input" + Utilities.getSeparater() + filename + ".csv";
-                    List<Signal> signals = Utilities.getColumnSignals(filepath,false);
+                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesHighInput" + Utilities.getSeparater() + filename + ".csv";
+                    List<Signal> signals = Utilities.getiBioSimSignals(filepath);
                     //double threshold = 10000;
 
                     Grid grid = new Grid(signals, xthreshold, ythreshold);
                     //TemporalLogicInference.getSTL(grid);
 
-                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "modules_high_input" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater() + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
-                    Utilities.writeToFile(resultFilepath, TemporalLogicInference.getSTL(grid, threshold).toString());
+                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesHighInput" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater();
+                    createFolder(resultFilepath);
+                    String resultFilename = resultFilepath + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
+                    Utilities.writeToFile(resultFilename, TemporalLogicInference.getSTL(grid, threshold).toString());
 
                 }
             }
@@ -92,7 +94,75 @@ public class bioCPSTest {
         }
 
     }
+    
+    //@Test
+    public void testiBioSimGetSTLfromModulesLow() {
 
+        double threshold = 5;
+        double xthreshold = 10;
+        double ythreshold = 5;
+
+        for (int k = 0; k < 7; k++) {
+            switch (k) {
+                case 0:
+                    threshold = 1;
+                    xthreshold = 1;
+                    ythreshold = 1;
+                    break;
+                case 1:
+                    threshold = 1;
+                    xthreshold = 5;
+                    ythreshold = 1;
+                    break;
+                case 2:
+                    threshold = 4;
+                    xthreshold = 5;
+                    ythreshold = 5;
+                    break;
+                case 3:
+                    threshold = 5;
+                    xthreshold = 5;
+                    ythreshold = 5;
+                    break;
+                case 4:
+                    threshold = 1;
+                    xthreshold = 10;
+                    ythreshold = 1;
+                    break;
+                case 5:
+                    threshold = 4;
+                    xthreshold = 10;
+                    ythreshold = 5;
+                    break;
+                case 6:
+                    threshold = 5;
+                    xthreshold = 10;
+                    ythreshold = 5;
+                    break;
+            }
+
+            for (int i = 1; i <= 3; i++) {
+                for (int j = 1; j <= 2; j++) {
+
+                    String filename = i + "-" + j + "-data";
+                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + filename + ".csv";
+                    List<Signal> signals = Utilities.getiBioSimSignals(filepath);
+                    //double threshold = 10000;
+
+                    Grid grid = new Grid(signals, xthreshold, ythreshold);
+                    //TemporalLogicInference.getSTL(grid);
+
+                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater();
+                    createFolder(resultFilepath);
+                    String resultFilename = resultFilepath + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
+                    Utilities.writeToFile(resultFilename, TemporalLogicInference.getSTL(grid, threshold).toString());
+                    
+                }
+            }
+
+        }
+    }
+    
     //@Test
     public void testiBioSimGetSTLfromCascades() {
 
@@ -141,18 +211,28 @@ public class bioCPSTest {
             for (int i = 1; i <= 6; i++) {
                 for (int j = 1; j <= 3; j++) {
                     String filename = i + "-" + j + "-data";
-                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + filename + ".csv";
-                    List<Signal> signals = Utilities.getColumnSignals(filepath,false);
+                    String filepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + filename + ".csv";
+                    List<Signal> signals = Utilities.getiBioSimSignals(filepath);;
                     //double threshold = 10000;
                     Grid grid = new Grid(signals, xthreshold, ythreshold);
 
                     //TemporalLogicInference.getSTL(grid);
-                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater() + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) + Utilities.getSeparater() + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
-                    Utilities.writeToFile(resultFilepath, TemporalLogicInference.getSTL(grid, threshold).toString());
+                    String resultFilepath = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater() + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) + Utilities.getSeparater();
+                    
+                    createFolder(resultFilepath);
+                    String fileResultName = resultFilepath + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
+                    Utilities.writeToFile(fileResultName, TemporalLogicInference.getSTL(grid, threshold).toString());
                 }
             }
         }
 
+    }
+    
+    
+    public static void createFolder(String filepath){
+        if(!Utilities.isDirectory(filepath)){
+            Utilities.makeDirectory(filepath);
+        }
     }
 
     //@Test

@@ -717,7 +717,7 @@ public class PaperTest {
         return signals;
     }
     
-    @Test
+    //@Test
     public void testFuelControl(){
         int run = 666;
         testFuelControl(Mode.KFold,run);
@@ -835,7 +835,7 @@ public class PaperTest {
         walkTransformFuel(path,header);
     }
     
-    @Test
+    //@Test
     public void testBioSignals(){
         String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() ;
 //        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
@@ -918,6 +918,48 @@ public class PaperTest {
                 }
             }
         }
+    }
+    
+    
+    @Test
+    public void testSpecificFuelControl(){
+        
+        //for (int i = 0; i < 10; i++) {
+        int i=3;
+            String filepath = Utilities.getResourcesFilepath() + "biosignals/allSignals/balanced/"+i+"/";
+            String outputfilepath = Utilities.getResourcesFilepath() + "biosignals/forPaper/highThresh/foundyou/";
+            createFolder(outputfilepath);
+//            double x_t = 184.35;
+//            double t_t = 0.345;
+//            double c_t = 0;
+            double x_t = 1843.5;
+            double t_t = 3.45;
+            double c_t = 1843.5;
+            
+            String trainingFilepath = filepath + "training.csv";
+            String testingFilepath = filepath + "testing.csv";
+
+            String plot_test = outputfilepath + "grid_test"+i+".png";
+            String plot_train = outputfilepath + "grid_train"+i+".png";
+            List<Signal> training = Utilities.getRowSignals(trainingFilepath, true);
+            List<Signal> testing = Utilities.getRowSignals(testingFilepath, true);
+            Grid grid = new Grid(training, t_t, x_t);
+            TreeNode stl = TemporalLogicInference.getSTL(grid, c_t);
+            System.out.println(stl);
+            List<Signal> notSatisfy = new ArrayList<Signal>();
+            List<Signal> satisfy = new ArrayList<Signal>();
+            for(Signal signal:testing){
+                double r = Validation.getRobustness(stl, signal);
+                if(r<0){
+                    notSatisfy.add(signal);
+                } else {
+                    satisfy.add(signal);
+                }
+            }
+            JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid_withTestingData(grid, satisfy, notSatisfy), plot_test);
+            JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), plot_train);
+        //}
+        
     }
     
     //@Test
