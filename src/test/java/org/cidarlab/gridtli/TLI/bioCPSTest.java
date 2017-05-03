@@ -7,12 +7,15 @@ package org.cidarlab.gridtli.TLI;
 
 import hyness.stl.TreeNode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.cidarlab.gridtli.Adaptors.BioCPSAdaptor;
 import org.cidarlab.gridtli.DOM.Grid;
 import org.cidarlab.gridtli.DOM.Signal;
+import static org.cidarlab.gridtli.TLI.CompositionTest.composedModulesGrid;
 import org.cidarlab.gridtli.Visualize.JavaPlotAdaptor;
 import org.junit.Test;
 
@@ -359,6 +362,121 @@ public class bioCPSTest {
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getResourcesTempFilepath() + "gridnoCover" + filename + ".png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getResourcesTempFilepath() + "grid" + filename + ".png");
 
+    }
+    
+    @Test
+    public void testIBioSimNDim(){
+        bioCPSTest test = new bioCPSTest();
+        test.testIBioSimLowModules();
+        test.testIBioSimHighModules();
+        test.testIBioSimCascades();
+    }
+    
+    public void testIBioSimLowModules(){
+        
+        for (int i = 1; i <= 3; i++) {
+            Map<String, List<Signal>> nsig = new HashMap<String, List<Signal>>();
+            for (int j = 1; j <= 2; j++) {
+                String file1 = i + "-" + j + "-data";
+                String filepath1 = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + file1 + ".csv";
+                List<Signal> m1 = Utilities.getiBioSimSignals(filepath1);
+                String signalVar = ioChar(j) + i;
+                nsig.put(signalVar, m1);
+            }
+            String resultFile = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + "ndim_low" + Utilities.getSeparater() + i + "-data.txt";
+            TreeNode stl = TemporalLogicInference.getNDimSTL(nsig, 0.05);
+            Utilities.writeToFile(resultFile, stl.toString());
+            //System.out.println("STL :: " + stl);
+        }
+    }
+    
+    public void testIBioSimHighModules(){
+        
+        for (int i = 1; i <= 3; i++) {
+            Map<String, List<Signal>> nsig = new HashMap<String, List<Signal>>();
+            for (int j = 1; j <= 2; j++) {
+                String file1 = i + "-" + j + "-data";
+                String filepath1 = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "newData" + Utilities.getSeparater() + "modulesHighInput" + Utilities.getSeparater() + file1 + ".csv";
+                List<Signal> m1 = Utilities.getiBioSimSignals(filepath1);
+                String signalVar = ioChar(j) + i;
+                nsig.put(signalVar, m1);
+            }
+            String resultFile = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "newData" + Utilities.getSeparater() + "modulesHighInput" + Utilities.getSeparater() + "ndim_high" + Utilities.getSeparater() + i + "-data.txt";
+            TreeNode stl = TemporalLogicInference.getNDimSTL(nsig, 0.05);
+            Utilities.writeToFile(resultFile, stl.toString());
+            //System.out.println("STL :: " + stl);
+        }
+    }
+    
+    public void testIBioSimCascades(){
+        
+        for (int i = 1; i <= 6; i++) {
+            Map<String, List<Signal>> nsig = new HashMap<String, List<Signal>>();
+            for (int j = 1; j <= 3; j++) {
+                String file1 = i + "-" + j + "-data";
+                String filepath1 = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "newData" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + file1 + ".csv";
+                List<Signal> m1 = Utilities.getiBioSimSignals(filepath1);
+                String signalVar = icoChar(j) + i;
+                nsig.put(signalVar, m1);
+            }
+            String resultFile = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater() + "newData" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + "ndim_cascades" + Utilities.getSeparater() + i + "-data.txt";
+            TreeNode stl = TemporalLogicInference.getNDimSTL(nsig, 0.05);
+            Utilities.writeToFile(resultFile, stl.toString());
+            //System.out.println("STL :: " + stl);
+        }
+    }
+    
+    private static String ioChar(int i){
+        switch(i){
+            case 1: return "i";
+            case 2: return "o";
+        }
+        return "";
+    }
+    
+    private static String icoChar(int i){
+        switch(i){
+            case 1: return "i";
+            case 2: return "c";
+            case 3: return "o";
+        }
+        return "";
+    }
+    
+    //@Test
+    public void testBinDependant(){
+        String filepath = Utilities.getResourcesFilepath() + "bin_dependant";
+        Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = Utilities.binDependantWalk(filepath);
+        Map<String, Map<String,List<Signal>>> collapsedSignals = BioCPSAdaptor.binDependantSignals(map, true);
+        Map<String, Map<String,List<Signal>>> expandedSignals = BioCPSAdaptor.binDependantSignals(map, false);
+
+        
+        
+        for(String module: expandedSignals.keySet()){
+            System.out.println("Module ::" + module);
+            TreeNode stl = TemporalLogicInference.getNDimSTL( expandedSignals.get(module) , 0.5);
+            System.out.println("STL ::" + stl);
+        }
+        
+        for(String module: collapsedSignals.keySet()){
+            System.out.println("Module ::" + module);
+            TreeNode stl = TemporalLogicInference.getNDimSTL( collapsedSignals.get(module) , 0.05);
+            System.out.println("STL ::" + stl);
+        }
+    }
+    
+    //@Test
+    public void testBinDependantWalk(){
+        String filepath = Utilities.getResourcesFilepath() + "bin_dependant";
+        Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = Utilities.binDependantWalk(filepath);
+        
+        System.out.println(map.keySet());
+        for(String key:map.keySet()){
+            System.out.println(map.get(key).keySet());
+            for(String innerKey:map.get(key).keySet()){
+                System.out.println("One Level Deeper :: " + map.get(key).get(innerKey).keySet());
+            }
+        }
     }
 
 }

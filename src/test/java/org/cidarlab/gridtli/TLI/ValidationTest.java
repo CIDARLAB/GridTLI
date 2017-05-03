@@ -33,24 +33,25 @@ public class ValidationTest {
     public void testRobustness(){
         String columnData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
         List<Signal> signals = Utilities.getiBioSimSignals(columnData);
-        double xthreshold = 1;
-        double ythreshold = 1;
-        double clusterThreshold = 1;
+        double xthreshold = 10;
+        double ythreshold = 10;
+        double clusterThreshold = 10;
         
         
         Grid grid = new Grid(signals, xthreshold, ythreshold);
         TreeNode stl =  TemporalLogicInference.getSTL(grid, clusterThreshold);
         
-        
+        System.out.println(stl);
+        System.out.println("\n\n\n");
         int count =0;
         for(Signal s: signals){
             System.out.println("Signal " + count++);
             System.out.println("Final Robustness Value:: " + Validation.getRobustness(stl, s));
         }
         String demoFilepath = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater();
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Column.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Column.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Column.png");
+        //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Column.png");
+        //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Column.png");
+        //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Column.png");
 //        List<TreeNode> nodes = Validation.getDisjunctionLeaves(stl);
 //        System.out.println("Number of Conjunction Nodes" + nodes.size());
 //        System.out.println(nodes);

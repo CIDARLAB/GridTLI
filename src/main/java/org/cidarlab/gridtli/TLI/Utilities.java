@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cidarlab.gridtli.DOM.Point;
@@ -207,6 +209,64 @@ public class Utilities {
             listPieces.add(line.split(","));
         }
         return listPieces;
+    }
+    
+    public static Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> binDependantWalk(String root){
+        Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = new HashMap<>();
+        //List<Signal> signals = new ArrayList<Signal>();
+        binDependantWalk(root,root,map);
+        return map;
+    }
+    
+    private static void binDependantWalk(String path, String resultsRoot, Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map){
+        File root = new File( path );
+        File[] list = root.listFiles();
+        
+        if (list == null) return ;
+        
+        String[] pathpieces = filepathPieces(path,resultsRoot);
+        
+        if(pathpieces[pathpieces.length-1].equals("input")  || pathpieces[pathpieces.length-1].equals("output")){
+            
+            int len = pathpieces.length;
+            if(!map.containsKey(pathpieces[len-4].trim())){
+                map.put(pathpieces[len-4].trim(), new HashMap());
+            }
+            if(!map.get(pathpieces[len-4]).containsKey(pathpieces[len-3].trim())){
+                map.get(pathpieces[len-4]).put(pathpieces[len-3], new HashMap());
+            }
+            if(!map.get(pathpieces[len-4]).get(pathpieces[len-3]).containsKey(pathpieces[len-2])){
+                map.get(pathpieces[len-4]).get(pathpieces[len-3]).put(pathpieces[len-2], new HashMap());
+            }
+            if(!map.get(pathpieces[len-4]).get(pathpieces[len-3]).get(pathpieces[len-2]).containsKey(pathpieces[len-1])){
+                map.get(pathpieces[len-4]).get(pathpieces[len-3]).get(pathpieces[len-2]).put(pathpieces[len-1], new ArrayList<Signal>());
+            }
+            for(File f: list){
+                //System.out.println(f.getAbsolutePath());
+                map.get(pathpieces[len-4]).get(pathpieces[len-3]).get(pathpieces[len-2]).get(pathpieces[len-1]).add(readBinDependantFile(f.getAbsolutePath()));
+            }
+        }
+        else {
+            for(File f: list){
+                binDependantWalk(f.getAbsolutePath(),resultsRoot,map);
+            }
+        }
+        
+    }
+    
+    private static String[] filepathPieces(String filepath, String rootFilepath){
+        String relativeFilepath = filepath.substring(filepath.lastIndexOf(rootFilepath) + rootFilepath.length());
+        return relativeFilepath.split("/");
+    }
+    
+    public static Signal readBinDependantFile(String filepath){
+        List<String[]> listPieces = new ArrayList<String[]>();
+        listPieces = getCSVFileContentAsList(filepath);
+        List<Point> points = new ArrayList<Point>();
+        for(String[] pieces : listPieces){
+            points.add(new Point(Double.valueOf(pieces[0].trim()), "t", Double.valueOf(pieces[1].trim()), "x"));
+        }
+        return new Signal(points);
     }
     
     public static void writeToFile(String filepath, List<String> content){

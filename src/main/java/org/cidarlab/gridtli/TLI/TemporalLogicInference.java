@@ -13,8 +13,10 @@ import hyness.stl.RelOperation;
 import hyness.stl.TreeNode;
 import hyness.stl.grammar.flat.STLflat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.cidarlab.gridtli.DOM.Grid;
 import org.cidarlab.gridtli.DOM.Signal;
@@ -26,10 +28,8 @@ import org.cidarlab.gridtli.DOM.SubGrid;
  */
 public class TemporalLogicInference {
     
-    
-    
-    public static List<Set<Signal>> cluster(Grid grid, double threshold){
-        List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
+    public static List<Set<Integer>> getClusterIndices(Grid grid, double threshold){
+        
         double xstart = grid.getSubGridMinX();
         //double xend = grid.getSubGridMaxX() + grid.getXIncrement();
         double xend = grid.getSubGridMaxX();
@@ -37,16 +37,6 @@ public class TemporalLogicInference {
         double ystart = grid.getSubGridMinY();
         //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
         double yend = grid.getSubGridMaxY();
-        
-        //System.out.println("xstart and ystart");
-        //System.out.println(xstart);
-        //System.out.println(ystart);
-        
-        //System.out.println("xend and yend");
-        //System.out.println(xend);
-        //System.out.println(yend);
-        //System.out.println("Grid X Increment :: " + grid.getXIncrement());
-        //System.out.println("Grid Y Increment :: " + grid.getYIncrement());
         
         boolean first = true;
         boolean started = true;
@@ -126,10 +116,29 @@ public class TemporalLogicInference {
             }
             
         }
+        return finalClusterList;
+    }
+    
+    public static Set<Signal> getSignalsFromClusterIndices(Grid grid, Set<Integer> cluster){
+   
+        Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
+        Set<Signal> signalCluster = new HashSet<Signal>();
+        for (Signal signal : signals) {
+            if (cluster.contains(signal.getIndex())) {
+                signalCluster.add(signal);
+            } 
+        }
+        return signalCluster;
+    }
+    
+    public static List<Set<Signal>> cluster(Grid grid, double threshold){
+        
+        List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
+        
         
         //System.out.println("Final Cluster :: \n"+finalClusterList);
         Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
-        for(Set<Integer> singleCluster: finalClusterList){
+        for(Set<Integer> singleCluster: getClusterIndices(grid,threshold)){
             Set<Signal> signalCluster = new HashSet<Signal>();
             Set<Signal> otherSignals = new HashSet<Signal>();
             for(Signal signal:signals){
@@ -203,112 +212,6 @@ public class TemporalLogicInference {
         
         
         return finalList;
-    }
-    
-    public static List<Set<Signal>> clusterHack(Grid grid, double threshold){
-        List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
-        double xstart = grid.getSubGridMinX();
-        //double xend = grid.getSubGridMaxX() + grid.getXIncrement();
-        double xend = grid.getSubGridMaxX();
-        
-        double ystart = grid.getSubGridMinY();
-        //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
-        double yend = grid.getSubGridMaxY();
-        
-//        System.out.println("xstart and ystart");
-//        System.out.println(xstart);
-//        System.out.println(ystart);
-//        
-//        System.out.println("xend and yend");
-//        System.out.println(xend);
-//        System.out.println(yend);
-//        System.out.println("Grid X Increment :: " + grid.getXIncrement());
-//        System.out.println("Grid Y Increment :: " + grid.getYIncrement());
-        
-        
-        boolean started = true;
-        boolean up = true;
-        List<Set<Integer>> clusterList = new ArrayList<Set<Integer>>();
-        List<Set<Integer>> finalClusterList = new ArrayList<Set<Integer>>();
-        
-        Set<Integer> cluster = new HashSet<Integer>();
-        for(double i=xstart;i<= xend; i+= grid.getXIncrement()){
-            
-            started = false;
-            up = false;
-            clusterList = new ArrayList<Set<Integer>>();
-            cluster = new HashSet<Integer>();
-            Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
-            int differenceCount = 0;
-            for(double j=ystart; j<= yend; j+= grid.getYIncrement()){
-                //System.out.println(i+ ","+j);
-                if(grid.isSpecificSubGridCovered(i, j)){
-                    if(!started){
-                        started = true;
-                    }
-                    if(!up){
-                        up = true;
-                        //System.out.println("Another cluster started.");
-                        if( (differenceCount * grid.getYIncrement()) > threshold){
-                            //System.out.println("Difference greater than threshold");
-                            if(!cluster.isEmpty()){
-                                //System.out.println("Cluster is not empty :: " + cluster);
-                                clusterList.add(cluster);
-                            }
-                            cluster = new HashSet<Integer>();
-                        }
-                    } 
-                    Set<Signal> tempSignalList = new HashSet<Signal>();
-                    for (Signal signal : signals) {
-                        if (signal.coversSubGrid(i, j)) {
-                            cluster.add(signal.getIndex());
-                            //signals.remove(signal);
-                        } else{
-                            tempSignalList.add(signal);
-                        }
-                    }
-                    signals = new HashSet<Signal>(tempSignalList);
-                } else {
-                    if(up){
-                        //System.out.println("End of cluster");
-                        differenceCount = 0;
-                        up = false;
-                    }
-                    differenceCount++;
-                }
-            }
-            if(!started){
-                //System.out.println("Empty");
-            } else{
-                if (!cluster.isEmpty()) {
-                    clusterList.add(cluster);
-                }
-                //System.out.println("Cluster List :: ");
-                //System.out.println(clusterList);
-            }
-            //System.out.println("\n\n");
-            if(clusterList.size() > finalClusterList.size()){
-                finalClusterList = new ArrayList<Set<Integer>>(clusterList);
-            }
-        }
-        
-        //System.out.println("Final Cluster :: \n"+finalClusterList);
-        Set<Signal> signals = new HashSet<Signal>(grid.getSignals());
-        for(Set<Integer> singleCluster: finalClusterList){
-            Set<Signal> signalCluster = new HashSet<Signal>();
-            Set<Signal> otherSignals = new HashSet<Signal>();
-            for(Signal signal:signals){
-                if(singleCluster.contains(signal.getIndex())){
-                    signalCluster.add(signal);
-                } else{
-                    otherSignals.add(signal);
-                }
-            }
-            clusters.add(signalCluster);
-            signals = new HashSet<Signal>(otherSignals);
-        }
-        
-        return clusters;
     }
     
     public static Set<SubGrid> getAllCoveredSubGrids(Set<Signal> signals){
@@ -645,10 +548,6 @@ public class TemporalLogicInference {
         return allLinearPredicates;
     }
     
-//    public static TreeNode getClusterSTL(List<TreeNode> topBottom){
-//        return reduceToSingleConjunction(topBottom);
-//    }
-    
     public static List<TreeNode> getSTLClusters(Grid grid, double threshold){
         List<Set<Signal>> clusters = cluster(grid,threshold);
         List<TreeNode> disjunctionClusters = new ArrayList<TreeNode>();
@@ -823,6 +722,93 @@ public class TemporalLogicInference {
         
 
         return reducedList.get(0);
+    }
+    
+    public static TreeNode getNDimSTL(Map<String, List<Signal>> signal, double perc){
+        
+        Map<String, Double> signalT = new HashMap<String, Double>();
+        Map<String, Double> temporalT = new HashMap<String, Double>();
+        for(String dim:signal.keySet()){
+            List<Signal> dimSig = signal.get(dim);
+            double sigMax = Double.MIN_VALUE;
+            double sigMin = Double.MAX_VALUE;
+            double temMax = Double.MIN_VALUE;
+            double temMin = Double.MAX_VALUE;
+            for(Signal s:dimSig){
+                if(s.getxMax() > temMax){
+                    temMax = s.getxMax();
+                }
+                if(s.getxMin() < temMin){
+                    temMin = s.getxMin();
+                }
+                if(s.getyMax() > sigMax){
+                    sigMax = s.getyMax();
+                }
+                if(s.getyMin() < sigMin){
+                    sigMin = s.getyMin();
+                }
+            }
+            
+            double sigT = (sigMax - sigMin) * perc;
+            if(((sigMax - sigMin) == 0) || (sigT ==0)){
+                sigT = 1;
+            }
+            
+            double temT = (temMax - temMin) * perc;
+            if((temMax - temMin) == 0){
+                temT = 1;
+            }
+            
+            signalT.put(dim, sigT);
+            temporalT.put(dim, temT);
+        }
+        return getNDimSTL(signal, signalT, temporalT, signalT);
+    }
+    
+    public static TreeNode getNDimSTL(Map<String, List<Signal>> signal, Map<String, Double> signalT, Map<String, Double> temporalT, Map<String, Double> clusterT){
+        
+        List<List<Set<Integer>>> nclusters = new ArrayList<List<Set<Integer>>>();
+        Map<String, Grid> gridMap = new HashMap<String, Grid>();
+        for(String module:signal.keySet()){
+            Grid g = new Grid(signal.get(module),signalT.get(module),temporalT.get(module));
+            nclusters.add(getClusterIndices(g, signalT.get(module)));
+            gridMap.put(module, g);
+        }
+        
+        List<Set<Integer>> finalCluster = getNDimclusterList(nclusters);
+        List<TreeNode> clusterSTLCollection = new ArrayList<TreeNode>();
+        for(Set<Integer> cluster: finalCluster){
+            List<TreeNode> stlList = new ArrayList<TreeNode>();
+            for(String module:gridMap.keySet()){
+                Set<Signal> signalCluster = getSignalsFromClusterIndices(gridMap.get(module),cluster);
+                stlList.add(reduceToSingleConjunction(getClusterSTL(module,signalCluster, gridMap.get(module).getXIncrement(),gridMap.get(module).getYIncrement(),gridMap.get(module).getxMax())));
+            }
+            clusterSTLCollection.add(reduceToSingleConjunction(stlList));
+        }
+        return reduceToSingleDisjunction(clusterSTLCollection);
+    }
+    
+    public static List<Set<Integer>> getNDimclusterList(List<List<Set<Integer>>> nclusters){
+        
+        if(nclusters.size() == 1){
+            return nclusters.get(0);
+        }
+        
+        List<List<Set<Integer>>> finalcluster = new ArrayList<List<Set<Integer>>>();
+        finalcluster.addAll(nclusters);
+        while(finalcluster.size() > 1){
+            List<List<Set<Integer>>> tempList = new ArrayList<List<Set<Integer>>>();
+            tempList.addAll(finalcluster);
+            finalcluster = new ArrayList<List<Set<Integer>>>();
+            for(int i =0; i < tempList.size()-1; i+= 2){
+                finalcluster.add(updateClusterList(tempList.get(i),tempList.get(i+1)));
+            }
+            if((tempList.size() % 2) == 1){
+                finalcluster.add(tempList.get(tempList.size()-1));
+            }
+        }
+        
+        return finalcluster.get(0);
     }
     
 }

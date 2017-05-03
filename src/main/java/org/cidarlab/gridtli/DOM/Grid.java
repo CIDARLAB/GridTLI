@@ -115,7 +115,7 @@ public class Grid {
         //System.out.println("Sub Grid Creation complete. Now Setting Sub Grid Covers");
         
         setSubGridCovers();
-        //System.out.println("Sub Grid Covers set");
+        //System.out.println("Sub Grid Covers set complete");
     }
 
     public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement, double _xUpperLimit, double _xLowerLimit, double _yUpperLimit, double _yLowerLimit) {
@@ -216,12 +216,22 @@ public class Grid {
             if (yStart > 0) {
                 yPOSstart = yStart;
             }
+//            System.out.println("X Start :: " + xPOSstart);
+//            System.out.println("X End :: " + this.xUpperLimit);
+//            System.out.println("Y Start :: " + yPOSstart);
+//            System.out.println("Y End :: " + this.yUpperLimit);
+//            System.out.println("X Increment :: " + this.xIncrement);
+//            System.out.println("Y Increment :: " + this.yIncrement);
+//            System.out.println("First quadrant");
             for (double i = xPOSstart; i < this.xUpperLimit; i += this.xIncrement) {
                 for (double j = yPOSstart; j < this.yUpperLimit; j += this.yIncrement) {
-                    xPOSyPOS.add(new SubGrid(i, j));
+//                    System.out.println("i = " + i + ", j = " + j);
+                    //System.out.println("Here");
+                    //xPOSyPOS.add(new SubGrid(i, j));
                     this.subGrid.put(new SubGrid(i, j), false);
                 }
             }
+//            System.out.println("Second quadrant");
             //Second quadrant xPOS yNEG
             List<SubGrid> xPOSyNEG = new ArrayList<SubGrid>();
             if (xStart > 0) {
@@ -230,7 +240,7 @@ public class Grid {
             if (this.yUpperLimit < 0) {
                 for (double i = xPOSstart; i < this.xUpperLimit; i += this.xIncrement) {
                     for (double j = this.yLowerLimit; j < this.yUpperLimit; j += this.yIncrement) {
-                        xPOSyNEG.add(new SubGrid(i, j));
+                        //xPOSyNEG.add(new SubGrid(i, j));
                         this.subGrid.put(new SubGrid(i, j), false);
                     }
                 }
@@ -243,91 +253,11 @@ public class Grid {
 
                 for (double i = xPOSstart; i < this.xUpperLimit; i += this.xIncrement) {
                     for (int j = temp.size() - 1; j >= 0; j--) {
-                        xPOSyNEG.add(new SubGrid(i, temp.get(j)));
+                        //xPOSyNEG.add(new SubGrid(i, temp.get(j)));
                         this.subGrid.put(new SubGrid(i, temp.get(j)), false);
                     }
                 }
             }
-
-            //<editor-fold desc="When Time is negative. Not needed" defaultstate="collapsed"> 
-//            //Third quadrant xNEG yNEG 
-//            List<SubGrid> xNEGyNEG = new ArrayList<SubGrid>();
-//            if (this.xUpperLimit < 0) {
-//                if (this.yUpperLimit < 0) {
-//                    for (double i = this.xLowerLimit; i <= this.xUpperLimit; i += this.xIncrement) {
-//                        for (double j = this.yLowerLimit; j <= this.yUpperLimit; j += this.yIncrement) {
-//                            xNEGyNEG.add(new SubGrid(i, j));
-//                            this.subGrid.put(new SubGrid(i, j), false);
-//                        }
-//                    }
-//                } else {
-//                    List<Double> temp = new ArrayList<Double>();
-//                    for (double j = 0; j >= this.yLowerLimit; j -= this.yIncrement) {
-//                        temp.add(j);
-//                    }
-//                    for (double i = this.xLowerLimit; i <= this.xUpperLimit; i += this.xIncrement) {
-//                        for (int j = temp.size() - 1; j >= 0; j--) {
-//                            xNEGyNEG.add(new SubGrid(i, temp.get(j)));
-//                            this.subGrid.put(new SubGrid(i, temp.get(j)), false);
-//                            
-//                        }
-//                    }
-//                }
-//            } else {
-//                List<Double> tempx = new ArrayList<Double>();
-//                for (double i = 0; i >= this.xLowerLimit; i -= this.xIncrement) {
-//                    tempx.add(i);
-//                }
-//                if (this.yUpperLimit < 0) {
-//                    for (int i = tempx.size() - 1; i >= 0; i--) {
-//                        for (double j = this.yLowerLimit; j <= this.yUpperLimit; j += this.yIncrement) {
-//                            xNEGyNEG.add(new SubGrid(tempx.get(i), j));
-//                            this.subGrid.put(new SubGrid(tempx.get(i), j), false);
-//                            
-//                        }
-//                    }
-//                } else {
-//                    List<Double> tempy = new ArrayList<Double>();
-//                    for (double j = 0; j >= this.yLowerLimit; j -= this.yIncrement) {
-//                        tempy.add(j);
-//                    }
-//                    for (int i = tempx.size() - 1; i >= 0; i--) {
-//                        for (int j = tempy.size() - 1; j >= 0; j--) {
-//                            xNEGyNEG.add(new SubGrid(tempx.get(i), tempy.get(j)));
-//                            this.subGrid.put(new SubGrid(tempx.get(i), tempy.get(j)), false);
-//                            
-//                        }
-//                    }
-//                }
-//            }
-//
-//            //Fourth quadrant xNEG yPOS
-//            List<SubGrid> xNEGyPOS = new ArrayList<SubGrid>();
-//            if (yStart > 0) {
-//                yPOSstart = yStart;
-//            }
-//            if (this.xUpperLimit < 0) {
-//                for(double i=this.xLowerLimit; i <= this.xUpperLimit; i+= this.xIncrement){
-//                    for(double j = yPOSstart; j <= this.yUpperLimit; j += this.yIncrement){
-//                        xNEGyPOS.add(new SubGrid(i,j));
-//                        this.subGrid.put(new SubGrid(i,j), false);
-//                            
-//                    }
-//                }
-//            } else {
-//                List<Double> tempx = new ArrayList<Double>();
-//                for(double i=0; i >= this.xLowerLimit; i -= this.xIncrement){
-//                    tempx.add(i);
-//                }
-//                for(int i = tempx.size()-1; i >=0; i--){
-//                    for(double j = yPOSstart; j <= this.yUpperLimit; j += this.yIncrement){
-//                        xNEGyPOS.add(new SubGrid(tempx.get(i),j));
-//                        this.subGrid.put(new SubGrid(tempx.get(i),j), false);
-//                            
-//                    }
-//                }
-//            }
-            //</editor-fold>
             
             
         }//End of Else condition of ifCentered
