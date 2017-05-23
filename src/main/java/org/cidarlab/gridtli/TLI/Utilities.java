@@ -22,6 +22,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cidarlab.gridtli.DOM.Point;
 import org.cidarlab.gridtli.DOM.Signal;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -288,6 +291,28 @@ public class Utilities {
         } catch (IOException ex) {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static List<Signal> getWebappSignals(JSONArray arr){
+        List<Signal> signals = new ArrayList<Signal>();
+        
+        for(int i=0;i<arr.length();i++){
+            List<Point> points = new ArrayList<Point>();
+            try {
+                JSONArray pointsArr = (JSONArray)arr.get(i);
+                for(int j=0;j<pointsArr.length();j++){
+                    JSONObject point = (JSONObject)pointsArr.get(j);
+                    double time = Double.valueOf(point.get("x").toString());
+                    double signal = Double.valueOf(point.get("y").toString());
+                    points.add(new Point(time,"t",signal,"x"));
+                }
+            } catch (JSONException ex) {
+                Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            signals.add(new Signal(points));
+        }
+        
+        return signals;
     }
     
     public static List<Signal> getiBioSimSignals(String filepath){ //
