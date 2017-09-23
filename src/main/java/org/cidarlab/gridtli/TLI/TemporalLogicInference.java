@@ -11,7 +11,7 @@ import hyness.stl.DisjunctionNode;
 import hyness.stl.LinearPredicateLeaf;
 import hyness.stl.RelOperation;
 import hyness.stl.TreeNode;
-import hyness.stl.grammar.flat.STLflat;
+import hyness.stl.grammar.sharp.STLSharp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -572,7 +572,7 @@ public class TemporalLogicInference {
         return reduceToSingleDisjunction(disjunctionClusters);
     }
     
-    public static STLflat getLongSTL(Grid grid) {
+    public static STLSharp getLongSTL(Grid grid) {
         
         System.out.println(grid.getSubGrid());
 
@@ -640,7 +640,7 @@ public class TemporalLogicInference {
             
         }
         TreeNode entireConjunction = reduceToSingleConjunction(outerNodes);
-        STLflat stl = new STLflat(entireConjunction);
+        STLSharp stl = new STLSharp(entireConjunction);
         System.out.println(stl.module.toString());
         return stl;
     }
