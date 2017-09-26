@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.Adaptors;
+package org.cidarlab.gridtli.adaptors;
 
 import hyness.stl.AlwaysNode;
 import hyness.stl.LinearPredicateLeaf;
@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Signal;
-import org.cidarlab.gridtli.TLI.TemporalLogicInference;
-import org.cidarlab.gridtli.TLI.Utilities;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.tli.TemporalLogicInference;
+import org.cidarlab.gridtli.tli.Utilities;
 
 /**
  *

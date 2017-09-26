@@ -5,6 +5,8 @@
  */
 package org.cidarlab.gridtli.DOM;
 
+import org.cidarlab.gridtli.dom.Point;
+import org.cidarlab.gridtli.dom.Signal;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;

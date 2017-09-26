@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.Visualize;
+package org.cidarlab.gridtli.visualize;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import javax.imageio.ImageIO;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Signal;
-import org.cidarlab.gridtli.DOM.SubGrid;
-import org.cidarlab.gridtli.TLI.TemporalLogicInference;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.tli.TemporalLogicInference;
 
 /**
  *
@@ -35,7 +35,7 @@ public class JavaPlotAdaptor {
     
     public static List<Point> getSignalJPlotPoints(Signal signal){
         List<Point> points = new ArrayList<Point>();
-        for(org.cidarlab.gridtli.DOM.Point point:signal.getPoints()){
+        for(org.cidarlab.gridtli.dom.Point point:signal.getPoints()){
             points.add(new Point(point.getX(),point.getY()));
         }
         return points;

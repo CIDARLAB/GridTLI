@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.TLI;
+package org.cidarlab.gridtli.tli;
 
 import hyness.stl.AlwaysNode;
 import hyness.stl.ConjunctionNode;
@@ -18,9 +18,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Signal;
-import org.cidarlab.gridtli.DOM.SubGrid;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.dom.SubGrid;
 
 /**
  *

@@ -5,6 +5,8 @@
  */
 package org.cidarlab.gridtli.DOM;
 
+import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.dom.Grid;
 import java.util.Set;
 import org.junit.After;
 import org.junit.AfterClass;

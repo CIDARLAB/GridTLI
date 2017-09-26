@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.TLI;
+package org.cidarlab.gridtli.tli;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.cidarlab.gridtli.DOM.Point;
-import org.cidarlab.gridtli.DOM.Signal;
+import org.cidarlab.gridtli.dom.Point;
+import org.cidarlab.gridtli.dom.Signal;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -142,12 +142,7 @@ public class Utilities {
     
     public static String getResourcesFilepath(){
         String filepath = getFilepath();
-        if(Utilities.isWindows()){
-            filepath += "\\src\\main\\resources\\";
-        }
-        else{
-            filepath += "/src/main/resources/";
-        }
+        filepath += (getSeparater() + "src" + getSeparater() + "main" + getSeparater() + "resources" + getSeparater());
         return filepath;
     }
     

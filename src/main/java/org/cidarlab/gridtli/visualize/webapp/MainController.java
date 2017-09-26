@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.Visualize.Webapp;
+package org.cidarlab.gridtli.visualize.webapp;
 
 import hyness.stl.TreeNode;
 import java.io.IOException;
@@ -13,10 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Signal;
-import org.cidarlab.gridtli.TLI.TemporalLogicInference;
-import org.cidarlab.gridtli.TLI.Utilities;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.tli.TemporalLogicInference;
+import org.cidarlab.gridtli.tli.Utilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.springframework.stereotype.Controller;

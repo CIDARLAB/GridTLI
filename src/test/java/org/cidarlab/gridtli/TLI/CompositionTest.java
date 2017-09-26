@@ -5,6 +5,7 @@
  */
 package org.cidarlab.gridtli.TLI;
 
+import org.cidarlab.gridtli.tli.Utilities;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.DataSetPlot;
@@ -13,13 +14,13 @@ import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import java.util.ArrayList;
 import java.util.List;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Point;
-import org.cidarlab.gridtli.DOM.Signal;
-import org.cidarlab.gridtli.DOM.SubGrid;
-import org.cidarlab.gridtli.Visualize.JavaPlotAdaptor;
-import static org.cidarlab.gridtli.Visualize.JavaPlotAdaptor.getSignalJPlotPoints;
-import static org.cidarlab.gridtli.Visualize.JavaPlotAdaptor.getSubGridJPlotPoints;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Point;
+import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
+import static org.cidarlab.gridtli.visualize.JavaPlotAdaptor.getSignalJPlotPoints;
+import static org.cidarlab.gridtli.visualize.JavaPlotAdaptor.getSubGridJPlotPoints;
 
 /**
  *

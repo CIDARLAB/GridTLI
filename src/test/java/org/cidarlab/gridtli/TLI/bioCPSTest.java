@@ -5,6 +5,8 @@
  */
 package org.cidarlab.gridtli.TLI;
 
+import org.cidarlab.gridtli.tli.TemporalLogicInference;
+import org.cidarlab.gridtli.tli.Utilities;
 import hyness.stl.TreeNode;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +14,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.cidarlab.gridtli.Adaptors.BioCPSAdaptor;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Signal;
+import org.cidarlab.gridtli.adaptors.BioCPSAdaptor;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Signal;
 import static org.cidarlab.gridtli.TLI.CompositionTest.composedModulesGrid;
-import org.cidarlab.gridtli.Visualize.JavaPlotAdaptor;
+import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
 import org.junit.Test;
 
 /**

@@ -5,13 +5,15 @@
  */
 package org.cidarlab.gridtli.TLI;
 
+import org.cidarlab.gridtli.tli.TemporalLogicInference;
+import org.cidarlab.gridtli.tli.Utilities;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import org.cidarlab.gridtli.DOM.Grid;
-import org.cidarlab.gridtli.DOM.Point;
-import org.cidarlab.gridtli.DOM.Signal;
-import org.cidarlab.gridtli.Visualize.JavaPlotAdaptor;
+import org.cidarlab.gridtli.dom.Grid;
+import org.cidarlab.gridtli.dom.Point;
+import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
