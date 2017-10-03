@@ -34,7 +34,7 @@ public class ValidationTest {
 
     @Test
     public void testRobustness(){
-        String columnData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
+        String columnData = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
         List<Signal> signals = Utilities.getiBioSimSignals(columnData);
         double xthreshold = 10;
         double ythreshold = 10;
@@ -51,7 +51,7 @@ public class ValidationTest {
             System.out.println("Signal " + count++);
             System.out.println("Final Robustness Value:: " + Validation.getRobustness(stl, s));
         }
-        String demoFilepath = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater();
+        String demoFilepath = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater();
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Column.png");
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Column.png");
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Column.png");

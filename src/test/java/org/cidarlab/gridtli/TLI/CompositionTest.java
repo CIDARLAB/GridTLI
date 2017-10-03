@@ -37,7 +37,7 @@ public class CompositionTest {
     public static void main(String[] args) {
         CompositionTest ct = new CompositionTest();
         
-        String plotresults = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        String plotresults = Utilities.getSampleFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
         createFolder(plotresults);
         String modulescascadesFP = plotresults + "moduleCascades" + Utilities.getSeparater();
         String modulesFP = plotresults + "modules" + Utilities.getSeparater();
@@ -91,7 +91,7 @@ public class CompositionTest {
                 for (int j = 1; j <= 2; j++) {
 
                     String file1 = i + "-" + j + "-data";
-                    String filepath1 = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + file1 + ".csv";
+                    String filepath1 = Utilities.getSampleFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + file1 + ".csv";
                     List<Signal> m1 = Utilities.getiBioSimSignals(filepath1);
                     Grid g1 = new Grid(m1,xthreshold,ythreshold);
                     String mPlotFP = modulesFP + file1 + ".png";
@@ -103,7 +103,7 @@ public class CompositionTest {
                                 continue;
                             }
                             //modulescascadesFP
-                            String filepath2 = Utilities.getResourcesFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + file2 + ".csv";
+                            String filepath2 = Utilities.getSampleFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + file2 + ".csv";
                             List<Signal> m2 = Utilities.getiBioSimSignals(filepath2);
                             String cPlotFP = modulescascadesFP + file1 + "TO" + file2 + ".png";
                             JavaPlotAdaptor.plotToFile(composedModulesGrid(m1,m2,xthreshold,ythreshold), cPlotFP);

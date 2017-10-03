@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class PaperTest {
 
-    String fuelControlDatafilepath = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater();
+    String fuelControlDatafilepath = Utilities.getSampleFilepath() + "fuelcontrol" + Utilities.getSeparater();
 
     String posegofile = fuelControlDatafilepath + "EGO-pos-data.csv";
     String negegofile = fuelControlDatafilepath + "EGO-neg-data.csv";
@@ -45,7 +45,7 @@ public class PaperTest {
     String delimiter = ",";
 
     String biofilesuffix = "GeoMeanMEPTR";
-    String biosignalsfilepath = Utilities.getResourcesFilepath() + "biosignals" + Utilities.getSeparater();
+    String biosignalsfilepath = Utilities.getSampleFilepath() + "biosignals" + Utilities.getSeparater();
     int biosamples = 20;
     List<Double> time = new ArrayList<Double>();
     List<Double> lasAHLconc = new ArrayList<Double>();
@@ -822,7 +822,7 @@ public class PaperTest {
 
     //@Test
     public void testTransformFuel(){
-        String path = Utilities.getResourcesFilepath() + "fuelcontrol" + Utilities.getSeparater() + Mode.KFold.toString() + Utilities.getSeparater();
+        String path = Utilities.getSampleFilepath() + "fuelcontrol" + Utilities.getSeparater() + Mode.KFold.toString() + Utilities.getSeparater();
         String header = "";
         BigDecimal b = new BigDecimal(0.3);
         b = b.setScale(1, RoundingMode.UP);
@@ -929,8 +929,8 @@ public class PaperTest {
         
         //for (int i = 0; i < 10; i++) {
         int i=3;
-            String filepath = Utilities.getResourcesFilepath() + "biosignals/allSignals/balanced/"+i+"/";
-            String outputfilepath = Utilities.getResourcesFilepath() + "biosignals/forPaper/highThresh/foundyou/";
+            String filepath = Utilities.getSampleFilepath() + "biosignals/allSignals/balanced/"+i+"/";
+            String outputfilepath = Utilities.getSampleFilepath() + "biosignals/forPaper/highThresh/foundyou/";
             createFolder(outputfilepath);
 //            double x_t = 184.35;
 //            double t_t = 0.345;
@@ -968,7 +968,7 @@ public class PaperTest {
     //@Test
     public void testSpecificBiosignal(){
         System.out.println("Specific Test");
-        String filepath = Utilities.getResourcesFilepath() + "biosignals/separatedSignals/pL2f1439/1/testData/10/11/";
+        String filepath = Utilities.getSampleFilepath() + "biosignals/separatedSignals/pL2f1439/1/testData/10/11/";
         String usedSignalsFilepath = filepath + "used-plasmid.csv";
         String unusedSignalsFilepath = filepath + "unused-plasmid.csv";
         String plot = filepath + "grid.png";

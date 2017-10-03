@@ -49,7 +49,7 @@ public class TemporalLogicInferenceTest {
     @Test
     public void testColumnDemo(){
         System.out.println("COLUMN TYPE DATA");
-        String columnData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
+        String columnData = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
         List<Signal> signals = Utilities.getColumnSignals(columnData,false);
         double xthreshold = 10;
         double ythreshold = 10;
@@ -58,7 +58,7 @@ public class TemporalLogicInferenceTest {
         Grid grid = new Grid(signals, xthreshold, ythreshold);
         System.out.println("STL ::\n" + TemporalLogicInference.getSTL(grid, clusterThreshold).toString());
                
-        String demoFilepath = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater();
+        String demoFilepath = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater();
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Column.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Column.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Column.png");
@@ -68,7 +68,7 @@ public class TemporalLogicInferenceTest {
     @Test
     public void testRowDemo(){
         System.out.println("ROW TYPE DATA");
-        String rowData = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater() + "row_data.csv";
+        String rowData = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater() + "row_data.csv";
         List<Signal> signals = Utilities.getRowSignals(rowData,false);
         double xthreshold = 1;
         double ythreshold = 1;
@@ -77,7 +77,7 @@ public class TemporalLogicInferenceTest {
         Grid grid = new Grid(signals, xthreshold, ythreshold);
         System.out.println("STL ::\n" + TemporalLogicInference.getSTL(grid, clusterThreshold).toString());
         
-        String demoFilepath = Utilities.getResourcesFilepath() + "demo" + Utilities.getSeparater();
+        String demoFilepath = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater();
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Row.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Row.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Row.png");
@@ -119,9 +119,9 @@ public class TemporalLogicInferenceTest {
         
         Grid grid = new Grid(signals,0.5,0.5);
         TemporalLogicInference.getLongSTL(grid);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getResourcesTempFilepath() + "subgrid.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getResourcesTempFilepath() + "gridnoCover.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getResourcesTempFilepath() + "grid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid.png");
         
     }
     
@@ -173,9 +173,9 @@ public class TemporalLogicInferenceTest {
         System.out.println("");
         System.out.println("\nSubGrid :: \n" + grid.getSubGrid());
         
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getResourcesTempFilepath() + "subgrid.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getResourcesTempFilepath() + "gridnoCover.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getResourcesTempFilepath() + "grid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid.png");
         
     }
     

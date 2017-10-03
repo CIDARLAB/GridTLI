@@ -106,54 +106,35 @@ public class Utilities {
     
     
     public static String getFilepath() {
+        
         String _filepath = Utilities.class.getClassLoader().getResource(".").getPath();
-        if (_filepath.contains("/target/")) {
-            _filepath = _filepath.substring(0, _filepath.lastIndexOf("/target/"));
-        } else if (_filepath.contains("/src/")) {
-            _filepath = _filepath.substring(0, _filepath.lastIndexOf("/src/"));
-        } else if (_filepath.contains("/build/classes/")) {
-            _filepath = _filepath.substring(0, _filepath.lastIndexOf("/build/classes/"));
-        }
         if (Utilities.isWindows()) {
             try {
                 _filepath = URLDecoder.decode(_filepath, "utf-8");
                 _filepath = new File(_filepath).getPath();
-                if (_filepath.contains("\\target\\")) {
-                    _filepath = _filepath.substring(0, _filepath.lastIndexOf("\\target\\"));
-                } else if (_filepath.contains("\\src\\")) {
-                    _filepath = _filepath.substring(0, _filepath.lastIndexOf("\\src\\"));
-                } else if (_filepath.contains("\\build\\classes\\")) {
-                    _filepath = _filepath.substring(0, _filepath.lastIndexOf("\\build\\classes\\"));
-                }
             } catch (UnsupportedEncodingException ex) {
                 Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else {
-            if (_filepath.contains("/target/")) {
-                _filepath = _filepath.substring(0, _filepath.lastIndexOf("/target/"));
-            } else if (_filepath.contains("/src/")) {
-                _filepath = _filepath.substring(0, _filepath.lastIndexOf("/src/"));
-            } else if (_filepath.contains("/build/classes/")) {
-                _filepath = _filepath.substring(0, _filepath.lastIndexOf("/build/classes/"));
-            }
+        } 
+        char sep =  getSeparater();
+        if (_filepath.contains(sep + "target" + sep)) {
+            _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "target" + sep));
+        } else if (_filepath.contains(sep + "src" + sep)) {
+            _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "src" + sep));
+        } else if (_filepath.contains(sep + "build" + sep + "classes" + sep)) {
+            _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "build" + sep + "classes" + sep));
         }
         return _filepath;
     }
     
-    public static String getResourcesFilepath(){
+    public static String getSampleFilepath(){
         String filepath = getFilepath();
-        filepath += (getSeparater() + "src" + getSeparater() + "main" + getSeparater() + "resources" + getSeparater());
+        filepath += (getSeparater() + "samplefiles" + getSeparater());
         return filepath;
     }
     
-    public static String getResourcesTempFilepath(){
-        String filepath = getFilepath();
-        if(Utilities.isWindows()){
-            filepath += "\\src\\main\\resources\\temp\\";
-        }
-        else{
-            filepath += "/src/main/resources/temp/";
-        }
+    public static String getSampleTestFilepath(){
+        String filepath = getSampleFilepath() + "temp" + getSeparater();
         return filepath;
     }
     
