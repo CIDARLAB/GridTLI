@@ -13,16 +13,49 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <excludes>
-                        <exclude>**/resources/bin_dependant</exclude>
-                        <exclude>**/resources/biosignals</exclude>
-                        <exclude>**/resources/demo</exclude>
-                        <exclude>**/resources/fuelcontrol</exclude>
-                        <exclude>**/resources/ibiosim</exclude>
-                    </excludes>
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5.2</version>
+                <executions>
+                    <execution>
+                        <id>install-external</id>
+                        <phase>clean</phase>
+                        <configuration>
+                            <file>${basedir}/lib/JavaPlot.jar</file>
+                            <repositoryLayout>default</repositoryLayout>
+                            <groupId>org.java.plot</groupId>
+                            <artifactId>JavaPlot</artifactId>
+                            <version>1.0</version>
+                            <packaging>jar</packaging>
+                            <generatePom>true</generatePom>
+                        </configuration>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>            
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.cidarlab.gridtli.cli.Main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin> 
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -46,8 +79,13 @@
             <groupId>org.java.plot</groupId>
             <artifactId>JavaPlot</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/src/main/resources/lib/JavaPlot.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.9</version>
+            <type>jar</type>
         </dependency>
         
         <!--STL-flat-->

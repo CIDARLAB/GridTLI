@@ -31,7 +31,7 @@ import org.junit.Test;
  *
  * @author prash
  */
-public class PaperTest {
+public class ManuscriptTest {
 
     String fuelControlDatafilepath = Utilities.getSampleFilepath() + "fuelcontrol" + Utilities.getSeparater();
 

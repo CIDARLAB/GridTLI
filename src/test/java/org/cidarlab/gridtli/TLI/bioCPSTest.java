@@ -89,7 +89,7 @@ public class bioCPSTest {
                     //TemporalLogicInference.getSTL(grid);
 
                     String resultFilepath = Utilities.getSampleFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesHighInput" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater();
-                    createFolder(resultFilepath);
+                    Utilities.makeDirectory(resultFilepath);
                     String resultFilename = resultFilepath + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
                     Utilities.writeToFile(resultFilename, TemporalLogicInference.getSTL(grid, threshold).toString());
 
@@ -158,7 +158,7 @@ public class bioCPSTest {
                     //TemporalLogicInference.getSTL(grid);
 
                     String resultFilepath = Utilities.getSampleFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "modulesLowInput" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater()  + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) +  Utilities.getSeparater();
-                    createFolder(resultFilepath);
+                    Utilities.makeDirectory(resultFilepath);
                     String resultFilename = resultFilepath + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
                     Utilities.writeToFile(resultFilename, TemporalLogicInference.getSTL(grid, threshold).toString());
                     
@@ -224,7 +224,7 @@ public class bioCPSTest {
                     //TemporalLogicInference.getSTL(grid);
                     String resultFilepath = Utilities.getSampleFilepath() + "ibiosim" + Utilities.getSeparater()+ "newData" + Utilities.getSeparater() + "cascades" + Utilities.getSeparater() + "TLI" + Utilities.getSeparater() + ((int)xthreshold) + "_" + ((int)ythreshold) + "_" + ((int)threshold) + Utilities.getSeparater();
                     
-                    createFolder(resultFilepath);
+                    Utilities.makeDirectory(resultFilepath);
                     String fileResultName = resultFilepath + filename + "_" + xthreshold + "_" + ythreshold + "_" + threshold + ".txt";
                     Utilities.writeToFile(fileResultName, TemporalLogicInference.getSTL(grid, threshold).toString());
                 }
@@ -233,13 +233,6 @@ public class bioCPSTest {
 
     }
     
-    
-    public static void createFolder(String filepath){
-        if(!Utilities.isDirectory(filepath)){
-            Utilities.makeDirectory(filepath);
-        }
-    }
-
     //@Test
     public void testGetSTLfromModules() {
 
@@ -277,21 +270,6 @@ public class bioCPSTest {
 
     }
 
-    //@Test
-    public void testGetGurobi() {
-        String module1 = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
-        String module2 = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-2-data.csv";
-
-        List<String> moduleFiles = new ArrayList<String>();
-        moduleFiles.add(module1);
-        moduleFiles.add(module2);
-
-        double xThreshold = 1;
-        double yThreshold = 10000;
-        double clusterThreshold = 10000;
-        System.out.println(BioCPSAdaptor.generateGurobiConstraints(moduleFiles, xThreshold, yThreshold, clusterThreshold));
-
-    }
 
     //@Test
     public void testModule11Data() {
@@ -322,27 +300,7 @@ public class bioCPSTest {
         System.out.println(TemporalLogicInference.getSTL(grid, 10000));
 
     }
-
-    //@Test
-    public void testClustering() {
-        String filepath = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
-        List<Signal> signals = Utilities.getRowSignals(filepath,false);
-        double threshold = 10000;
-        Grid grid = new Grid(signals, 1, threshold);
-
-        //TemporalLogicInference.getSTL(grid);
-        List<Set<Signal>> cluster = TemporalLogicInference.cluster(grid, threshold);
-        TemporalLogicInference.getClusterSTLFast(grid.getXSignal(), cluster.get(0), grid.getXIncrement(), grid.getYIncrement(), grid.getXLowerLimit(), grid.getXUpperLimit(), grid.getYLowerLimit(), grid.getYUpperLimit(), threshold);
-    }
-
-    //@Test
-    public void testGetSTL() {
-        String filepath = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
-        List<Signal> signals = Utilities.getRowSignals(filepath,false);
-        double threshold = 10000;
-        Grid grid = new Grid(signals, 1, threshold);
-        System.out.println(TemporalLogicInference.getSTL(grid, threshold).toString());
-    }
+    
 
     //@Test
     public void testFadingDrop() {
@@ -467,7 +425,7 @@ public class bioCPSTest {
         }
     }
     
-    //@Test
+    @Test
     public void testBinDependantWalk(){
         String filepath = Utilities.getSampleFilepath() + "bin_dependant";
         Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = Utilities.binDependantWalk(filepath);

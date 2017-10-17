@@ -5,6 +5,7 @@
  */
 package org.cidarlab.gridtli.tli;
 
+import com.opencsv.CSVReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -90,8 +91,11 @@ public class Utilities {
     
     //<editor-fold desc="File and Directory checks">
     public static boolean makeDirectory(String filepath){
-        File file = new File(filepath);
-        return file.mkdir();
+        if(!isDirectory(filepath)) {
+            File file = new File(filepath);
+            return file.mkdir();
+        }
+        return true;
     }
     
     public static boolean validFilepath(String filepath){
@@ -107,24 +111,41 @@ public class Utilities {
     
     public static String getFilepath() {
         
-        String _filepath = Utilities.class.getClassLoader().getResource(".").getPath();
-        if (Utilities.isWindows()) {
-            try {
-                _filepath = URLDecoder.decode(_filepath, "utf-8");
-                _filepath = new File(_filepath).getPath();
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            String path = Utilities.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            String _filepath = URLDecoder.decode(path, "UTF-8");
+            if(_filepath.endsWith(".jar")){
+                String sep = "" + Utilities.getSeparater();
+                if(Utilities.isWindows()){
+                    _filepath = new File(_filepath).getPath();
+                }
+                _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep));
+                _filepath += Utilities.getSeparater();
+                return _filepath;
+            } else {
+                if (Utilities.isWindows()) {
+                    try {
+                        _filepath = URLDecoder.decode(_filepath, "utf-8");
+                        _filepath = new File(_filepath).getPath();
+                    } catch (UnsupportedEncodingException ex) {
+                        Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                char sep = getSeparater();
+                if (_filepath.contains(sep + "target" + sep)) {
+                    _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "target" + sep));
+                } else if (_filepath.contains(sep + "src" + sep)) {
+                    _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "src" + sep));
+                } else if (_filepath.contains(sep + "build" + sep + "classes" + sep)) {
+                    _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "build" + sep + "classes" + sep));
+                }
+                return _filepath;
             }
-        } 
-        char sep =  getSeparater();
-        if (_filepath.contains(sep + "target" + sep)) {
-            _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "target" + sep));
-        } else if (_filepath.contains(sep + "src" + sep)) {
-            _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "src" + sep));
-        } else if (_filepath.contains(sep + "build" + sep + "classes" + sep)) {
-            _filepath = _filepath.substring(0, _filepath.lastIndexOf(sep + "build" + sep + "classes" + sep));
+            
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return _filepath;
+        return null;
     }
     
     public static String getSampleFilepath(){
@@ -136,8 +157,7 @@ public class Utilities {
     public static String getSampleTestFilepath(){
         String filepath = getSampleFilepath() + "temp" + getSeparater();
         return filepath;
-    }
-    
+    }    
     //</editor-fold>
     
     //<editor-fold desc="File content">
@@ -182,17 +202,23 @@ public class Utilities {
     }
     
     public static List<String[]> getCSVFileContentAsList(String filepath){
-        List<String[]> listPieces = new ArrayList<String[]>();
-        List<String> stringList = getFileContentAsStringList(filepath);
-        for(String line:stringList){
-            listPieces.add(line.split(","));
+        List<String[]> listPieces = new ArrayList<>();
+        try {
+            CSVReader reader = new CSVReader(new FileReader(filepath));
+            String[] nextline;
+            while( (nextline = reader.readNext()) != null ){
+                listPieces.add(nextline);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listPieces;
     }
     
     public static Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> binDependantWalk(String root){
         Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = new HashMap<>();
-        //List<Signal> signals = new ArrayList<Signal>();
         binDependantWalk(root,root,map);
         return map;
     }
@@ -238,7 +264,7 @@ public class Utilities {
         return relativeFilepath.split("/");
     }
     
-    public static Signal readBinDependantFile(String filepath){
+    private static Signal readBinDependantFile(String filepath){
         List<String[]> listPieces = new ArrayList<String[]>();
         listPieces = getCSVFileContentAsList(filepath);
         List<Point> points = new ArrayList<Point>();
