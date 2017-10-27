@@ -17,6 +17,5 @@ public class TLIException  extends Exception{
     
     public TLIException(String message){
         super(message);
-        //System.exit(0);
     }    
 }
