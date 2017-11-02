@@ -5,7 +5,7 @@
  */
 package org.cidarlab.gridtli.DOM;
 
-import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.dom.Cell;
 import org.cidarlab.gridtli.dom.Grid;
 import java.util.Set;
 import org.junit.After;
@@ -111,10 +111,10 @@ public class GridTest {
 //        Grid g1 = new Grid(signals1);
 //        System.out.println("Sub Grids :: " + g1.getSubGrid().keySet());
 //        
-//        SubGrid sg = new SubGrid(0,2);
+//        Cell sg = new Cell(0,2);
 //        assertTrue(g1.getSubGrid().containsKey(sg));
-//        assertFalse(g1.isSpecificSubGridCovered(new SubGrid(0,2)));
-//        assertTrue(g1.isSpecificSubGridCovered(new SubGrid(0,0)));
+//        assertFalse(g1.isSpecificCellCovered(new Cell(0,2)));
+//        assertTrue(g1.isSpecificCellCovered(new Cell(0,0)));
         
     }
     
@@ -131,7 +131,7 @@ public class GridTest {
         double xthreshold = 1;
         double ythreshold = 0.5;
         
-        Set<SubGrid> quadTree = Grid.createQuadTreeSubGrid(xmin, ymin, xinc, yinc, xthreshold, ythreshold);
+        Set<Cell> quadTree = Grid.createQuadTreeCell(xmin, ymin, xinc, yinc, xthreshold, ythreshold);
         System.out.println(quadTree);
     }
     

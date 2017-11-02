@@ -59,7 +59,7 @@ public class TemporalLogicInferenceTest {
         System.out.println("STL ::\n" + TemporalLogicInference.getSTL(grid, clusterThreshold).toString());
                
         String demoFilepath = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater();
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Column.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeCells(grid.getCell().keySet()), demoFilepath + "subgrid_Column.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Column.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Column.png");
         
@@ -78,7 +78,7 @@ public class TemporalLogicInferenceTest {
         System.out.println("STL ::\n" + TemporalLogicInference.getSTL(grid, clusterThreshold).toString());
         
         String demoFilepath = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater();
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), demoFilepath + "subgrid_Row.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeCells(grid.getCell().keySet()), demoFilepath + "subgrid_Row.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), demoFilepath + "gridnoCover_Row.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), demoFilepath + "grid_Row.png");
         
@@ -119,7 +119,7 @@ public class TemporalLogicInferenceTest {
         
         Grid grid = new Grid(signals,0.5,0.5);
         TemporalLogicInference.getLongSTL(grid);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeCells(grid.getCell().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid.png");
         
@@ -171,9 +171,9 @@ public class TemporalLogicInferenceTest {
         System.out.println("y Start :" + grid.getYStart());
         
         System.out.println("");
-        System.out.println("\nSubGrid :: \n" + grid.getSubGrid());
+        System.out.println("\nSubGrid :: \n" + grid.getCell());
         
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeCells(grid.getCell().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid.png");
         

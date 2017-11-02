@@ -17,7 +17,7 @@ import java.util.List;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
-import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.dom.Cell;
 import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
 import static org.cidarlab.gridtli.visualize.JavaPlotAdaptor.getSignalJPlotPoints;
 import static org.cidarlab.gridtli.visualize.JavaPlotAdaptor.getSubGridJPlotPoints;
@@ -144,7 +144,7 @@ public class CompositionTest {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -159,8 +159,8 @@ public class CompositionTest {
             plot.addPlot(dsp);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell subgrid: grid.getCell().keySet()){
+            if(grid.isSpecificCellCovered(subgrid)){
                 
                 //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
                 String obj = "object " + count;

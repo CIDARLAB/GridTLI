@@ -25,7 +25,7 @@ public class Grid {
     private List<Signal> signals;
 
     @Getter
-    private Map<SubGrid,Boolean> subGrid;
+    private Map<Cell,Boolean> cell;
 
     @Getter
     @Setter //Change this. This will trigger a ripple effect.
@@ -88,7 +88,7 @@ public class Grid {
         assignSignalIndex();
         
         createSubGrid();
-        setSubGridCovers();
+        setCellCovers();
     }
 
     public Grid(List<Signal> _signals, double _xIncrement, double _yIncrement) {
@@ -114,7 +114,7 @@ public class Grid {
         
         //System.out.println("Sub Grid Creation complete. Now Setting Sub Grid Covers");
         
-        setSubGridCovers();
+        setCellCovers();
         //System.out.println("Sub Grid Covers set complete");
     }
 
@@ -137,38 +137,38 @@ public class Grid {
         assignSignalIndex();
         
         createSubGrid();
-        setSubGridCovers();
+        setCellCovers();
     }
 
-    public static Set<SubGrid> createQuadTreeSubGrid(double xmin, double ymin, double xInc, double yInc, double xthreshold, double ythreshold){
-        Set<SubGrid> set = new HashSet<SubGrid>();
-        set.add(new SubGrid(xmin,ymin,xInc,yInc));
+    public static Set<Cell> createQuadTreeCell(double xmin, double ymin, double xInc, double yInc, double xthreshold, double ythreshold){
+        Set<Cell> set = new HashSet<Cell>();
+        set.add(new Cell(xmin,ymin,xInc,yInc));
         double yhalf = yInc/2;
         if( yhalf >= ythreshold){
-            set.add(new SubGrid(xmin,ymin,xInc,yhalf));
-            set.add(new SubGrid(xmin,ymin + yhalf,xInc,yhalf));
+            set.add(new Cell(xmin,ymin,xInc,yhalf));
+            set.add(new Cell(xmin,ymin + yhalf,xInc,yhalf));
         } 
-        Set<SubGrid> xdiv = new HashSet<SubGrid>();
+        Set<Cell> xdiv = new HashSet<Cell>();
         
-        for(SubGrid sgrid:set){
-            xdiv.addAll(divideX(sgrid.getXOrigin(),sgrid.getYOrigin(),sgrid.getXInc(),sgrid.getYInc(),xthreshold,ythreshold));
+        for(Cell cell:set){
+            xdiv.addAll(divideX(cell.getXOrigin(),cell.getYOrigin(),cell.getXInc(),cell.getYInc(),xthreshold,ythreshold));
         }
         set.addAll(xdiv);
         return set;
     }
     
-    private static Set<SubGrid> divideX(double xmin, double ymin, double xInc, double yInc, double xthreshold, double ythreshold){
-        Set<SubGrid> set = new HashSet<SubGrid>();
+    private static Set<Cell> divideX(double xmin, double ymin, double xInc, double yInc, double xthreshold, double ythreshold){
+        Set<Cell> set = new HashSet<Cell>();
         double xhalf = xInc/2;
         double yhalf = yInc/2;
         if(xhalf >= xthreshold){
-            set.add(new SubGrid(xmin,ymin,xhalf,yInc));
-            set.add(new SubGrid(xmin+xhalf,ymin,xhalf,yInc));
+            set.add(new Cell(xmin,ymin,xhalf,yInc));
+            set.add(new Cell(xmin+xhalf,ymin,xhalf,yInc));
         }
-        Set<SubGrid> ydiv = new HashSet<SubGrid>();
+        Set<Cell> ydiv = new HashSet<Cell>();
         if(yhalf >= ythreshold){
-            for(SubGrid sgrid:set){
-                ydiv.addAll(createQuadTreeSubGrid(sgrid.getXOrigin(),sgrid.getYOrigin(),sgrid.getXInc(),sgrid.getYInc(),xthreshold,ythreshold));
+            for(Cell sgrid:set){
+                ydiv.addAll(createQuadTreeCell(sgrid.getXOrigin(),sgrid.getYOrigin(),sgrid.getXInc(),sgrid.getYInc(),xthreshold,ythreshold));
             }
             set.addAll(ydiv);
         }
@@ -176,7 +176,7 @@ public class Grid {
     }
     
     private void createSubGrid() {
-        this.subGrid = new HashMap<SubGrid,Boolean>();
+        this.cell = new HashMap<Cell,Boolean>();
 
         if (this.centered) {
             
@@ -209,7 +209,7 @@ public class Grid {
             double yPOSstart = 0;
 
             //First quadrant xPOS yPOS
-            List<SubGrid> xPOSyPOS = new ArrayList<SubGrid>();
+            List<Cell> xPOSyPOS = new ArrayList<Cell>();
             if (xStart > 0) {
                 xPOSstart = xStart;
             }
@@ -227,21 +227,21 @@ public class Grid {
                 for (double j = yPOSstart; j < this.yUpperLimit; j += this.yIncrement) {
 //                    System.out.println("i = " + i + ", j = " + j);
                     //System.out.println("Here");
-                    //xPOSyPOS.add(new SubGrid(i, j));
-                    this.subGrid.put(new SubGrid(i, j), false);
+                    //xPOSyPOS.add(new Cell(i, j));
+                    this.cell.put(new Cell(i, j), false);
                 }
             }
 //            System.out.println("Second quadrant");
             //Second quadrant xPOS yNEG
-            List<SubGrid> xPOSyNEG = new ArrayList<SubGrid>();
+            List<Cell> xPOSyNEG = new ArrayList<Cell>();
             if (xStart > 0) {
                 xPOSstart = xStart;
             }
             if (this.yUpperLimit < 0) {
                 for (double i = xPOSstart; i < this.xUpperLimit; i += this.xIncrement) {
                     for (double j = this.yLowerLimit; j < this.yUpperLimit; j += this.yIncrement) {
-                        //xPOSyNEG.add(new SubGrid(i, j));
-                        this.subGrid.put(new SubGrid(i, j), false);
+                        //xPOSyNEG.add(new Cell(i, j));
+                        this.cell.put(new Cell(i, j), false);
                     }
                 }
             } else {
@@ -253,8 +253,8 @@ public class Grid {
 
                 for (double i = xPOSstart; i < this.xUpperLimit; i += this.xIncrement) {
                     for (int j = temp.size() - 1; j >= 0; j--) {
-                        //xPOSyNEG.add(new SubGrid(i, temp.get(j)));
-                        this.subGrid.put(new SubGrid(i, temp.get(j)), false);
+                        //xPOSyNEG.add(new Cell(i, temp.get(j)));
+                        this.cell.put(new Cell(i, temp.get(j)), false);
                     }
                 }
             }
@@ -272,48 +272,48 @@ public class Grid {
     }
     
     
-    public boolean isSpecificSubGridCovered(double x, double y){
-        return isSpecificSubGridCovered(new SubGrid(x,y));
+    public boolean isSpecificCellCovered(double x, double y){
+        return Grid.this.isSpecificCellCovered(new Cell(x,y));
     }
     
-    public boolean isSpecificSubGridCovered(SubGrid _sgrid){
-        if(this.subGrid.containsKey(_sgrid)){
-            return this.subGrid.get(_sgrid);
+    public boolean isSpecificCellCovered(Cell _cell){
+        if(this.cell.containsKey(_cell)){
+            return this.cell.get(_cell);
         }
         return false;
     }
     
-    public SubGrid getSpecificSubGrid(double x, double y){
-        return getSpecificSubGrid(new SubGrid(x,y));
+    public Cell getSpecificCell(double x, double y){
+        return getSpecificCell(new Cell(x,y));
     }
     
-    public SubGrid getSpecificSubGrid(SubGrid _sgrid){
-        for(SubGrid sgrid : this.subGrid.keySet()){
-            if(sgrid.equals(_sgrid)){
-                return sgrid;
+    public Cell getSpecificCell(Cell _cell){
+        for(Cell cell : this.cell.keySet()){
+            if(cell.equals(_cell)){
+                return cell;
             }
         }
         return null;
     }
     
-    private void setSubGridCovers(){
+    private void setCellCovers(){
         //System.out.println("In Set Sub Grid Covers");
-        //System.out.println("subgrid size :: " + this.subGrid.size());
+        //System.out.println("cell size :: " + this.cell.size());
         //System.out.println("Number of Signals :: " + this.signals.size());
-        for(SubGrid subgrid: this.subGrid.keySet()){
+        for(Cell cell: this.cell.keySet()){
             for(Signal signal:this.signals){
-                List<Point> possiblePoints = signal.getGridPoints(subgrid.getXOrigin(), this.xIncrement);
+                List<Point> possiblePoints = signal.getGridPoints(cell.getXOrigin(), this.xIncrement);
                 for(int i=0;i< possiblePoints.size()-1; i++){
-                    if(inGrid(subgrid.getXOrigin(), this.xIncrement , subgrid.getYOrigin(), this.yIncrement, possiblePoints.get(i), possiblePoints.get(i+1))){
+                    if(inGrid(cell.getXOrigin(), this.xIncrement , cell.getYOrigin(), this.yIncrement, possiblePoints.get(i), possiblePoints.get(i+1))){
                         //subgrid.setCovered(true);
-                        signal.addSubGrid(subgrid);
-                        this.subGrid.put(subgrid, true);
+                        signal.addCell(cell);
+                        this.cell.put(cell, true);
                         
-                        if(signal.getSubGridCovered().size() == 1){
-                            signal.setStartingGrid(subgrid);
+                        if(signal.getCellCovered().size() == 1){
+                            signal.setStartingCell(cell);
                         } else {
-                            if(subgrid.smallerThan(signal.getStartingGrid())){
-                                signal.setStartingGrid(subgrid);
+                            if(cell.smallerThan(signal.getStartingCell())){
+                                signal.setStartingCell(cell);
                             }
                         }
                     }
@@ -366,41 +366,41 @@ public class Grid {
         return min;
     }
     
-    public double getSubGridMinX(){
+    public double getCellMinX(){
         double min = this.xUpperLimit;
-        for(SubGrid sgrid: this.subGrid.keySet()){
-            if(sgrid.getXOrigin() <= min){
-                min = sgrid.getXOrigin();
+        for(Cell cell: this.cell.keySet()){
+            if(cell.getXOrigin() <= min){
+                min = cell.getXOrigin();
             }
         }
         return min;
     }
     
-    public double getSubGridMaxX(){
+    public double getCellMaxX(){
         double max = this.xLowerLimit;
-        for(SubGrid sgrid: this.subGrid.keySet()){
-            if(sgrid.getXOrigin() >= max){
-                max = sgrid.getXOrigin();
+        for(Cell cell: this.cell.keySet()){
+            if(cell.getXOrigin() >= max){
+                max = cell.getXOrigin();
             }
         }
         return max;
     }    
     
-    public double getSubGridMinY(){
+    public double getCellMinY(){
         double min = this.yUpperLimit;
-        for(SubGrid sgrid: this.subGrid.keySet()){
-            if(sgrid.getYOrigin() <= min){
-                min = sgrid.getYOrigin();
+        for(Cell cell: this.cell.keySet()){
+            if(cell.getYOrigin() <= min){
+                min = cell.getYOrigin();
             }
         }
         return min;
     }
     
-    public double getSubGridMaxY(){
+    public double getCellMaxY(){
         double max = this.yLowerLimit;
-        for(SubGrid sgrid: this.subGrid.keySet()){
-            if(sgrid.getYOrigin() >= max){
-                max = sgrid.getYOrigin();
+        for(Cell cell: this.cell.keySet()){
+            if(cell.getYOrigin() >= max){
+                max = cell.getYOrigin();
             }
         }
         return max;

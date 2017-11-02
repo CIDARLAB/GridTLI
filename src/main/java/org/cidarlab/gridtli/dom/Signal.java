@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,38 +36,45 @@ public class Signal {
     private double yLimit;
 
     @Getter
-    private Set<SubGrid> subGridCovered;
+    private Set<Cell> cellCovered;
     
     @Getter
     @Setter
-    private SubGrid startingGrid;
+    private Cell startingCell;
     
     public Signal(List<Point> _points) {
-        points = new ArrayList<Point>(_points);
-        subGridCovered = new HashSet<SubGrid>();
+        if(_points.isEmpty()){
+            try {
+                throw new TLIException("Points cannot be empty. A signal must have at-least 1 point.");
+            } catch (TLIException ex) {
+                Logger.getLogger(Signal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        points = new ArrayList<>(_points);
+        cellCovered = new HashSet<>();
         if(!isSorted()){
             sortPoints(); 
         }
         checkPoints();
     }
     
-    public boolean coversSubGrid(double x, double y){
-        return coversSubGrid(new SubGrid(x,y));
+    public boolean coversCell(double x, double y){
+        return coversCell(new Cell(x,y));
     }
     
-    public boolean coversSubGrid(SubGrid _subgrid){
-        if(this.subGridCovered.contains(_subgrid)){
+    public boolean coversCell(Cell _cell){
+        if(this.cellCovered.contains(_cell)){
             return true;
         }
         return false;
     }
     
-    public void addSubGrid(double x, double y){
-        this.subGridCovered.add(new SubGrid(x,y));
+    public void addCell(double x, double y){
+        this.cellCovered.add(new Cell(x,y));
     }
     
-    public void addSubGrid(SubGrid _subGrid){
-        this.subGridCovered.add(_subGrid);
+    public void addCell(Cell _cell){
+        this.cellCovered.add(_cell);
     }
     
     public double getxMax(){
@@ -169,7 +178,7 @@ public class Signal {
                 }
             } catch(TLIException ex){
                 System.out.println(ex.getMessage());
-                System.exit(1);
+                System.exit(-1);
             }
         }
     }

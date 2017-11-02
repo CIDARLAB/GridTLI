@@ -23,7 +23,7 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Signal;
-import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.dom.Cell;
 import org.cidarlab.gridtli.tli.TemporalLogicInference;
 
 /**
@@ -41,10 +41,10 @@ public class JavaPlotAdaptor {
         return points;
     }
     
-    public static List<Point> getSubGridJPlotPoints(Set<SubGrid> subgrids){
+    public static List<Point> getSubGridJPlotPoints(Set<Cell> cells){
         List<Point> points = new ArrayList<Point>();
-        for(SubGrid subgrid:subgrids){
-            points.add(new Point(subgrid.getXOrigin(),subgrid.getYOrigin()));
+        for(Cell cell:cells){
+            points.add(new Point(cell.getXOrigin(),cell.getYOrigin()));
         }
         return points;
     }
@@ -69,7 +69,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -98,12 +98,12 @@ public class JavaPlotAdaptor {
             plot.addPlot(dsp);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"yellow\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"yellow\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -125,12 +125,12 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
         
-        Set<SubGrid> coveredCluster = TemporalLogicInference.getAllCoveredSubGrids(cluster);
+        Set<Cell> coveredCluster = TemporalLogicInference.getAllCoveredCells(cluster);
         
         for(Signal signal:cluster){
             PlotStyle sps = new PlotStyle();
@@ -143,13 +143,13 @@ public class JavaPlotAdaptor {
             plot.addPlot(dsp);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                if (coveredCluster.contains(subgrid)) {
-                    String rect = "rect from " + subgrid.getXOrigin() + "," + subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin() + grid.getYIncrement()) + " fc rgb \"yellow\"";
+                if (coveredCluster.contains(cell)) {
+                    String rect = "rect from " + cell.getXOrigin() + "," + cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin() + grid.getYIncrement()) + " fc rgb \"yellow\"";
                     plot.set(obj, rect);
                     count++;
 
@@ -174,7 +174,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -189,12 +189,12 @@ public class JavaPlotAdaptor {
             plot.addPlot(dsp);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -216,7 +216,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -240,12 +240,12 @@ public class JavaPlotAdaptor {
             plot.addPlot(dsp_test);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -266,7 +266,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -291,12 +291,12 @@ public class JavaPlotAdaptor {
             plot.addPlot(dsp_test);
         }
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"#B3B3FA\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -318,7 +318,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -359,12 +359,12 @@ public class JavaPlotAdaptor {
         }
         
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(!grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(!grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"beige\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"beige\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -388,32 +388,28 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
         
-        
-        
-        
-        
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(!grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(!grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"white\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"white\"";
                 
                 plot.set(obj, rect);
                 count++;
             } else{
                 String color = "";
                 for(int i=0;i<10;i++){
-                    if (grid.getSignals().get(i).coversSubGrid(subgrid)) {
+                    if (grid.getSignals().get(i).coversCell(cell)) {
                         color = "yellow";
                         String obj = "object " + count;
-                        String rect = "rect from " + subgrid.getXOrigin() + "," + subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin() + grid.getYIncrement()) + " fc rgb \"" + color + "\"";
+                        String rect = "rect from " + cell.getXOrigin() + "," + cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin() + grid.getYIncrement()) + " fc rgb \"" + color + "\"";
 
                         plot.set(obj, rect);
                         count++;
@@ -473,44 +469,40 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
         
-        
-        
-        
-        
         int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(!grid.isSpecificSubGridCovered(subgrid)){
+        for(Cell cell: grid.getCell().keySet()){
+            if(!grid.isSpecificCellCovered(cell)){
                 
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
+                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"white\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"white\"";
                 
                 plot.set(obj, rect);
                 count++;
             } else{
                 String color = "";
                 for(int i=0;i<10;i++){
-                    if(grid.getSignals().get(i).coversSubGrid(subgrid)){
+                    if(grid.getSignals().get(i).coversCell(cell)){
                         color = "yellow";
                     }
                 }
                 for(int i=10;i<11;i++){
-                    if(grid.getSignals().get(i).coversSubGrid(subgrid)){
+                    if(grid.getSignals().get(i).coversCell(cell)){
                         color = "green";
                     }
                 }
                 for(int i=11;i<12;i++){
-                    if(grid.getSignals().get(i).coversSubGrid(subgrid)){
+                    if(grid.getSignals().get(i).coversCell(cell)){
                         color = "orange";
                     }
                 }
                 String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \""+color+"\"";
+                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \""+color+"\"";
                 
                 plot.set(obj, rect);
                 count++;
@@ -566,7 +558,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         //plot.addPlot(dspgrid);
@@ -580,18 +572,7 @@ public class JavaPlotAdaptor {
             dsp.setPlotStyle(sps);
             plot.addPlot(dsp);
         }
-        /*int count =1;
-        for(SubGrid subgrid: grid.getSubGrid().keySet()){
-            if(!grid.isSpecificSubGridCovered(subgrid)){
-                
-                //System.out.println("Covered: " +  subgrid.getXOrigin()+","+subgrid.getYOrigin());
-                String obj = "object " + count;
-                String rect = "rect from " + subgrid.getXOrigin()+","+subgrid.getYOrigin() + " to " + (subgrid.getXOrigin() + grid.getXIncrement()) + "," + (subgrid.getYOrigin()+grid.getYIncrement()) + " fc rgb \"cyan\"";
-                
-                plot.set(obj, rect);
-                count++;
-            }
-        }*/
+        
         plot.set("style fill", "transparent solid 0.5");
         plot.getAxis("x").setLabel("x");
         plot.getAxis("y").setLabel("y");
@@ -608,7 +589,7 @@ public class JavaPlotAdaptor {
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
         ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getSubGrid().keySet()));
+        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
         DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
         dspgrid.setPlotStyle(ps);
         plot.addPlot(dspgrid);
@@ -632,11 +613,11 @@ public class JavaPlotAdaptor {
         return plot;
     }
     
-    public static JavaPlot visualizeSubGrid(Set<SubGrid> subgrids){
+    public static JavaPlot visualizeCells(Set<Cell> cells){
         JavaPlot plot = new JavaPlot();
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
-        PointDataSet pds = new PointDataSet(getSubGridJPlotPoints(subgrids));
+        PointDataSet pds = new PointDataSet(getSubGridJPlotPoints(cells));
         DataSetPlot dsp = new DataSetPlot(pds);
         dsp.setPlotStyle(ps);
         plot.addPlot(dsp);

@@ -5,7 +5,7 @@
  */
 package org.cidarlab.gridtli.DOM;
 
-import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.dom.Cell;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.After;
@@ -43,10 +43,10 @@ public class SubGridTest {
     @Test
     public void testSubGridSetTest(){
         
-        SubGrid g1 = new SubGrid(0,2);
-        SubGrid g2 = new SubGrid(0,2);
+        Cell g1 = new Cell(0,2);
+        Cell g2 = new Cell(0,2);
         
-        Set<SubGrid> set = new HashSet<SubGrid>();
+        Set<Cell> set = new HashSet<Cell>();
         
         set.add(g1);
         set.add(g1);
@@ -55,7 +55,7 @@ public class SubGridTest {
         set.add(g2);
         assertEquals(set.size(),1);
         
-        set.add(new SubGrid(0,2));
+        set.add(new Cell(0,2));
         assertEquals(set.size(),1);
         
     }

@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Signal;
-import org.cidarlab.gridtli.dom.SubGrid;
+import org.cidarlab.gridtli.dom.Cell;
 
 /**
  *
@@ -30,13 +30,13 @@ public class TemporalLogicInference {
     
     public static List<Set<Integer>> getClusterIndices(Grid grid, double threshold){
         
-        double xstart = grid.getSubGridMinX();
-        //double xend = grid.getSubGridMaxX() + grid.getXIncrement();
-        double xend = grid.getSubGridMaxX();
+        double xstart = grid.getCellMinX();
+        //double xend = grid.getCellMaxX() + grid.getXIncrement();
+        double xend = grid.getCellMaxX();
         
-        double ystart = grid.getSubGridMinY();
-        //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
-        double yend = grid.getSubGridMaxY();
+        double ystart = grid.getCellMinY();
+        //double yend = grid.getCellMaxY() + grid.getYIncrement();
+        double yend = grid.getCellMaxY();
         
         boolean first = true;
         boolean started = true;
@@ -56,7 +56,7 @@ public class TemporalLogicInference {
             int differenceCount = 0;
             for(double j=ystart; j<= yend; j+= grid.getYIncrement()){
                 //System.out.println(i+ ","+j);
-                if(grid.isSpecificSubGridCovered(i, j)){
+                if(grid.isSpecificCellCovered(i, j)){
                     if(!started){
                         started = true;
                     }
@@ -74,7 +74,7 @@ public class TemporalLogicInference {
                     } 
                     Set<Signal> tempSignalList = new HashSet<Signal>();
                     for (Signal signal : signals) {
-                        if (signal.coversSubGrid(i, j)) {
+                        if (signal.coversCell(i, j)) {
                             cluster.add(signal.getIndex());
                             //signals.remove(signal);
                         } else{
@@ -214,19 +214,19 @@ public class TemporalLogicInference {
         return finalList;
     }
     
-    public static Set<SubGrid> getAllCoveredSubGrids(Set<Signal> signals){
-        Set<SubGrid> subgrids = new HashSet<SubGrid>();
+    public static Set<Cell> getAllCoveredCells(Set<Signal> signals){
+        Set<Cell> cells = new HashSet<Cell>();
         
         for(Signal signal:signals){
-            subgrids.addAll(signal.getSubGridCovered());
+            cells.addAll(signal.getCellCovered());
         }
         
-        return subgrids;
+        return cells;
     }
     
-    public static double getSmallestSubGrid(Set<SubGrid> covered, double x){
+    public static double getSmallestCell(Set<Cell> covered, double x){
         double ymin = Double.MAX_VALUE;
-        for(SubGrid s:covered){
+        for(Cell s:covered){
             if(s.getXOrigin() == x){
                 if(s.getYOrigin() < ymin){
                     ymin = s.getYOrigin();
@@ -236,9 +236,9 @@ public class TemporalLogicInference {
         return ymin;
     }
         
-    public static double getLargestSubGrid(Set<SubGrid> covered, double x){
+    public static double getLargestCell(Set<Cell> covered, double x){
         double ymax = Double.MIN_VALUE;
-        for(SubGrid s:covered){
+        for(Cell s:covered){
             if(s.getXOrigin() == x){
                 if(s.getYOrigin() > ymax){
                     ymax = s.getYOrigin();
@@ -248,9 +248,9 @@ public class TemporalLogicInference {
         return ymax;
     }
     
-    public static ClusterMaxMin getMaxMinClusterSubGrid(Set<SubGrid> covered, double x){
+    public static ClusterMaxMin getMaxMinClusterCell(Set<Cell> covered, double x){
         ClusterMaxMin cmm = new ClusterMaxMin();
-        for(SubGrid s:covered){
+        for(Cell s:covered){
             if(s.getXOrigin() == x){
                 if(s.getYOrigin() > cmm.ymax){
                     cmm.ymax = s.getYOrigin();
@@ -273,13 +273,13 @@ public class TemporalLogicInference {
     public static List<TreeNode> getClusterSTL(String ysignal, Set<Signal> signals, double xInc, double yInc, double xMax){
         List<TreeNode> bottom = new ArrayList<TreeNode>();
         List<TreeNode> top = new ArrayList<TreeNode>();
-        SubGrid smallest = new SubGrid(Double.MAX_VALUE,Double.MAX_VALUE); 
+        Cell smallest = new Cell(Double.MAX_VALUE,Double.MAX_VALUE); 
         for(Signal signal:signals){
-            if(signal.getStartingGrid().smallerThan(smallest)){
-                smallest = signal.getStartingGrid();
+            if(signal.getStartingCell().smallerThan(smallest)){
+                smallest = signal.getStartingCell();
             }
         }
-        Set<SubGrid> covered = getAllCoveredSubGrids(signals);
+        Set<Cell> covered = getAllCoveredCells(signals);
         //Bottom
         double x = smallest.getXOrigin();
         double xstartTop = x;
@@ -289,7 +289,7 @@ public class TemporalLogicInference {
         
         boolean started = true;
         do{
-            ClusterMaxMin cmm = getMaxMinClusterSubGrid(covered,x);
+            ClusterMaxMin cmm = getMaxMinClusterCell(covered,x);
             if(cmm.xcount == 0){
                 break;
             }
@@ -333,14 +333,14 @@ public class TemporalLogicInference {
         
         //System.out.println("Signals :: " + signals);
         System.out.println("Start Cluster STL ===================================");
-        SubGrid smallest = new SubGrid(Double.MAX_VALUE,Double.MAX_VALUE); 
+        Cell smallest = new Cell(Double.MAX_VALUE,Double.MAX_VALUE); 
         for(Signal signal:signals){
-            if(signal.getStartingGrid().smallerThan(smallest)){
-                smallest = signal.getStartingGrid();
+            if(signal.getStartingCell().smallerThan(smallest)){
+                smallest = signal.getStartingCell();
             }
         }
         System.out.println("Smallest SubGrid (start point):: " + smallest);
-        Set<SubGrid> covered = getAllCoveredSubGrids(signals);
+        Set<Cell> covered = getAllCoveredCells(signals);
         boolean topend = false;
         boolean bottomend = false;
         
@@ -353,7 +353,7 @@ public class TemporalLogicInference {
         //System.out.println("BOTTOM");
         List<TreeNode> bottom = new ArrayList<TreeNode>();
         while(true){
-            if(covered.contains(new SubGrid(x, (y -yinc) )) ){
+            if(covered.contains(new Cell(x, (y -yinc) )) ){
                 y = y - yinc;
             } else {
                 if(x == 0 && y == 0){
@@ -362,7 +362,7 @@ public class TemporalLogicInference {
                 int downcount = 0;
                 double diff =0;
                 for (int i = 1; (i * yinc) <= (y - (threshold + yinc)); i++) {
-                    if (covered.contains(new SubGrid(x, (y - (i * yinc))))) {
+                    if (covered.contains(new Cell(x, (y - (i * yinc))))) {
                         diff = i* yinc;
                         downcount++;
                     }
@@ -371,7 +371,7 @@ public class TemporalLogicInference {
                     //lowest point. Move right
                     //System.out.println("Lowest Point. Move Right.");
                     if(moveright){
-                        if(covered.contains( new SubGrid( (x + xinc), y) )){
+                        if(covered.contains(new Cell( (x + xinc), y) )){
                             x = x + xinc;
                         } else {
                             moveright = false;
@@ -386,7 +386,7 @@ public class TemporalLogicInference {
                                 int changecount = 0;
                                 diff = 0;
                                 for(int i=1; (i*yinc) <= (y-ymin); i++){
-                                    if(covered.contains(new SubGrid(x + xinc, y - (i*yinc) ) )){
+                                    if(covered.contains(new Cell(x + xinc, y - (i*yinc) ) )){
                                         changecount++;
                                         diff = (i*yinc);
                                     }
@@ -394,7 +394,7 @@ public class TemporalLogicInference {
                                 if(changecount ==0){
                                     diff =0;
                                     for(int i=1; (i*yinc) <= (ymax - y); i++ ){
-                                        if(covered.contains(new SubGrid(x + xinc, y + (i*yinc)))){
+                                        if(covered.contains(new Cell(x + xinc, y + (i*yinc)))){
                                             changecount++;
                                             diff = (i*yinc);
                                             break;
@@ -438,13 +438,13 @@ public class TemporalLogicInference {
         //System.out.println("TOP");
         List<TreeNode> top = new ArrayList<TreeNode>();
         while(true){
-            if(covered.contains(new SubGrid(x, (y + yinc) )) ){
+            if(covered.contains(new Cell(x, (y + yinc) )) ){
                 y = y + yinc;
             } else {
                 int upcount = 0;
                 double diff =0;
                 for (int i = 1; (i * yinc) <= (y - (threshold + yinc)); i++) {
-                    if (covered.contains(new SubGrid(x, (y + (i * yinc))))) {
+                    if (covered.contains(new Cell(x, (y + (i * yinc))))) {
                         diff = i* yinc;
                         upcount++;
                     }
@@ -453,8 +453,8 @@ public class TemporalLogicInference {
                     //topmost point. Move right
                     //System.out.println("Topmost Point. Move Right.");
                     if(moveright){
-                        if(covered.contains( new SubGrid( (x + xinc), y) )){
-                            if(covered.contains(new SubGrid(x+xinc, y+yinc))){
+                        if(covered.contains(new Cell( (x + xinc), y) )){
+                            if(covered.contains(new Cell(x+xinc, y+yinc))){
                                 moveright = false;
                                 LinearPredicateLeaf lp = new LinearPredicateLeaf(RelOperation.LE, xsignal, y + yinc);
                                 AlwaysNode always = new AlwaysNode(lp, xstart, x + xinc);
@@ -466,7 +466,7 @@ public class TemporalLogicInference {
                             } else {
                                 int moverightupcount = 0;
                                 for (int i = 1; (i * yinc) <= (y - (threshold + yinc)); i++) {
-                                    if (covered.contains(new SubGrid(x + xinc, (y + (i * yinc))))) {
+                                    if (covered.contains(new Cell(x + xinc, (y + (i * yinc))))) {
                                         diff = i * yinc;
                                         moverightupcount++;
                                     }
@@ -496,7 +496,7 @@ public class TemporalLogicInference {
                                 int changecount = 0;
                                 diff = 0;
                                 for(int i=1; (i*yinc) <= (ymax - y); i++){
-                                    if(covered.contains(new SubGrid(x + xinc, y + (i*yinc) ) )){
+                                    if(covered.contains(new Cell(x + xinc, y + (i*yinc) ) )){
                                         changecount++;
                                         diff = (i*yinc);
                                     }
@@ -504,7 +504,7 @@ public class TemporalLogicInference {
                                 if(changecount ==0){
                                     diff =0;
                                     for(int i=1; (i*yinc) <= (y-ymin); i++ ){
-                                        if(covered.contains(new SubGrid(x + xinc, y - (i*yinc)))){
+                                        if(covered.contains(new Cell(x + xinc, y - (i*yinc)))){
                                             changecount++;
                                             diff = (i*yinc);
                                             break;
@@ -574,15 +574,15 @@ public class TemporalLogicInference {
     
     public static STLSharp getLongSTL(Grid grid) {
         
-        System.out.println(grid.getSubGrid());
+        System.out.println(grid.getCell());
 
-        double xstart = grid.getSubGridMinX();
-        //double xend = grid.getSubGridMaxX() + grid.getXIncrement();
-        double xend = grid.getSubGridMaxX();
+        double xstart = grid.getCellMinX();
+        //double xend = grid.getCellMaxX() + grid.getXIncrement();
+        double xend = grid.getCellMaxX();
         
-        double ystart = grid.getSubGridMinY();
-        //double yend = grid.getSubGridMaxY() + grid.getYIncrement();
-        double yend = grid.getSubGridMaxY();
+        double ystart = grid.getCellMinY();
+        //double yend = grid.getCellMaxY() + grid.getYIncrement();
+        double yend = grid.getCellMaxY();
         
         boolean started = false;
         boolean ended = false;
@@ -593,10 +593,10 @@ public class TemporalLogicInference {
             ended = false;
             List<LinearPredicateLeaf> predicates = new ArrayList<LinearPredicateLeaf>();
             for (double j = ystart; j <= yend; j += grid.getYIncrement()) {
-                SubGrid sgrid = new SubGrid(i, j);
-                if (grid.getSubGrid().containsKey(sgrid)) {
+                Cell sgrid = new Cell(i, j);
+                if (grid.getCell().containsKey(sgrid)) {
                     if (!started) {
-                        if (grid.isSpecificSubGridCovered(sgrid)){
+                        if (grid.isSpecificCellCovered(sgrid)){
                             started = true;
                             up = true;
                             predicates.add(new LinearPredicateLeaf(RelOperation.GE, grid.getYSignal(), j));
@@ -606,12 +606,12 @@ public class TemporalLogicInference {
                     if (started) {
                         if (up) {
 
-                            if (!grid.isSpecificSubGridCovered(sgrid)) {
+                            if (!grid.isSpecificCellCovered(sgrid)) {
                                 predicates.add(new LinearPredicateLeaf(RelOperation.LE, grid.getYSignal(), j));
                                 up = false;
                             }
                         } else {
-                            if (grid.isSpecificSubGridCovered(sgrid)) {
+                            if (grid.isSpecificCellCovered(sgrid)) {
                                 predicates.add(new LinearPredicateLeaf(RelOperation.GE, grid.getYSignal(), j));
                                 up = true;
                             }
@@ -645,14 +645,14 @@ public class TemporalLogicInference {
         return stl;
     }
     
-    private List<Double> getMaxMin(Set<SubGrid> subgrid){
+    private List<Double> getMaxMin(Set<Cell> subgrid){
         List<Double> maxmin = new ArrayList<Double>();
         double xmin = Double.MAX_VALUE;
         double xmax = (-1) * Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
         double ymax = (-1) * Double.MAX_VALUE;
         
-        for(SubGrid sgrid:subgrid){
+        for(Cell sgrid:subgrid){
             if(sgrid.getXOrigin() < xmin){
                 xmin = sgrid.getXOrigin();
             }

@@ -277,7 +277,7 @@ public class bioCPSTest {
         List<Signal> signals = Utilities.getRowSignals(filepath,false);
         Grid grid = new Grid(signals, 1, 10000);
         //TemporalLogicInference.getLongSTL(grid);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeCells(grid.getCell().keySet()), Utilities.getSampleTestFilepath() + "subgrid.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid.png");
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridData1_1(grid), Utilities.getSampleTestFilepath() + "cluster.png");
@@ -318,7 +318,7 @@ public class bioCPSTest {
         List<Signal> signals = Utilities.getRowSignals(filepath,false);
         Grid grid = new Grid(signals, xThreshHold, yThreshHold);
         //TemporalLogicInference.getSTL(grid);
-        //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeSubGrid(grid.getSubGrid()), Utilities.getSampleTestFilepath() + "subgrid" + filename +  ".png");
+        //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.visualizeCells(grid.getSubGrid()), Utilities.getSampleTestFilepath() + "subgrid" + filename +  ".png");
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover" + filename + ".png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid" + filename + ".png");
 

@@ -78,10 +78,7 @@ public class Point {
             return false;
         }
         Point check = (Point)o;
-        if((check.x == this.x) && (check.y == this.y) && (check.xSignal == this.xSignal) && (check.ySignal == this.ySignal)){
-            return true;
-        }
-        return false;
+        return (check.x == this.x) && (check.y == this.y) && (check.xSignal.equals(this.xSignal)) && (check.ySignal.equals(this.ySignal));
     }
 
     @Override

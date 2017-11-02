@@ -12,7 +12,7 @@ import lombok.Setter;
  *
  * @author prash
  */
-public class SubGrid {
+public class Cell {
 
     @Getter
     @Setter
@@ -35,25 +35,25 @@ public class SubGrid {
     //@Setter
     //private boolean covered;
 
-    public SubGrid(double _xOrigin, double _yOrigin) {
+    public Cell(double _xOrigin, double _yOrigin) {
         this.xOrigin = _xOrigin;
         this.yOrigin = _yOrigin;
     }
     
-    public SubGrid(double _xOrigin, double _yOrigin, double _xInc, double _yInc){
+    public Cell(double _xOrigin, double _yOrigin, double _xInc, double _yInc){
         this.xOrigin = _xOrigin;
         this.yOrigin = _yOrigin;
         this.xInc = _xInc;
         this.yInc = _yInc;
     }
 
-    public boolean smallerThan(SubGrid sgrid){
+    public boolean smallerThan(Cell cell){
         
-        if(this.xOrigin < sgrid.xOrigin){
+        if(this.xOrigin < cell.xOrigin){
             return true;
         }
-        if(this.xOrigin == sgrid.xOrigin){
-            if(this.yOrigin < sgrid.yOrigin){
+        if(this.xOrigin == cell.xOrigin){
+            if(this.yOrigin < cell.yOrigin){
                 return true;
             }
         }
@@ -71,10 +71,10 @@ public class SubGrid {
     
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof SubGrid)) {
+        if (!(o instanceof Cell)) {
             return false;
         }
-        SubGrid clone = (SubGrid) o;
+        Cell clone = (Cell) o;
         if (this.xOrigin == clone.xOrigin) {
             if (this.yOrigin == clone.yOrigin) {
                 return true;

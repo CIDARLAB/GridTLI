@@ -19,6 +19,8 @@ import org.cidarlab.gridtli.tli.TemporalLogicInference;
 import org.cidarlab.gridtli.tli.Utilities;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author prash
  */
 
+@EnableAutoConfiguration(exclude=ErrorMvcAutoConfiguration.class)
 @Controller
 public class MainController {
     
