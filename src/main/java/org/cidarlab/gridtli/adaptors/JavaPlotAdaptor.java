@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.visualize;
+package org.cidarlab.gridtli.adaptors;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
@@ -33,7 +33,7 @@ import org.cidarlab.gridtli.tli.TemporalLogicInference;
 public class JavaPlotAdaptor {
  
     
-    public static List<Point> getSignalJPlotPoints(Signal signal){
+    private static List<Point> getSignalJPlotPoints(Signal signal){
         List<Point> points = new ArrayList<Point>();
         for(org.cidarlab.gridtli.dom.Point point:signal.getPoints()){
             points.add(new Point(point.getX(),point.getY()));
@@ -41,7 +41,7 @@ public class JavaPlotAdaptor {
         return points;
     }
     
-    public static List<Point> getSubGridJPlotPoints(Set<Cell> cells){
+    private static List<Point> getSubGridJPlotPoints(Set<Cell> cells){
         List<Point> points = new ArrayList<Point>();
         for(Cell cell:cells){
             points.add(new Point(cell.getXOrigin(),cell.getYOrigin()));
@@ -49,13 +49,13 @@ public class JavaPlotAdaptor {
         return points;
     }
     
-    public static NamedPlotColor getRandomColor(){
+    private static NamedPlotColor getRandomColor(){
         Random rand = new Random();
         int i= rand.nextInt(NamedPlotColor.values().length);
         return NamedPlotColor.values()[i];
     }
     
-    public static int getClusterIndex(List<Set<Signal>> clusters, Signal s){
+    private static int getClusterIndex(List<Set<Signal>> clusters, Signal s){
         for(int i=0;i<clusters.size();i++){
             if(clusters.get(i).contains(s)){
                 return i;
@@ -120,7 +120,7 @@ public class JavaPlotAdaptor {
     }
     
     
-    public static JavaPlot plotSpecificCluster(Grid grid, Set<Signal> cluster){
+    public static JavaPlot plotCluster(Grid grid, Set<Signal> cluster){
         JavaPlot plot = new JavaPlot();
         PlotStyle ps = new PlotStyle();
         ps.setStyle(Style.DOTS);
@@ -312,247 +312,6 @@ public class JavaPlotAdaptor {
         return plot;
     }
     
-    
-    public static JavaPlot plotGridData1_1(Grid grid){
-        JavaPlot plot = new JavaPlot();
-        PlotStyle ps = new PlotStyle();
-        ps.setStyle(Style.DOTS);
-        ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
-        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
-        dspgrid.setPlotStyle(ps);
-        plot.addPlot(dspgrid);
-        
-        
-        
-        for(int i=0;i<10;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.ORANGE_RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        for(int i=10;i<11;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.DARK_VIOLET);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        for(int i=11;i<12;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.MIDNIGHT_BLUE);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        int count =1;
-        for(Cell cell: grid.getCell().keySet()){
-            if(!grid.isSpecificCellCovered(cell)){
-                
-                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
-                String obj = "object " + count;
-                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"beige\"";
-                
-                plot.set(obj, rect);
-                count++;
-            }
-        }
-        
-        plot.set("style fill", "transparent solid 0.5");
-        plot.getAxis("x").setLabel("x");
-        plot.getAxis("y").setLabel("y");
-        plot.setTitle("Grid");
-        plot.set("xzeroaxis", "");
-        plot.set("yzeroaxis", "");
-        plot.set("key", "off");
-        return plot;
-    }
-    
-    
-    
-    public static JavaPlot plotGridData1_1alt_1(Grid grid){
-        JavaPlot plot = new JavaPlot();
-        PlotStyle ps = new PlotStyle();
-        ps.setStyle(Style.DOTS);
-        ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
-        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
-        dspgrid.setPlotStyle(ps);
-        plot.addPlot(dspgrid);
-        
-        int count =1;
-        for(Cell cell: grid.getCell().keySet()){
-            if(!grid.isSpecificCellCovered(cell)){
-                
-                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
-                String obj = "object " + count;
-                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"white\"";
-                
-                plot.set(obj, rect);
-                count++;
-            } else{
-                String color = "";
-                for(int i=0;i<10;i++){
-                    if (grid.getSignals().get(i).coversCell(cell)) {
-                        color = "yellow";
-                        String obj = "object " + count;
-                        String rect = "rect from " + cell.getXOrigin() + "," + cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin() + grid.getYIncrement()) + " fc rgb \"" + color + "\"";
-
-                        plot.set(obj, rect);
-                        count++;
-                    }
-                }
-                
-                
-            }
-        }
-        
-        for(int i=0;i<10;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        for(int i=10;i<11;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        for(int i=11;i<12;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        plot.set("style fill", "transparent solid 0.5");
-        plot.getAxis("x").setLabel("x");
-        plot.getAxis("y").setLabel("y");
-        plot.setTitle("Grid");
-        plot.set("xzeroaxis", "");
-        plot.set("yzeroaxis", "");
-        plot.set("key", "off");
-        return plot;
-    }
-    
-    
-    public static JavaPlot plotGridData1_1alt(Grid grid){
-        JavaPlot plot = new JavaPlot();
-        PlotStyle ps = new PlotStyle();
-        ps.setStyle(Style.DOTS);
-        ps.setLineType(NamedPlotColor.BLACK);
-        PointDataSet pdsgrid = new PointDataSet(getSubGridJPlotPoints(grid.getCell().keySet()));
-        DataSetPlot dspgrid = new DataSetPlot(pdsgrid);
-        dspgrid.setPlotStyle(ps);
-        plot.addPlot(dspgrid);
-        
-        int count =1;
-        for(Cell cell: grid.getCell().keySet()){
-            if(!grid.isSpecificCellCovered(cell)){
-                
-                //System.out.println("Covered: " +  cell.getXOrigin()+","+cell.getYOrigin());
-                String obj = "object " + count;
-                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \"white\"";
-                
-                plot.set(obj, rect);
-                count++;
-            } else{
-                String color = "";
-                for(int i=0;i<10;i++){
-                    if(grid.getSignals().get(i).coversCell(cell)){
-                        color = "yellow";
-                    }
-                }
-                for(int i=10;i<11;i++){
-                    if(grid.getSignals().get(i).coversCell(cell)){
-                        color = "green";
-                    }
-                }
-                for(int i=11;i<12;i++){
-                    if(grid.getSignals().get(i).coversCell(cell)){
-                        color = "orange";
-                    }
-                }
-                String obj = "object " + count;
-                String rect = "rect from " + cell.getXOrigin()+","+cell.getYOrigin() + " to " + (cell.getXOrigin() + grid.getXIncrement()) + "," + (cell.getYOrigin()+grid.getYIncrement()) + " fc rgb \""+color+"\"";
-                
-                plot.set(obj, rect);
-                count++;
-            }
-        }
-        
-        for(int i=0;i<10;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        for(int i=10;i<11;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        for(int i=11;i<12;i++){
-            Signal signal = grid.getSignals().get(i);
-            PlotStyle sps = new PlotStyle();
-            sps.setStyle(Style.LINES);
-            sps.setLineType(NamedPlotColor.RED);
-            PointDataSet psd = new PointDataSet(getSignalJPlotPoints(signal));
-            DataSetPlot dsp = new DataSetPlot(psd);
-            dsp.setPlotStyle(sps);
-            plot.addPlot(dsp);
-        }
-        
-        plot.set("style fill", "transparent solid 0.5");
-        plot.getAxis("x").setLabel("x");
-        plot.getAxis("y").setLabel("y");
-        plot.setTitle("Grid");
-        plot.set("xzeroaxis", "");
-        plot.set("yzeroaxis", "");
-        plot.set("key", "off");
-        return plot;
-    }
-    
-    
     public static JavaPlot plotSignals(Grid grid){
         JavaPlot plot = new JavaPlot();
         PlotStyle ps = new PlotStyle();
@@ -624,7 +383,7 @@ public class JavaPlotAdaptor {
         
         plot.getAxis("x").setLabel("x");
         plot.getAxis("y").setLabel("y");
-        plot.setTitle("SubGrid");
+        plot.setTitle("Cells");
         plot.set("xzeroaxis", "");
         plot.set("yzeroaxis", "");
         plot.set("key", "off");

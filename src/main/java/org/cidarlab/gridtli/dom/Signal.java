@@ -42,13 +42,10 @@ public class Signal {
     @Setter
     private Cell startingCell;
     
-    public Signal(List<Point> _points) {
+    public Signal(List<Point> _points) throws TLIException {
+        
         if(_points.isEmpty()){
-            try {
-                throw new TLIException("Points cannot be empty. A signal must have at-least 1 point.");
-            } catch (TLIException ex) {
-                Logger.getLogger(Signal.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            throw new TLIException("Points cannot be empty. A signal must have at-least 1 point.");
         }
         points = new ArrayList<>(_points);
         cellCovered = new HashSet<>();
@@ -170,15 +167,13 @@ public class Signal {
         return true;
     }
     
-    private void checkPoints(){
+    private void checkPoints() throws TLIException {
         for(int i=0;i<this.points.size()-1; i++){
-            try{
-                if(points.get(i).getX() == points.get(i+1).getX()){
-                    throw new TLIException("Two Points in the same signal cannot have the same time (x) value. This would imply that time was stopped.");
-                }
-            } catch(TLIException ex){
-                System.out.println(ex.getMessage());
-                System.exit(-1);
+            if (points.get(i).getX() == points.get(i + 1).getX()) {
+                throw new TLIException("Two Points in the same signal cannot have the same time (x) value. This would imply that time was stopped.");
+            }
+            if(points.get(i).getX() < 0){
+                throw new TLIException("Time cannot be negative. Point : " + points.get(i).toString() + " has negative time value.");
             }
         }
     }

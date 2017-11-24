@@ -10,22 +10,61 @@ import org.cidarlab.gridtli.tli.Utilities;
 import hyness.stl.TreeNode;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.cidarlab.gridtli.adaptors.BioCPSAdaptor;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Signal;
-import static org.cidarlab.gridtli.TLI.CompositionTest.composedModulesGrid;
-import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
+import org.cidarlab.gridtli.adaptors.JavaPlotAdaptor;
 import org.junit.Test;
 
 /**
  *
  * @author prash
  */
-public class bioCPSTest {
+public class BioCPSTest {
+
+    public static Map<String, Map<String, List<Signal>>> binDependantSignals(Map<String, Map<String, Map<String, Map<String, List<Signal>>>>> map, boolean collapsedModule) {
+        Map<String, Map<String, List<Signal>>> moduleSignals = new HashMap();
+        if (collapsedModule) {
+            for (String module : map.keySet()) {
+                for (String sm : map.get(module).keySet()) {
+                    for (String plasmid : map.get(module).get(sm).keySet()) {
+                        if (!moduleSignals.containsKey(module)) {
+                            moduleSignals.put(module, new HashMap());
+                        }
+                        if (!moduleSignals.get(module).containsKey("input")) {
+                            moduleSignals.get(module).put("input", new ArrayList<Signal>());
+                        }
+                        if (!moduleSignals.get(module).containsKey("output")) {
+                            moduleSignals.get(module).put("output", new ArrayList<Signal>());
+                        }
+                        moduleSignals.get(module).get("input").addAll(map.get(module).get(sm).get(plasmid).get("input"));
+                        moduleSignals.get(module).get("output").addAll(map.get(module).get(sm).get(plasmid).get("output"));
+                    }
+                }
+            }
+        } else {
+            for (String module : map.keySet()) {
+                for (String sm : map.get(module).keySet()) {
+                    String mName = module + ":" + sm;
+                    if (!moduleSignals.containsKey(mName)) {
+                        moduleSignals.put(mName, new HashMap());
+                    }
+                    for (String plasmid : map.get(module).get(sm).keySet()) {
+                        if (!moduleSignals.get(mName).containsKey("input")) {
+                            moduleSignals.get(mName).put("input", new ArrayList<Signal>());
+                        }
+                        if (!moduleSignals.get(mName).containsKey("output")) {
+                            moduleSignals.get(mName).put("output", new ArrayList<Signal>());
+                        }
+                        moduleSignals.get(mName).get("input").addAll(map.get(module).get(sm).get(plasmid).get("input"));
+                        moduleSignals.get(mName).get("output").addAll(map.get(module).get(sm).get(plasmid).get("output"));
+                    }
+                }
+            }
+        }
+        return moduleSignals;
+    }
 
     private double _threshold = 5;
     private double _xthreshold = 10;
@@ -281,9 +320,7 @@ public class bioCPSTest {
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridwithoutCover(grid), Utilities.getSampleTestFilepath() + "gridnoCover.png");
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid), Utilities.getSampleTestFilepath() + "grid.png");
         //JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridData1_1(grid), Utilities.getSampleTestFilepath() + "cluster.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridData1_1alt(grid), Utilities.getSampleTestFilepath() + "clusters.png");
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGridData1_1alt_1(grid), Utilities.getSampleTestFilepath() + "cluster1_HIGHLIGHT.png");
-
+        
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSignals(grid), Utilities.getSampleTestFilepath() + "signals.png");
 
         List<Signal> cluster = new ArrayList<Signal>();
@@ -326,7 +363,7 @@ public class bioCPSTest {
     
     @Test
     public void testIBioSimNDim(){
-        bioCPSTest test = new bioCPSTest();
+        BioCPSTest test = new BioCPSTest();
         test.testIBioSimLowModules();
         test.testIBioSimHighModules();
         test.testIBioSimCascades();
@@ -407,8 +444,8 @@ public class bioCPSTest {
     public void testBinDependant(){
         String filepath = Utilities.getSampleFilepath() + "bin_dependant";
         Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = Utilities.binDependantWalk(filepath);
-        Map<String, Map<String,List<Signal>>> collapsedSignals = BioCPSAdaptor.binDependantSignals(map, true);
-        Map<String, Map<String,List<Signal>>> expandedSignals = BioCPSAdaptor.binDependantSignals(map, false);
+        Map<String, Map<String,List<Signal>>> collapsedSignals = binDependantSignals(map, true);
+        Map<String, Map<String,List<Signal>>> expandedSignals = binDependantSignals(map, false);
 
         
         

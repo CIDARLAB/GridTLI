@@ -9,6 +9,7 @@ import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
 import java.util.ArrayList;
 import java.util.List;
+import org.cidarlab.gridtli.dom.TLIException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class SignalTest {
     }
     
     @AfterClass
-    public static void tearDownClass() {
+    public static void tearDownClass()  {
     }
     
     @Before
@@ -41,7 +42,7 @@ public class SignalTest {
     }
 
     @Test
-    public void getGridPointsTest(){
+    public void getGridPointsTest() throws TLIException{
         
         Point p1 = new Point(1,1);
         Point p2 = new Point(1.1,1.2);

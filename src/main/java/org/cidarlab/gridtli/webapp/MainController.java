@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.gridtli.visualize.webapp;
+package org.cidarlab.gridtli.webapp;
 
 import hyness.stl.TreeNode;
 import java.io.IOException;

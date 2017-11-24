@@ -24,7 +24,8 @@ import java.util.Set;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
-import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
+import org.cidarlab.gridtli.adaptors.JavaPlotAdaptor;
+import org.cidarlab.gridtli.dom.TLIException;
 import org.junit.Test;
 
 /**
@@ -277,7 +278,7 @@ public class ManuscriptTest {
     }
     
     //@Test
-    public void generateBioSignalsTest_KFold(){
+    public void generateBioSignalsTest_KFold() throws TLIException{
         
         String allSignalsFilepath = biosignalsfilepath + "allSignals" + Utilities.getSeparater();
         createFolder(allSignalsFilepath);
@@ -580,7 +581,7 @@ public class ManuscriptTest {
     }
     
     //@Test
-    public void generateBioSignalsTest() {
+    public void generateBioSignalsTest() throws TLIException {
         Map<String, Map<Double, List<Signal>>> signals = readBioSignals(biosignalsfilepath);
         String separateSignalsFilepath = biosignalsfilepath + "separatedSignals";
         if (!Utilities.validFilepath(separateSignalsFilepath)) {
@@ -660,7 +661,7 @@ public class ManuscriptTest {
         }
     }
 
-    private Map<String, Map<Double, List<Signal>>> readBioSignals(String rootfilepath) {
+    private Map<String, Map<Double, List<Signal>>> readBioSignals(String rootfilepath) throws TLIException {
         Map<String, Map<Double, List<Signal>>> signals = new HashMap<String, Map<Double, List<Signal>>>();
 
         lasAHLconc = new ArrayList<Double>();
@@ -987,9 +988,9 @@ public class ManuscriptTest {
         List<Set<Signal>> clusters = new ArrayList<Set<Signal>>();
         clusters = TemporalLogicInference.cluster(grid, cthreshold);
         JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotGrid(grid,clusters), plot);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(0)), cluster1);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(1)), cluster2);
-        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotSpecificCluster(grid,clusters.get(2)), cluster3);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotCluster(grid,clusters.get(0)), cluster1);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotCluster(grid,clusters.get(1)), cluster2);
+        JavaPlotAdaptor.plotToFile(JavaPlotAdaptor.plotCluster(grid,clusters.get(2)), cluster3);
         
         System.out.println("STL Formula");
         System.out.println(stl);

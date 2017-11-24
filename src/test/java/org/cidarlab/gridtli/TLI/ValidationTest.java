@@ -21,7 +21,8 @@ import java.util.Set;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
-import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
+import org.cidarlab.gridtli.adaptors.JavaPlotAdaptor;
+import org.cidarlab.gridtli.dom.TLIException;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -42,6 +43,7 @@ public class ValidationTest {
         
         
         Grid grid = new Grid(signals, xthreshold, ythreshold);
+        
         TreeNode stl =  TemporalLogicInference.getSTL(grid, clusterThreshold);
         
         System.out.println(stl);
@@ -62,7 +64,7 @@ public class ValidationTest {
     }
     
     //@Test
-    public void testSampleRobustness(){
+    public void testSampleRobustness() throws TLIException{
         
         AlwaysNode a11g = new AlwaysNode(new LinearPredicateLeaf(RelOperation.GE,"x",0),0,3);
         AlwaysNode a11l = new AlwaysNode(new LinearPredicateLeaf(RelOperation.LE,"x",3),0,3);

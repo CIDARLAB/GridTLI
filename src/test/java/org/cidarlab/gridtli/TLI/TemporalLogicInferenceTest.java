@@ -13,7 +13,8 @@ import java.util.List;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
-import org.cidarlab.gridtli.visualize.JavaPlotAdaptor;
+import org.cidarlab.gridtli.adaptors.JavaPlotAdaptor;
+import org.cidarlab.gridtli.dom.TLIException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -86,7 +87,7 @@ public class TemporalLogicInferenceTest {
     
     
     //@Test
-    public void testTLI(){
+    public void testTLI() throws TLIException{
         List<Point> s1points = new ArrayList<Point>();
         s1points.add(new Point(0.0,0.7));
         s1points.add(new Point(2.5,6.2));
@@ -126,7 +127,7 @@ public class TemporalLogicInferenceTest {
     }
     
     //@Test
-    public void testSignals1(){
+    public void testSignals1() throws TLIException{
         
         List<Point> s1points = new ArrayList<Point>();
         s1points.add(new Point(0.0,0.7));
