@@ -48,7 +48,7 @@ public class TemporalLogicInferenceTest {
     }
     
     @Test
-    public void testColumnDemo(){
+    public void testColumnDemo() throws TLIException{
         System.out.println("COLUMN TYPE DATA");
         String columnData = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
         List<Signal> signals = Utilities.getColumnSignals(columnData,false);
@@ -67,7 +67,7 @@ public class TemporalLogicInferenceTest {
     }
     
     @Test
-    public void testRowDemo(){
+    public void testRowDemo() throws TLIException{
         System.out.println("ROW TYPE DATA");
         String rowData = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater() + "row_data.csv";
         List<Signal> signals = Utilities.getRowSignals(rowData,false);

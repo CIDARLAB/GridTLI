@@ -54,7 +54,7 @@ public class ManuscriptTest {
     
     
     //@Test
-    public void generateFuelControlTest_KFold() {
+    public void generateFuelControlTest_KFold() throws TLIException {
         String testdatafilepath = fuelControlDatafilepath + Mode.KFold.toString();
         if (!Utilities.validFilepath(testdatafilepath)) {
             Utilities.makeDirectory(testdatafilepath);
@@ -161,7 +161,7 @@ public class ManuscriptTest {
     }
 
     //@Test
-    public void generateFuelControlTest_RRS() {
+    public void generateFuelControlTest_RRS() throws TLIException {
         String testdatafilepath = fuelControlDatafilepath + Mode.RRS.toString();
         if (!Utilities.validFilepath(testdatafilepath)) {
             Utilities.makeDirectory(testdatafilepath);
@@ -722,7 +722,7 @@ public class ManuscriptTest {
     }
     
     //@Test
-    public void testFuelControl(){
+    public void testFuelControl() throws TLIException{
         int run = 666;
         testFuelControl(Mode.KFold,run);
         testConsolidateFuelResults(Mode.KFold, run);
@@ -733,7 +733,7 @@ public class ManuscriptTest {
         return (it * (perc*(range)));
     }
     
-    public void testFuelControl(Mode mode, int run) {
+    public void testFuelControl(Mode mode, int run) throws TLIException {
         System.out.println("Fuel Control Data Set!");
         String root = fuelControlDatafilepath + mode.toString() + Utilities.getSeparater();
         //String root = fuelControlDatafilepath + "KFold" + Utilities.getSeparater();
@@ -840,7 +840,7 @@ public class ManuscriptTest {
     }
     
     //@Test
-    public void testBioSignals(){
+    public void testBioSignals() throws TLIException{
         String balancedAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater()+ "balanced" + Utilities.getSeparater() ;
 //        String randomAll = biosignalsfilepath + "allSignals" + Utilities.getSeparater() + "random" + Utilities.getSeparater();
 //        String balancedWeak = biosignalsfilepath + "twoRBS" + Utilities.getSeparater() + "weak" + Utilities.getSeparater() + "balanced" + Utilities.getSeparater();
@@ -859,7 +859,7 @@ public class ManuscriptTest {
         System.out.println("Biosignals done");
     }
     
-    public void testBioSignals(String root, int run, String jobName) {
+    public void testBioSignals(String root, int run, String jobName) throws TLIException {
         System.out.println("Biosignals test " + jobName);
         String headerLine = 
                 "iterFolder" +delimiter+ 
@@ -926,7 +926,7 @@ public class ManuscriptTest {
     
     
     @Test
-    public void testSpecificFuelControl(){
+    public void testSpecificBioSignal() throws TLIException{
         
         //for (int i = 0; i < 10; i++) {
         int i=3;
@@ -967,7 +967,7 @@ public class ManuscriptTest {
     }
     
     //@Test
-    public void testSpecificBiosignal(){
+    public void testSpecificBiosignal() throws TLIException{
         System.out.println("Specific Test");
         String filepath = Utilities.getSampleFilepath() + "biosignals/separatedSignals/pL2f1439/1/testData/10/11/";
         String usedSignalsFilepath = filepath + "used-plasmid.csv";
@@ -1118,7 +1118,7 @@ public class ManuscriptTest {
         }
     }
     
-    private void walkFuelControl(String path, String resultsRoot, double t_t, double x_t_EGO, double x_t_MAP, double c_t_EGO, double c_t_MAP, List<String> fileLines) {
+    private void walkFuelControl(String path, String resultsRoot, double t_t, double x_t_EGO, double x_t_MAP, double c_t_EGO, double c_t_MAP, List<String> fileLines) throws TLIException {
         File root = new File(path);
         File[] list = root.listFiles();
 
@@ -1498,7 +1498,7 @@ public class ManuscriptTest {
 
     }
     
-    private void walkBioSignals(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> filelines) {
+    private void walkBioSignals(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> filelines) throws TLIException {
         File root = new File(path);
         File[] list = root.listFiles();
 
@@ -1638,7 +1638,7 @@ public class ManuscriptTest {
     }
     
     
-    private void walkBioSignals_old(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> filelines) {
+    private void walkBioSignals_old(String path, String resultsRoot, double xthreshold, double ythreshold, double cthreshold, List<String> filelines) throws TLIException {
         File root = new File(path);
         File[] list = root.listFiles();
 

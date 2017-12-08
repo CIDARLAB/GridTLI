@@ -15,6 +15,7 @@ import java.util.Map;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Signal;
 import org.cidarlab.gridtli.adaptors.JavaPlotAdaptor;
+import org.cidarlab.gridtli.dom.TLIException;
 import org.junit.Test;
 
 /**
@@ -71,7 +72,7 @@ public class BioCPSTest {
     private double _ythreshold = 5;
     
     //@Test
-    public void testiBioSimGetSTLfromModulesHigh() {
+    public void testiBioSimGetSTLfromModulesHigh() throws TLIException {
 
         double threshold = 5;
         double xthreshold = 10;
@@ -140,7 +141,7 @@ public class BioCPSTest {
     }
     
     //@Test
-    public void testiBioSimGetSTLfromModulesLow() {
+    public void testiBioSimGetSTLfromModulesLow() throws TLIException {
 
         double threshold = 5;
         double xthreshold = 10;
@@ -208,7 +209,7 @@ public class BioCPSTest {
     }
     
     //@Test
-    public void testiBioSimGetSTLfromCascades() {
+    public void testiBioSimGetSTLfromCascades() throws TLIException {
 
         double threshold = 5;
         double xthreshold = 10;
@@ -273,7 +274,7 @@ public class BioCPSTest {
     }
     
     //@Test
-    public void testGetSTLfromModules() {
+    public void testGetSTLfromModules() throws TLIException {
 
         for (int i = 1; i <= 3; i++) {
             for (int j = 1; j <= 2; j++) {
@@ -291,7 +292,7 @@ public class BioCPSTest {
     }
 
     //@Test
-    public void testGetSTLfromCascades() {
+    public void testGetSTLfromCascades() throws TLIException {
 
         for (int i = 1; i <= 6; i++) {
             for (int j = 1; j <= 3; j++) {
@@ -311,7 +312,7 @@ public class BioCPSTest {
 
 
     //@Test
-    public void testModule11Data() {
+    public void testModule11Data() throws TLIException {
         String filepath = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "modules" + Utilities.getSeparater() + "1-1-data.csv";
         List<Signal> signals = Utilities.getRowSignals(filepath,false);
         Grid grid = new Grid(signals, 1, 10000);
@@ -340,7 +341,7 @@ public class BioCPSTest {
     
 
     //@Test
-    public void testFadingDrop() {
+    public void testFadingDrop() throws TLIException {
         String filepathAHL = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "fadingDrop" + Utilities.getSeparater() + "AHL-data.csv";
         String filepathAHL_neighbour = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "fadingDrop" + Utilities.getSeparater() + "AHL_neighborAvg-data.csv";
         String filepathGFP = Utilities.getSampleFilepath() + "bioCPS" + Utilities.getSeparater() + "fadingDrop" + Utilities.getSeparater() + "GFP-data.csv";
@@ -350,7 +351,7 @@ public class BioCPSTest {
 
     }
 
-    public static void getFormulaAndPlots(String filename, String filepath, double xThreshHold, double yThreshHold) {
+    public static void getFormulaAndPlots(String filename, String filepath, double xThreshHold, double yThreshHold) throws TLIException {
 
         List<Signal> signals = Utilities.getRowSignals(filepath,false);
         Grid grid = new Grid(signals, xThreshHold, yThreshHold);
@@ -362,14 +363,14 @@ public class BioCPSTest {
     }
     
     @Test
-    public void testIBioSimNDim(){
+    public void testIBioSimNDim() throws TLIException{
         BioCPSTest test = new BioCPSTest();
         test.testIBioSimLowModules();
         test.testIBioSimHighModules();
         test.testIBioSimCascades();
     }
     
-    public void testIBioSimLowModules(){
+    public void testIBioSimLowModules() throws TLIException{
         
         for (int i = 1; i <= 3; i++) {
             Map<String, List<Signal>> nsig = new HashMap<String, List<Signal>>();
@@ -387,7 +388,7 @@ public class BioCPSTest {
         }
     }
     
-    public void testIBioSimHighModules(){
+    public void testIBioSimHighModules() throws TLIException{
         
         for (int i = 1; i <= 3; i++) {
             Map<String, List<Signal>> nsig = new HashMap<String, List<Signal>>();
@@ -405,7 +406,7 @@ public class BioCPSTest {
         }
     }
     
-    public void testIBioSimCascades(){
+    public void testIBioSimCascades() throws TLIException{
         
         for (int i = 1; i <= 6; i++) {
             Map<String, List<Signal>> nsig = new HashMap<String, List<Signal>>();
@@ -441,7 +442,7 @@ public class BioCPSTest {
     }
     
     //@Test
-    public void testBinDependant(){
+    public void testBinDependant() throws TLIException{
         String filepath = Utilities.getSampleFilepath() + "bin_dependant";
         Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = Utilities.binDependantWalk(filepath);
         Map<String, Map<String,List<Signal>>> collapsedSignals = binDependantSignals(map, true);
@@ -463,7 +464,7 @@ public class BioCPSTest {
     }
     
     @Test
-    public void testBinDependantWalk(){
+    public void testBinDependantWalk() throws TLIException{
         String filepath = Utilities.getSampleFilepath() + "bin_dependant";
         Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = Utilities.binDependantWalk(filepath);
         

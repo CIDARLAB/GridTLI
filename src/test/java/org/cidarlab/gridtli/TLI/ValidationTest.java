@@ -34,7 +34,7 @@ import org.junit.Test;
 public class ValidationTest {
 
     @Test
-    public void testRobustness(){
+    public void testRobustness() throws TLIException{
         String columnData = Utilities.getSampleFilepath() + "demo" + Utilities.getSeparater() + "column_data.csv";
         List<Signal> signals = Utilities.getiBioSimSignals(columnData);
         double xthreshold = 10;

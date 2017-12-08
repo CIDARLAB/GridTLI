@@ -73,7 +73,7 @@ public class PyPlotAdaptorTest {
         signals1.add(s1);
         Grid g1 = new Grid(signals1);
         
-        for(String str:PyPlotAdaptor.generateScript(g1)){
+        for(String str:PyPlotAdaptor.generatePlotScript(g1)){
             System.out.println(str);
         }
         

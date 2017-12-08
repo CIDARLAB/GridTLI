@@ -50,8 +50,61 @@ public class PyPlotAdaptor {
         return lines;
     }
     
+    private static List<String> generateSignalScript(List<Signal> signals){
+        List<String> lines = new ArrayList<String>();
+        for(int i=0;i<signals.size();i++){
+            Signal s = signals.get(i);
+            String sx = "sx" + i + " = [";
+            String sy = "sy" + i + " = [";
+            sx += s.getPoints().get(0).getX();
+            sy += s.getPoints().get(0).getY();
+            
+            for(int j=1;j<s.getPoints().size();j++){
+                sx += ("," + s.getPoints().get(j).getX());
+                sy += ("," + s.getPoints().get(j).getY());
+            }
+            sx += "]";
+            sy += "]";
+            lines.add(sx);
+            lines.add(sy);
+            lines.add("plt.plot(sx" + i + ",sy" + i + ",color='r',linestyle='solid')" );
+            lines.add("\n");
+            
+        }
+        
+        return lines;
+    }
     
-    public static List<String> generateScript(Grid grid){
+    
+    public static List<String> generateSignalPlotScript(List<Signal> signals){
+        
+        List<String> lines = new ArrayList<String>();
+        
+        lines.add("import matplotlib.pyplot as plt");
+        lines.add("import matplotlib.patches as patches\n");
+        
+        lines.add("fig = plt.figure()\n");
+        
+        //Get Signal Name
+        String signalname = "signal";
+        if(signals.get(0).getPoints().get(0).getYSignal() != null){
+            if(!signals.get(0).getPoints().get(0).getYSignal().isEmpty()){
+                signalname = signals.get(0).getPoints().get(0).getYSignal();
+            }
+        }
+        lines.addAll(generateSignalScript(signals));
+        
+        
+        lines.add("plt.xlabel(\"time\")");
+        lines.add("plt.ylabel(\""+signalname+"\")");
+        lines.add("fig.savefig('graph.png', dpi=300)");
+        
+        
+        return lines;
+    }
+    
+    
+    public static List<String> generatePlotScript(Grid grid){
         List<String> lines = new ArrayList<String>();
         
         //Headers
@@ -79,25 +132,8 @@ public class PyPlotAdaptor {
         }
         
         //Convert Signals to points to plot.
-        for(int i=0;i<grid.getSignals().size();i++){
-            Signal s = grid.getSignals().get(i);
-            String sx = "sx" + i + " = [";
-            String sy = "sy" + i + " = [";
-            sx += s.getPoints().get(0).getX();
-            sy += s.getPoints().get(0).getY();
-            
-            for(int j=1;j<s.getPoints().size();j++){
-                sx += ("," + s.getPoints().get(j).getX());
-                sy += ("," + s.getPoints().get(j).getY());
-            }
-            sx += "]";
-            sy += "]";
-            lines.add(sx);
-            lines.add(sy);
-            lines.add("plt.plot(sx" + i + ",sy" + i + ",color='r',linestyle='solid')" );
-            lines.add("\n");
-            
-        }
+        lines.addAll(generateSignalScript(grid.getSignals()));
+        
         
         lines.add("plt.xlabel(\"time\")");
         lines.add("plt.ylabel(\""+signalname+"\")");

@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.dom.TLIException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -217,13 +218,13 @@ public class Utilities {
         return listPieces;
     }
     
-    public static Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> binDependantWalk(String root){
+    public static Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> binDependantWalk(String root) throws TLIException{
         Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map = new HashMap<>();
         binDependantWalk(root,root,map);
         return map;
     }
     
-    private static void binDependantWalk(String path, String resultsRoot, Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map){
+    private static void binDependantWalk(String path, String resultsRoot, Map<String,Map<String,Map<String,Map<String,List<Signal>>>>> map) throws TLIException{
         File root = new File( path );
         File[] list = root.listFiles();
         
@@ -264,7 +265,7 @@ public class Utilities {
         return relativeFilepath.split("/");
     }
     
-    private static Signal readBinDependantFile(String filepath){
+    private static Signal readBinDependantFile(String filepath) throws TLIException{
         List<String[]> listPieces = new ArrayList<String[]>();
         listPieces = getCSVFileContentAsList(filepath);
         List<Point> points = new ArrayList<Point>();
@@ -295,7 +296,7 @@ public class Utilities {
         }
     }
     
-    public static List<Signal> getWebappSignals(JSONArray arr){
+    public static List<Signal> getWebappSignals(JSONArray arr) throws TLIException{
         List<Signal> signals = new ArrayList<Signal>();
         
         for(int i=0;i<arr.length();i++){
@@ -317,7 +318,7 @@ public class Utilities {
         return signals;
     }
     
-    public static List<Signal> getiBioSimSignals(String filepath){ //
+    public static List<Signal> getiBioSimSignals(String filepath) throws TLIException{ //
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvsignals = getCSVFileContentAsList(filepath);
         List<List<Point>> pointlist = new ArrayList<List<Point>>();
@@ -340,7 +341,7 @@ public class Utilities {
         return signals;
     }
     
-    public static List<Signal> getColumnSignals(String filepath, boolean columnHeader){ //
+    public static List<Signal> getColumnSignals(String filepath, boolean columnHeader) throws TLIException{ //
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvsignals = getCSVFileContentAsList(filepath);
         List<List<Point>> pointlist = new ArrayList<List<Point>>();
@@ -376,7 +377,7 @@ public class Utilities {
         return signals;
     }
     
-    public static List<Signal> getRowSignals(String filepath, boolean header){
+    public static List<Signal> getRowSignals(String filepath, boolean header) throws TLIException{
         List<Signal> signals = new ArrayList<Signal>();
         List<String[]> csvStrings = getCSVFileContentAsList(filepath);
         if (!header) {
