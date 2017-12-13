@@ -50,7 +50,7 @@ public class PyPlotAdaptor {
         return lines;
     }
     
-    private static List<String> generateSignalScript(List<Signal> signals){
+    private static List<String> generateSignalScript(List<Signal> signals, String color){
         List<String> lines = new ArrayList<String>();
         for(int i=0;i<signals.size();i++){
             Signal s = signals.get(i);
@@ -67,14 +67,13 @@ public class PyPlotAdaptor {
             sy += "]";
             lines.add(sx);
             lines.add(sy);
-            lines.add("plt.plot(sx" + i + ",sy" + i + ",color='r',linestyle='solid')" );
+            lines.add("plt.plot(sx" + i + ",sy" + i + ",color='" + color +"',linestyle='solid')" );
             lines.add("\n");
             
         }
         
         return lines;
     }
-    
     
     public static List<String> generateSignalPlotScript(List<Signal> signals){
         
@@ -92,7 +91,7 @@ public class PyPlotAdaptor {
                 signalname = signals.get(0).getPoints().get(0).getYSignal();
             }
         }
-        lines.addAll(generateSignalScript(signals));
+        lines.addAll(generateSignalScript(signals,"#000000"));
         
         
         lines.add("plt.xlabel(\"time\")");
@@ -102,6 +101,48 @@ public class PyPlotAdaptor {
         
         return lines;
     }
+    
+    public static List<String> generatePlotScript(Grid grid, List<Signal> satisfy, List<Signal> notsatisfy){
+        List<String> lines = new ArrayList<String>();
+        
+        //Headers
+        lines.add("import matplotlib.pyplot as plt");
+        lines.add("import matplotlib.patches as patches\n");
+        
+        lines.add("fig = plt.figure()\n");
+        
+        //Get Signal Name
+        String signalname = "signal";
+        if(grid.getSignals().get(0).getPoints().get(0).getYSignal() != null){
+            if(!grid.getSignals().get(0).getPoints().get(0).getYSignal().isEmpty()){
+                signalname = grid.getSignals().get(0).getPoints().get(0).getYSignal();
+            }
+        }
+        
+        //Convert Cells to points to plot.
+        for(int i=0;i<grid.getCell().keySet().size();i++){
+            List<Cell> cells = new ArrayList<Cell>(grid.getCell().keySet());
+            if(grid.getCell().get(cells.get(i))){
+                lines.addAll(generateCellScript(cells.get(i),i,grid.getXIncrement(),grid.getYIncrement(),'b'));
+            } else {
+                lines.addAll(generateCellScript(cells.get(i),i,grid.getXIncrement(),grid.getYIncrement(),'w'));
+            }
+        }
+        
+        //Convert Signals to points to plot.
+        
+        lines.addAll(generateSignalScript(satisfy,"#000000"));        
+        lines.addAll(generateSignalScript(notsatisfy,"#e50000"));        
+        
+        lines.add("plt.xlabel(\"time\")");
+        lines.add("plt.ylabel(\""+signalname+"\")");
+        lines.add("fig.savefig('graph.png', dpi=300)");
+        
+        
+        return lines;
+        
+    }
+    
     
     
     public static List<String> generatePlotScript(Grid grid){
@@ -132,8 +173,7 @@ public class PyPlotAdaptor {
         }
         
         //Convert Signals to points to plot.
-        lines.addAll(generateSignalScript(grid.getSignals()));
-        
+        lines.addAll(generateSignalScript(grid.getSignals(),"#000000"));        
         
         lines.add("plt.xlabel(\"time\")");
         lines.add("plt.ylabel(\""+signalname+"\")");
@@ -143,5 +183,6 @@ public class PyPlotAdaptor {
         return lines;
         
     }
+    
     
 }

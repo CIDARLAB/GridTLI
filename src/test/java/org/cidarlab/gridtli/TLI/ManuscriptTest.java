@@ -25,6 +25,7 @@ import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Point;
 import org.cidarlab.gridtli.dom.Signal;
 import org.cidarlab.gridtli.adaptors.JavaPlotAdaptor;
+import org.cidarlab.gridtli.adaptors.PyPlotAdaptor;
 import org.cidarlab.gridtli.dom.TLIException;
 import org.junit.Test;
 
@@ -924,8 +925,57 @@ public class ManuscriptTest {
         }
     }
     
-    
     @Test
+    public void testPyPlotSpecificBioSignal() throws TLIException{
+        int i=3;
+        String filepath = Utilities.getSampleFilepath() + "biosignals/allSignals/balanced/" + i + "/";
+        String outputfilepath = Utilities.getSampleFilepath() + "biosignals/forPaper/pyplot/";
+        createFolder(outputfilepath);
+        double x_t = 1843.5;
+        double t_t = 3.45;
+        double c_t = 1843.5;
+        String trainingFilepath = filepath + "training.csv";
+        String testingFilepath = filepath + "testing.csv";
+
+        String plot_test = outputfilepath + "grid_test" + i + ".png";
+        String plot_train = outputfilepath + "grid_train" + i + ".png";
+        List<Signal> training = Utilities.getRowSignals(trainingFilepath, true);
+        List<Signal> testing = Utilities.getRowSignals(testingFilepath, true);
+        Grid grid = new Grid(training, t_t, x_t);
+        TreeNode stl = TemporalLogicInference.getSTL(grid, c_t);
+        System.out.println(stl);
+        List<Signal> notSatisfy = new ArrayList<Signal>();
+        List<Signal> satisfy = new ArrayList<Signal>();
+        for (Signal signal : testing) {
+            double r = Validation.getRobustness(stl, signal);
+            if (r < 0) {
+                notSatisfy.add(signal);
+            } else {
+                satisfy.add(signal);
+            }
+        }
+        List<String> plotlinestest = PyPlotAdaptor.generatePlotScript(grid, satisfy, notSatisfy);
+        List<String> plotlinestrain = PyPlotAdaptor.generatePlotScript(grid);
+        
+        Utilities.writeToFile(outputfilepath + "highthreshtrain.py", plotlinestrain);
+        Utilities.writeToFile(outputfilepath + "highthreshtest.py", plotlinestest);
+        
+        List<Signal> allsignals = new ArrayList<Signal>();
+        allsignals.addAll(training);
+        allsignals.addAll(testing);
+        List<String> plotallsignals = PyPlotAdaptor.generateSignalPlotScript(allsignals);
+        List<String> plottestsignals = PyPlotAdaptor.generateSignalPlotScript(testing);
+        List<String> plottrainsignals = PyPlotAdaptor.generateSignalPlotScript(training);
+        
+        Utilities.writeToFile(outputfilepath + "allsignals.py", plotallsignals);
+        Utilities.writeToFile(outputfilepath + "testsignals.py", plottestsignals);
+        Utilities.writeToFile(outputfilepath + "trainsignals.py", plottrainsignals);
+        
+        
+    }
+    
+    
+    //@Test
     public void testSpecificBioSignal() throws TLIException{
         
         //for (int i = 0; i < 10; i++) {

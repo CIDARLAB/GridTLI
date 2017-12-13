@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.cidarlab.gridtli.dom.Grid;
 import org.cidarlab.gridtli.dom.Signal;
+import org.cidarlab.gridtli.dom.TLIException;
 import org.cidarlab.gridtli.tli.TemporalLogicInference;
 import org.cidarlab.gridtli.tli.Utilities;
 import org.json.JSONArray;
@@ -36,7 +37,7 @@ public class MainController {
     
     
     @RequestMapping(value="/getSTL", method=RequestMethod.POST)
-    public void getSTL(HttpServletRequest request, HttpServletResponse response){
+    public void getSTL(HttpServletRequest request, HttpServletResponse response) throws TLIException{
         String val = "";
         TreeNode stl = null;
         
