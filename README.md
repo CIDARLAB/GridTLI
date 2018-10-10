@@ -1,6 +1,6 @@
 Install and Run GridTLI
 ----------------------------
-Instructions to install Cello can be found in [INSTALL.md](INSTALL.md). Instructions to run a local instance of GridTLI can be found in [RUN.md](RUN.md).
+Instructions to install GridTLI can be found in [INSTALL.md](INSTALL.md). Instructions to run a local instance of GridTLI can be found in [RUN.md](RUN.md).
 
 
 Contributing to this project
